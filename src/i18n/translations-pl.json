@@ -1,12 +1,12 @@
 {
     "appName": "Balance Tracker",
+    "menu": {
+        "history": "Historia",
+        "statistics": "Statystyki",
+        "login": "Logowanie",
+        "register": "Rejestracja"
+    },
     "navbar": {
-        "menu": {
-            "history": "Historia",
-            "statistics": "Statystyki",
-            "login": "Logowanie",
-            "register": "Rejestracja"
-        },
         "user": {
             "tooltip": "Opcje użytkownika",
             "editProfile": "Edytuj profil",

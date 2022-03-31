@@ -34,15 +34,15 @@ i18n.use(initReactI18next)
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Layout>
-        <BrowserRouter>
+      <BrowserRouter>
+        <Layout>
           <Routes>
             <Route path='/test' element={
               <Button variant="contained">Contained</Button>
             } />
           </Routes>
-        </BrowserRouter>
-      </Layout>
+        </Layout>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
