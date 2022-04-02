@@ -4,7 +4,7 @@ import { Box } from '@mui/system';
 import React, { useState } from 'react'
 import { Link, matchPath, useLocation } from 'react-router-dom';
 
-const Menu = () => {
+const MenuComponent = () => {
   const useRouteMatch = (patterns: readonly string[]) => {
     const { pathname } = useLocation();
 
@@ -34,4 +34,4 @@ const Menu = () => {
   )
 }
 
-export default Menu;
+export default MenuComponent;

@@ -1,13 +1,14 @@
-import React from 'react';
 import './App.css';
 import { Button, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Layout from './components/layout/Layout';
+import LayoutComponent from './components/layout/layout.component';
 import { plPL } from '@mui/material/locale';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import translationsPL from './i18n/translations-pl.json'
+import RegisterPage from './pages/register.page';
+import { SnackbarProvider } from 'notistack';
 
 const theme = createTheme(
   {
@@ -34,15 +35,21 @@ i18n.use(initReactI18next)
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path='/test' element={
-              <Button variant="contained">Contained</Button>
-            } />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
+      <SnackbarProvider 
+        maxSnack={3}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+      >
+        <BrowserRouter>
+          <LayoutComponent>
+            <Routes>
+              <Route path='/register' element={<RegisterPage />} />
+            </Routes>
+          </LayoutComponent>
+        </BrowserRouter>
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }

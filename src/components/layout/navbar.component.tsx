@@ -9,7 +9,9 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
-import { AppBar } from './LayoutHelpers';
+import { AppBar } from './layout-helpers';
+import { Link as RouterLink } from 'react-router-dom';
+import { Link } from '@mui/material';
 
 interface IProps {
     menuOpen: boolean,
@@ -17,7 +19,7 @@ interface IProps {
     handleDrawerOpen: () => void
 }
 
-const Navbar: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawerOpen }) => {
+const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawerOpen }) => {
     const { t } = useTranslation();
     const userOptions = [t("navbar.user.editProfile"), t("navbar.user.changePassword"), t("navbar.user.logout")];
 
@@ -46,9 +48,9 @@ const Navbar: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawerOpen }) 
                 >
                     <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" noWrap component="div">
+                <Link variant="h6" noWrap color="inherit" underline="none" to='/' component={RouterLink}>
                     {t("appName")}
-                </Typography>
+                </Link>
                 {userLoggedIn &&
                     <>
                         <Box sx={{ flexGrow: 1 }} />
@@ -85,4 +87,4 @@ const Navbar: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawerOpen }) 
         </AppBar>
     );
 };
-export default Navbar;
+export default NavbarComponent;

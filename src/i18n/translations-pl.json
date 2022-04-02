@@ -13,5 +13,50 @@
             "changePassword": "Zmień hasło",
             "logout": "Wyloguj się"
         }
+    },
+    "pages": {
+        "register": {
+            "submitButton": "Zarejestruj się"
+        }
+    },
+    "user": {
+        "username": "Nazwa użytkownika",
+        "email": "Adres e-mail",
+        "firstName": "Imię",
+        "lastName": "Nazwisko",
+        "password": "Hasło"
+    },
+    "password": {
+        "show": "Pokaż hasło",
+        "hide": "Ukryj hasło"
+    },
+    "validation": {
+        "required": "Pole jest wymagane",
+        "usernamePattern": "Dozwolone znaki: litery, cyfry, pauza (-) i podkreślenie (_)",
+        "emailPattern": "Nieprawidłowy adres e-mail",
+        "minLength": "Minimalna długość: {{length}} znaków",
+        "mustContainSmallLetter": "Musi zawierać małą literę",
+        "mustContainBigLetter": "Musi zawierać dużą literę",
+        "mustContainDigit": "Musi zawierać cyfrę",
+        "mustContainSpecialChar": "Musi zawierać znak specjalny",
+        "cantBeSameAsUsername": "Musi różnić się od nazwy użytkownika"
+    },
+    "toast": {
+        "success": "Sukces!",
+        "error": "Coś poszło nie tak..."
+    },
+    "backend": {
+        "error": {
+            "user": {
+                "register": {
+                    "usernameTaken": "Podana nazwa użytkownika jest już zajęta"
+                }
+            }
+        },
+        "success": {
+            "user": {
+                "register": "Rejestrcja powiodła się - sprawdź skrzynkę mailową aby zweryfikować swój adres e-mail"
+            }
+        }
     }
 }

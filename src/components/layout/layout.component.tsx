@@ -5,24 +5,24 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MenuItem from './MenuItem';
+import MenuItemComponent from './menu-item.component';
 import { List as HistoryIcon,
     StackedLineChart as StatisticsIcon,
     Login as LoginIcon,
     HowToReg as RegisterIcon
 } from '@mui/icons-material'
-import { Drawer, DrawerHeader } from './LayoutHelpers';
+import { Drawer, DrawerHeader } from './layout-helpers';
 import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Navbar from './Navbar';
+import NavbarComponent from './navbar.component';
 
 interface IProps { }
 
-const Layout: React.FC<IProps> = ({ children }) => {
+const LayoutComponent: React.FC<IProps> = ({ children }) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const [userLoggedIn, setUserLoggedIn] = React.useState(true);
+    const [userLoggedIn, setUserLoggedIn] = React.useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -34,7 +34,7 @@ const Layout: React.FC<IProps> = ({ children }) => {
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <Navbar menuOpen={open} userLoggedIn={userLoggedIn} handleDrawerOpen={handleDrawerOpen} />
+            <NavbarComponent menuOpen={open} userLoggedIn={userLoggedIn} handleDrawerOpen={handleDrawerOpen} />
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
@@ -45,13 +45,13 @@ const Layout: React.FC<IProps> = ({ children }) => {
                 <List>
                     { userLoggedIn ? 
                         <>
-                            <MenuItem menuOpen={open} icon={<HistoryIcon />} label={t("menu.history")} path="/history" />
-                            <MenuItem menuOpen={open} icon={<StatisticsIcon />} label={t("menu.statistics")} path="/statistics" />
+                            <MenuItemComponent menuOpen={open} icon={<HistoryIcon />} label={t("menu.history")} path="/history" />
+                            <MenuItemComponent menuOpen={open} icon={<StatisticsIcon />} label={t("menu.statistics")} path="/statistics" />
                         </>
                         :
                         <>
-                            <MenuItem menuOpen={open} icon={<LoginIcon />} label={t("menu.login")} path="/login" />
-                            <MenuItem menuOpen={open} icon={<RegisterIcon />} label={t("menu.register")} path="/register" />
+                            <MenuItemComponent menuOpen={open} icon={<LoginIcon />} label={t("menu.login")} path="/login" />
+                            <MenuItemComponent menuOpen={open} icon={<RegisterIcon />} label={t("menu.register")} path="/register" />
                         </>
                     }
                 </List>
@@ -64,4 +64,4 @@ const Layout: React.FC<IProps> = ({ children }) => {
     );
 }
 
-export default Layout
+export default LayoutComponent

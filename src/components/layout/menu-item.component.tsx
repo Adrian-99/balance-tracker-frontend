@@ -9,7 +9,7 @@ interface IProps {
     path: string
 }
 
-const MenuItem: React.FC<IProps> = ({ menuOpen, icon, label, path }) => {
+const MenuItemComponent: React.FC<IProps> = ({ menuOpen, icon, label, path }) => {
     const { pathname } = useLocation();
 
     return (
@@ -38,4 +38,4 @@ const MenuItem: React.FC<IProps> = ({ menuOpen, icon, label, path }) => {
     )
 }
 
-export default MenuItem
+export default MenuItemComponent
