@@ -11,19 +11,22 @@ import UserRegister from "../data/user-register";
 import { useCustomToast } from "../services/custom-toast.hook";
 import UserService from "../services/user.service";
 
+type UserRegisterWithRepeatPassword = UserRegister & { repeatPassword: string };
+
 const RegisterPage: React.FC = () => {
-    const { register, handleSubmit, watch, setError, formState: { errors } } = useForm<UserRegister>();
+    const { register, handleSubmit, watch, setError, formState: { errors } } = useForm<UserRegisterWithRepeatPassword>();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { successToast, errorToast } = useCustomToast();
 
-    const watchUsername = watch(["username"]);
+    const watchForm = watch(["username", "password"]);
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 
-    const onSubmit: SubmitHandler<UserRegister> = data => {
+    const onSubmit: SubmitHandler<UserRegisterWithRepeatPassword> = data => {
         setAwaitingResponse(true);
-        UserService.register(data)
+        const { repeatPassword, ...dataToSend } = data;
+        UserService.register(dataToSend)
             .then(response => {
                 successToast(response.translationKey);
                 setAwaitingResponse(false);
@@ -89,7 +92,7 @@ const RegisterPage: React.FC = () => {
                     <GridBreakComponent />
 
                     <Grid item xs={12} md={8}>
-                        <PasswordFieldComponent label={t('user.password') + " *"}
+                    <PasswordFieldComponent label={t('user.password') + " *"}
                             fullWidth
                             useFormRegister={register('password', {
                                 required: t('validation.required') as string,
@@ -99,11 +102,25 @@ const RegisterPage: React.FC = () => {
                                     mustContainBigLetter: v => /.*[A-Z].*/.test(v) || t('validation.mustContainBigLetter') as string,
                                     mustContainDigit: v => /.*[0-9].*/.test(v) || t('validation.mustContainDigit') as string,
                                     mustContainSpecialChar: v => /.*[^a-zA-Z0-9].*/.test(v) || t('validation.mustContainSpecialChar') as string,
-                                    cantBeSameAsUsername: v => v.toLowerCase() !== watchUsername[0].toLowerCase() || t('validation.cantBeSameAsUsername') as string
+                                    cantBeSameAsUsername: v => v.toLowerCase() !== watchForm[0].toLowerCase() || t('validation.cantBeSameAsUsername') as string
                                 }
                             })}
                             error={errors.password !== undefined}
                             helperText={errors.password?.message}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} md={8}>
+                        <PasswordFieldComponent label={t('user.repeatPassword') + " *"}
+                            fullWidth
+                            useFormRegister={register('repeatPassword', {
+                                required: t('validation.required') as string,
+                                validate: { 
+                                    mustBeSameAsPassword: v => v === watchForm[1] || t('validation.mustBeSameAsPassword') as string
+                                }
+                            })}
+                            error={errors.repeatPassword !== undefined}
+                            helperText={errors.repeatPassword?.message}
                         />
                     </Grid>
 

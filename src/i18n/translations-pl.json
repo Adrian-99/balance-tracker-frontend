@@ -24,7 +24,8 @@
         "email": "Adres e-mail",
         "firstName": "Imię",
         "lastName": "Nazwisko",
-        "password": "Hasło"
+        "password": "Hasło",
+        "repeatPassword": "Powtórz hasło"
     },
     "password": {
         "show": "Pokaż hasło",
@@ -39,7 +40,8 @@
         "mustContainBigLetter": "Musi zawierać dużą literę",
         "mustContainDigit": "Musi zawierać cyfrę",
         "mustContainSpecialChar": "Musi zawierać znak specjalny",
-        "cantBeSameAsUsername": "Musi różnić się od nazwy użytkownika"
+        "cantBeSameAsUsername": "Musi różnić się od nazwy użytkownika",
+        "mustBeSameAsPassword": "Hasła nie są takie same"
     },
     "toast": {
         "success": "Sukces!",
