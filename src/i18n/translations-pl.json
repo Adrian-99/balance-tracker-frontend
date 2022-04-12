@@ -51,7 +51,8 @@
         "error": {
             "user": {
                 "register": {
-                    "usernameTaken": "Podana nazwa użytkownika jest już zajęta"
+                    "usernameTaken": "Podana nazwa użytkownika jest już zajęta",
+                    "emailTaken": "Podany adres email jest już zajęty"
                 }
             }
         },

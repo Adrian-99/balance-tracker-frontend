@@ -35,8 +35,11 @@ const RegisterPage: React.FC = () => {
             .catch(error => {
                 errorToast(error.response?.data?.translationKey);
                 setAwaitingResponse(false);
-                if (error.response?.data?.translationKey === "error.user.register.usernameTaken") {
+                var translationKey = error.response?.data?.translationKey;
+                if (translationKey === "error.user.register.usernameTaken") {
                     setError("username", { type: "custom", message: t("backend.error.user.register.usernameTaken") }, { shouldFocus: true });
+                } else if (translationKey === "error.user.register.emailTaken") {
+                    setError("email", { type: "custom", message: t("backend.error.user.register.emailTaken") }, { shouldFocus: true });
                 }
             });
     }
