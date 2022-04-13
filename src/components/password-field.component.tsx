@@ -9,10 +9,11 @@ interface IProps {
     useFormRegister: UseFormRegisterReturn,
     fullWidth?: boolean | undefined,
     error?: boolean | undefined,
-    helperText?: string
+    helperText?: string,
+    onChange?: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> | undefined
 }
 
-const PasswordFieldComponent: React.FC<IProps> = ({ label, useFormRegister, fullWidth, error, helperText }) => {
+const PasswordFieldComponent: React.FC<IProps> = ({ label, useFormRegister, fullWidth, error, helperText, onChange }) => {
     const { t } = useTranslation();
 
     const [showPassword, setShowPassword] = useState(false);
@@ -37,6 +38,7 @@ const PasswordFieldComponent: React.FC<IProps> = ({ label, useFormRegister, full
                     </InputAdornment>
                 }
                 label={label}
+                onChange={onChange}
             />
             <FormHelperText>
                 {helperText}

@@ -15,6 +15,7 @@ import { Drawer, DrawerHeader } from './layout-helpers';
 import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import NavbarComponent from './navbar.component';
+import { useAuthentication } from '../../hooks/authentication.hook';
 
 interface IProps { }
 
@@ -22,7 +23,8 @@ const LayoutComponent: React.FC<IProps> = ({ children }) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const [userLoggedIn, setUserLoggedIn] = React.useState(false);
+    
+    const { isUserLoggedIn } = useAuthentication();
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -34,7 +36,7 @@ const LayoutComponent: React.FC<IProps> = ({ children }) => {
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <NavbarComponent menuOpen={open} userLoggedIn={userLoggedIn} handleDrawerOpen={handleDrawerOpen} />
+            <NavbarComponent menuOpen={open} userLoggedIn={isUserLoggedIn()} handleDrawerOpen={handleDrawerOpen} />
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
@@ -43,7 +45,7 @@ const LayoutComponent: React.FC<IProps> = ({ children }) => {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    { userLoggedIn ? 
+                    { isUserLoggedIn() ? 
                         <>
                             <MenuItemComponent menuOpen={open} icon={<HistoryIcon />} label={t("menu.history")} path="/history" />
                             <MenuItemComponent menuOpen={open} icon={<StatisticsIcon />} label={t("menu.statistics")} path="/statistics" />

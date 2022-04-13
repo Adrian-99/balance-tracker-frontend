@@ -9,6 +9,8 @@ import { initReactI18next } from 'react-i18next';
 import translationsPL from './i18n/translations-pl.json'
 import RegisterPage from './pages/register.page';
 import { SnackbarProvider } from 'notistack';
+import LoginPage from './pages/login.page';
+import { useAuthentication } from './hooks/authentication.hook';
 
 const theme = createTheme(
   {
@@ -33,6 +35,8 @@ i18n.use(initReactI18next)
   })
 
 function App() {
+  const { isUserLoggedIn } = useAuthentication();
+
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider 
@@ -45,7 +49,14 @@ function App() {
         <BrowserRouter>
           <LayoutComponent>
             <Routes>
-              <Route path='/register' element={<RegisterPage />} />
+              { isUserLoggedIn() ? 
+                <></>
+              :
+                <>
+                  <Route path='/register' element={<RegisterPage />} />
+                  <Route path='/login' element={<LoginPage />} />
+                </>
+              }
             </Routes>
           </LayoutComponent>
         </BrowserRouter>

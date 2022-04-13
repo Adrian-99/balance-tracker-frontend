@@ -8,8 +8,8 @@ import GridBreakComponent from "../components/grid-break.component";
 import PageCardComponent from "../components/page-card.component";
 import PasswordFieldComponent from "../components/password-field.component";
 import UserRegister from "../data/user-register";
-import { useCustomToast } from "../services/custom-toast.hook";
-import UserService from "../services/user.service";
+import { useCustomToast } from "../hooks/custom-toast.hook";
+import { useUserService } from "../hooks/user-service.hook";
 
 type UserRegisterWithRepeatPassword = UserRegister & { repeatPassword: string };
 
@@ -18,6 +18,7 @@ const RegisterPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { successToast, errorToast } = useCustomToast();
+    const { registerUser } = useUserService();
 
     const watchForm = watch(["username", "password"]);
 
@@ -26,16 +27,16 @@ const RegisterPage: React.FC = () => {
     const onSubmit: SubmitHandler<UserRegisterWithRepeatPassword> = data => {
         setAwaitingResponse(true);
         const { repeatPassword, ...dataToSend } = data;
-        UserService.register(dataToSend)
+        registerUser(dataToSend)
             .then(response => {
                 successToast(response.translationKey);
                 setAwaitingResponse(false);
                 navigate('/login');
             })
             .catch(error => {
-                errorToast(error.response?.data?.translationKey);
-                setAwaitingResponse(false);
                 var translationKey = error.response?.data?.translationKey;
+                errorToast(translationKey);
+                setAwaitingResponse(false);
                 if (translationKey === "error.user.register.usernameTaken") {
                     setError("username", { type: "custom", message: t("backend.error.user.register.usernameTaken") }, { shouldFocus: true });
                 } else if (translationKey === "error.user.register.emailTaken") {
@@ -95,7 +96,7 @@ const RegisterPage: React.FC = () => {
                     <GridBreakComponent />
 
                     <Grid item xs={12} md={8}>
-                    <PasswordFieldComponent label={t('user.password') + " *"}
+                        <PasswordFieldComponent label={t('user.password') + " *"}
                             fullWidth
                             useFormRegister={register('password', {
                                 required: t('validation.required') as string,

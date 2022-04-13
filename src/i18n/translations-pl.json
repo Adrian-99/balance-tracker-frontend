@@ -17,11 +17,15 @@
     "pages": {
         "register": {
             "submitButton": "Zarejestruj się"
+        },
+        "login": {
+            "submitButton": "Zaloguj się"
         }
     },
     "user": {
         "username": "Nazwa użytkownika",
         "email": "Adres e-mail",
+        "usernameOrEmail": "Nazwa użytkownika lub adres e-mail",
         "firstName": "Imię",
         "lastName": "Nazwisko",
         "password": "Hasło",
@@ -53,6 +57,9 @@
                 "register": {
                     "usernameTaken": "Podana nazwa użytkownika jest już zajęta",
                     "emailTaken": "Podany adres email jest już zajęty"
+                },
+                "authenticate": {
+                    "wrongCredentials": "Niepoprawne dane logowania"
                 }
             }
         },
