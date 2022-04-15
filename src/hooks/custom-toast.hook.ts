@@ -1,25 +1,25 @@
-import { useSnackbar } from "notistack";
+import { useSnackbar, VariantType } from "notistack";
 import { useTranslation } from "react-i18next";
+
+type ToastInputType = "message" | "translationKey" | "backendTranslationKey";
 
 export const useCustomToast = () => {
     const { t } = useTranslation();
     const { enqueueSnackbar } = useSnackbar();
 
-    const successToast = (backendTranslationKey?: string | undefined) => {
-        anyToast("success", backendTranslationKey);
+    const successToast = (message?: string | undefined) => {
+        enqueueSnackbar(message ? message : t("toast.success"), { variant: "success" });
     }
     
-    const errorToast = (backendTranslationKey?: string | undefined) => {
-        anyToast("error", backendTranslationKey);
-    }
-    
-    const anyToast = (variant: "success" | "error", backendTranslationKey?: string | undefined) => {
-        var message = backendTranslationKey ?
-                t("backend." + backendTranslationKey) :
-                t("toast." + variant);
-    
-        enqueueSnackbar(message, { variant });
+    const errorToast = (message?: string | undefined) => {
+        enqueueSnackbar(message ? message : t("toast.error"), { variant: "error" });
     }
 
-    return { successToast, errorToast };
+    const evaluateBackendMessage = (translationKey: string | undefined, translationParams: any = undefined): string | undefined => {
+        return translationKey ? 
+            t("backend." + translationKey, translationParams) : 
+            undefined;
+    }
+
+    return { successToast, errorToast, evaluateBackendMessage };
 }

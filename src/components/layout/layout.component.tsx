@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
@@ -22,7 +22,7 @@ interface IProps { }
 const LayoutComponent: React.FC<IProps> = ({ children }) => {
     const { t } = useTranslation();
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     
     const { isUserLoggedIn } = useAuthentication();
 

@@ -17,7 +17,7 @@ const RegisterPage: React.FC = () => {
     const { register, handleSubmit, watch, setError, formState: { errors } } = useForm<UserRegisterWithRepeatPassword>();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { successToast, errorToast } = useCustomToast();
+    const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { registerUser } = useUserService();
 
     const watchForm = watch(["username", "password"]);
@@ -29,13 +29,13 @@ const RegisterPage: React.FC = () => {
         const { repeatPassword, ...dataToSend } = data;
         registerUser(dataToSend)
             .then(response => {
-                successToast(response.translationKey);
+                successToast(evaluateBackendMessage(response.translationKey));
                 setAwaitingResponse(false);
                 navigate('/login');
             })
             .catch(error => {
                 var translationKey = error.response?.data?.translationKey;
-                errorToast(translationKey);
+                errorToast(evaluateBackendMessage(translationKey));
                 setAwaitingResponse(false);
                 if (translationKey === "error.user.register.usernameTaken") {
                     setError("username", { type: "custom", message: t("backend.error.user.register.usernameTaken") }, { shouldFocus: true });

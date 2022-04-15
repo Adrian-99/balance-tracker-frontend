@@ -1,4 +1,6 @@
 {
+    "test": "Test {{value}}",
+
     "appName": "Balance Tracker",
     "menu": {
         "history": "Historia",
@@ -6,22 +8,29 @@
         "login": "Logowanie",
         "register": "Rejestracja"
     },
+
     "navbar": {
         "user": {
             "tooltip": "Opcje użytkownika",
             "editProfile": "Edytuj profil",
             "changePassword": "Zmień hasło",
             "logout": "Wyloguj się"
+        },
+        "logout": {
+            "successToast": "Pomyślnie wylogowano"
         }
     },
+
     "pages": {
         "register": {
             "submitButton": "Zarejestruj się"
         },
         "login": {
-            "submitButton": "Zaloguj się"
+            "submitButton": "Zaloguj się",
+            "successToast": "Zalogowano jako {{username}}"
         }
     },
+
     "user": {
         "username": "Nazwa użytkownika",
         "email": "Adres e-mail",
@@ -31,10 +40,12 @@
         "password": "Hasło",
         "repeatPassword": "Powtórz hasło"
     },
+
     "password": {
         "show": "Pokaż hasło",
         "hide": "Ukryj hasło"
     },
+
     "validation": {
         "required": "Pole jest wymagane",
         "usernamePattern": "Dozwolone znaki: litery, cyfry, pauza (-) i podkreślenie (_)",
@@ -47,10 +58,12 @@
         "cantBeSameAsUsername": "Musi różnić się od nazwy użytkownika",
         "mustBeSameAsPassword": "Hasła nie są takie same"
     },
+
     "toast": {
         "success": "Sukces!",
         "error": "Coś poszło nie tak..."
     },
+
     "backend": {
         "error": {
             "user": {

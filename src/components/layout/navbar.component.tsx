@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -12,6 +12,14 @@ import { useTranslation } from 'react-i18next';
 import { AppBar } from './layout-helpers';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link } from '@mui/material';
+import { useAuthentication } from '../../hooks/authentication.hook';
+import { useUserService } from '../../hooks/user-service.hook';
+import { useCustomToast } from '../../hooks/custom-toast.hook';
+
+interface UserOption {
+    name: string;
+    action: () => void;
+}
 
 interface IProps {
     menuOpen: boolean,
@@ -21,9 +29,42 @@ interface IProps {
 
 const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawerOpen }) => {
     const { t } = useTranslation();
-    const userOptions = [t("navbar.user.editProfile"), t("navbar.user.changePassword"), t("navbar.user.logout")];
-
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const { clearUserInfo, username } = useAuthentication();
+    const { revokeUserTokens } = useUserService();
+    const { successToast, errorToast } = useCustomToast();
+    
+    const USER_OPTIONS: UserOption[] = [
+        { 
+            name: t("navbar.user.editProfile"),
+            action: () => {
+                handleCloseUserMenu();
+            }
+        }, 
+        {
+            name: t("navbar.user.changePassword"),
+            action: () => {
+                handleCloseUserMenu();
+            }
+        },
+        {
+            name: t("navbar.user.logout"),
+            action: () => {
+                revokeUserTokens()
+                    .then(() => {
+                        successToast(t("navbar.logout.successToast"));
+                    })
+                    .catch(() => {
+                        errorToast();
+                    })
+                    .finally(() => {
+                        clearUserInfo();
+                        handleCloseUserMenu();
+                    });
+            }
+        }
+    ];
+    
+    const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
@@ -56,7 +97,7 @@ const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawe
                         <Box sx={{ flexGrow: 1 }} />
                         <Box sx={{ flexGrow: 0 }}>
                             <Tooltip title={t("navbar.user.tooltip") as string}>
-                                <Button color="inherit" onClick={handleOpenUserMenu}>jan_kowalski</Button>
+                                <Button color="inherit" onClick={handleOpenUserMenu}>{ username }</Button>
                             </Tooltip>
                             <Menu
                                 sx={{ mt: '45px' }}
@@ -74,9 +115,9 @@ const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawe
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
                             >
-                                {userOptions.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography textAlign="center">{setting}</Typography>
+                                {USER_OPTIONS.map((option) => (
+                                    <MenuItem key={option.name} onClick={option.action}>
+                                        <Typography textAlign="center">{option.name}</Typography>
                                     </MenuItem>
                                 ))}
                             </Menu>

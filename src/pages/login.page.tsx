@@ -13,9 +13,9 @@ import { useUserService } from "../hooks/user-service.hook";
 const LoginPage: React.FC = () => {
     const { register, handleSubmit, setError, clearErrors, formState: { errors } } = useForm<Authenticate>();
     const { t } = useTranslation();
-    const { errorToast } = useCustomToast();
+    const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { authenticateUser } = useUserService();
-    const { saveTokens } = useAuthentication();
+    const { saveUserInfo } = useAuthentication();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 
@@ -41,12 +41,13 @@ const LoginPage: React.FC = () => {
         setAwaitingResponse(true);
         authenticateUser(data)
             .then(response => {
+                var username = saveUserInfo(response);
                 setAwaitingResponse(false);
-                saveTokens(response);
+                successToast(t("pages.login.successToast", { username }))
             })
             .catch(error => {
                 var translationKey = error.response?.data?.translationKey;
-                errorToast(translationKey);
+                errorToast(evaluateBackendMessage(translationKey));
                 setAwaitingResponse(false);
                 if (translationKey === "error.user.authenticate.wrongCredentials") {
                     setError("usernameOrEmail", { type: "custom"});
