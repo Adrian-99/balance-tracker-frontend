@@ -1,7 +1,7 @@
 import './App.css';
 import { Button, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import LayoutComponent from './components/layout/layout.component';
 import { plPL } from '@mui/material/locale';
 import i18n from 'i18next';
@@ -13,56 +13,67 @@ import LoginPage from './pages/login.page';
 import { useAuthentication } from './hooks/authentication.hook';
 
 const theme = createTheme(
-  {
-    // palette: {
-    //   primary: {
-    //     main: red[500]
-    //   }
-    // }
-  },
-  plPL
+    {
+        // palette: {
+        //   primary: {
+        //     main: red[500]
+        //   }
+        // }
+    },
+    plPL
 );
 
 i18n.use(initReactI18next)
-  .init({
-    interpolation: { escapeValue: false },
-    lng: 'pl',
-    resources: {
-      pl: {
-        translation: translationsPL
-      }
-    }
-  })
+    .init({
+        interpolation: { escapeValue: false },
+        lng: 'pl',
+        resources: {
+            pl: {
+                translation: translationsPL
+            }
+        }
+    })
 
 function App() {
-  const { isUserLoggedIn } = useAuthentication();
+    const { isUserLoggedIn } = useAuthentication();
 
-  return (
-    <ThemeProvider theme={theme}>
-      <SnackbarProvider 
-        maxSnack={3}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-      >
-        <BrowserRouter>
-          <LayoutComponent>
-            <Routes>
-              { isUserLoggedIn() ? 
-                <></>
-              :
-                <>
-                  <Route path='/register' element={<RegisterPage />} />
-                  <Route path='/login' element={<LoginPage />} />
-                </>
-              }
-            </Routes>
-          </LayoutComponent>
-        </BrowserRouter>
-      </SnackbarProvider>
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            <SnackbarProvider
+                maxSnack={3}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                }}
+            >
+                <BrowserRouter>
+                    <LayoutComponent>
+                        <Routes>
+                            <Route path="/" element={isUserLoggedIn() ?
+                                <Navigate to="/history" replace /> :
+                                <></>
+                            } />
+                            <Route path="/register" element={isUserLoggedIn() ?
+                                <Navigate to="/" replace /> :
+                                <RegisterPage />
+                            } />
+                            <Route path="/login" element={isUserLoggedIn() ?
+                                <Navigate to="/" replace /> :
+                                <LoginPage />
+                            } />
+                            <Route path="/history" element={isUserLoggedIn() ?
+                                <></> :
+                                <Navigate to="/login" replace />
+                            } />
+                            <Route path="*" element={
+                                <Navigate to="/" replace />
+                            } />
+                        </Routes>
+                    </LayoutComponent>
+                </BrowserRouter>
+            </SnackbarProvider>
+        </ThemeProvider>
+    );
 }
 
 export default App;

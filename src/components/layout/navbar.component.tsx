@@ -10,7 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
 import { AppBar } from './layout-helpers';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Link } from '@mui/material';
 import { useAuthentication } from '../../hooks/authentication.hook';
 import { useUserService } from '../../hooks/user-service.hook';
@@ -29,6 +29,7 @@ interface IProps {
 
 const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawerOpen }) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { clearUserInfo, username } = useAuthentication();
     const { revokeUserTokens } = useUserService();
     const { successToast, errorToast } = useCustomToast();
@@ -51,13 +52,14 @@ const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawe
             action: () => {
                 revokeUserTokens()
                     .then(() => {
+                        clearUserInfo();
                         successToast(t("navbar.logout.successToast"));
+                        navigate("/");
                     })
                     .catch(() => {
                         errorToast();
                     })
                     .finally(() => {
-                        clearUserInfo();
                         handleCloseUserMenu();
                     });
             }

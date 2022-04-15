@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
             .then(response => {
                 var username = saveUserInfo(response);
                 setAwaitingResponse(false);
-                successToast(t("pages.login.successToast", { username }))
+                successToast(t("pages.login.successToast", { username }));
             })
             .catch(error => {
                 var translationKey = error.response?.data?.translationKey;

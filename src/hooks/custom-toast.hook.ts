@@ -1,7 +1,5 @@
-import { useSnackbar, VariantType } from "notistack";
+import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-
-type ToastInputType = "message" | "translationKey" | "backendTranslationKey";
 
 export const useCustomToast = () => {
     const { t } = useTranslation();
