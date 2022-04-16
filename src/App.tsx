@@ -1,16 +1,14 @@
 import './App.css';
-import { Button, createTheme } from '@mui/material';
+import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import LayoutComponent from './components/layout/layout.component';
 import { plPL } from '@mui/material/locale';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import translationsPL from './i18n/translations-pl.json'
-import RegisterPage from './pages/register.page';
 import { SnackbarProvider } from 'notistack';
-import LoginPage from './pages/login.page';
-import { useAuthentication } from './hooks/authentication.hook';
+import PagesRouting from './pages-routing';
 
 const theme = createTheme(
     {
@@ -35,8 +33,6 @@ i18n.use(initReactI18next)
     })
 
 function App() {
-    const { isUserLoggedIn } = useAuthentication();
-
     return (
         <ThemeProvider theme={theme}>
             <SnackbarProvider
@@ -48,27 +44,7 @@ function App() {
             >
                 <BrowserRouter>
                     <LayoutComponent>
-                        <Routes>
-                            <Route path="/" element={isUserLoggedIn() ?
-                                <Navigate to="/history" replace /> :
-                                <></>
-                            } />
-                            <Route path="/register" element={isUserLoggedIn() ?
-                                <Navigate to="/" replace /> :
-                                <RegisterPage />
-                            } />
-                            <Route path="/login" element={isUserLoggedIn() ?
-                                <Navigate to="/" replace /> :
-                                <LoginPage />
-                            } />
-                            <Route path="/history" element={isUserLoggedIn() ?
-                                <></> :
-                                <Navigate to="/login" replace />
-                            } />
-                            <Route path="*" element={
-                                <Navigate to="/" replace />
-                            } />
-                        </Routes>
+                        <PagesRouting />
                     </LayoutComponent>
                 </BrowserRouter>
             </SnackbarProvider>

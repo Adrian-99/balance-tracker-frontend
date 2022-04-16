@@ -23,11 +23,21 @@
 
     "pages": {
         "register": {
-            "submitButton": "Zarejestruj się"
+            "submitButton": "Zarejestruj się",
+            "accountQuestion": "Masz już konto?",
+            "login": "Zaloguj się!"
         },
         "login": {
             "submitButton": "Zaloguj się",
-            "successToast": "Zalogowano jako {{username}}"
+            "successToast": "Zalogowano jako {{username}}",
+            "forgotPasswordQuestion": "Nie pamiętasz hasła?",
+            "resetPassword": "Zresetuj hasło!",
+            "noAccountQuestion": "Nie masz jeszcze konta?",
+            "register": "Zarejestruj się!"
+        },
+        "resetPasswordRequest": {
+            "title": "Reset hasła",
+            "submitButton": "Dalej"
         }
     },
 
@@ -78,7 +88,8 @@
         },
         "success": {
             "user": {
-                "register": "Rejestrcja powiodła się - sprawdź skrzynkę mailową aby zweryfikować swój adres e-mail"
+                "register": "Rejestracja powiodła się - sprawdź skrzynkę mailową aby zweryfikować swój adres e-mail",
+                "resetPasswordRequest": "Jeśli konto zostało znalezione, kod został wysłany na adres e-mail"
             }
         }
     }

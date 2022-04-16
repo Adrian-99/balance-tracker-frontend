@@ -1,9 +1,9 @@
-import { Grid, TextField } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Button, Divider, Grid, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import ButtonWithSpinnerComponent from "../components/button-with-spinner.component";
+import { Link, useNavigate } from "react-router-dom";
 import GridBreakComponent from "../components/grid-break.component";
 import PageCardComponent from "../components/page-card.component";
 import PasswordFieldComponent from "../components/password-field.component";
@@ -14,13 +14,11 @@ import { useUserService } from "../hooks/user-service.hook";
 type UserRegisterWithRepeatPassword = UserRegister & { repeatPassword: string };
 
 const RegisterPage: React.FC = () => {
-    const { register, handleSubmit, watch, setError, formState: { errors } } = useForm<UserRegisterWithRepeatPassword>();
+    const { register, handleSubmit, getValues, setError, formState: { errors } } = useForm<UserRegisterWithRepeatPassword>();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { registerUser } = useUserService();
-
-    const watchForm = watch(["username", "password"]);
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 
@@ -30,18 +28,19 @@ const RegisterPage: React.FC = () => {
         registerUser(dataToSend)
             .then(response => {
                 successToast(evaluateBackendMessage(response.translationKey));
-                setAwaitingResponse(false);
                 navigate('/login');
             })
             .catch(error => {
                 var translationKey = error.response?.data?.translationKey;
                 errorToast(evaluateBackendMessage(translationKey));
-                setAwaitingResponse(false);
                 if (translationKey === "error.user.register.usernameTaken") {
                     setError("username", { type: "custom", message: t("backend.error.user.register.usernameTaken") }, { shouldFocus: true });
                 } else if (translationKey === "error.user.register.emailTaken") {
                     setError("email", { type: "custom", message: t("backend.error.user.register.emailTaken") }, { shouldFocus: true });
                 }
+            })
+            .finally(() => {
+                setAwaitingResponse(false);
             });
     }
 
@@ -106,7 +105,7 @@ const RegisterPage: React.FC = () => {
                                     mustContainBigLetter: v => /.*[A-Z].*/.test(v) || t('validation.mustContainBigLetter') as string,
                                     mustContainDigit: v => /.*[0-9].*/.test(v) || t('validation.mustContainDigit') as string,
                                     mustContainSpecialChar: v => /.*[^a-zA-Z0-9].*/.test(v) || t('validation.mustContainSpecialChar') as string,
-                                    cantBeSameAsUsername: v => v.toLowerCase() !== watchForm[0].toLowerCase() || t('validation.cantBeSameAsUsername') as string
+                                    cantBeSameAsUsername: v => v.toLowerCase() !== getValues("username").toLowerCase() || t('validation.cantBeSameAsUsername') as string
                                 }
                             })}
                             error={errors.password !== undefined}
@@ -120,7 +119,7 @@ const RegisterPage: React.FC = () => {
                             useFormRegister={register('repeatPassword', {
                                 required: t('validation.required') as string,
                                 validate: { 
-                                    mustBeSameAsPassword: v => v === watchForm[1] || t('validation.mustBeSameAsPassword') as string
+                                    mustBeSameAsPassword: v => v === getValues("password") || t('validation.mustBeSameAsPassword') as string
                                 }
                             })}
                             error={errors.repeatPassword !== undefined}
@@ -129,15 +128,17 @@ const RegisterPage: React.FC = () => {
                     </Grid>
 
                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <ButtonWithSpinnerComponent 
-                            buttonText={t('pages.register.submitButton')}
-                            variant="contained"
-                            submitButton={true}
-                            enableSpinner={awaitingResponse}
-                        />
+                        <LoadingButton variant="contained" size="large" type="submit" loading={awaitingResponse}>
+                            {t('pages.register.submitButton')}
+                        </LoadingButton>
                     </Grid>
                 </Grid>
             </form>
+            <Divider sx={{ my: '16px' }} />
+            <Typography variant="body1">
+                { t("pages.register.accountQuestion") }
+                <Button to="/login" component={Link}>{ t("pages.register.login") }</Button>
+            </Typography>
         </PageCardComponent>
     )
 }
