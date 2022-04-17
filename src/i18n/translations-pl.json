@@ -36,8 +36,17 @@
             "register": "Zarejestruj się!"
         },
         "resetPasswordRequest": {
-            "title": "Reset hasła",
-            "submitButton": "Dalej"
+            "title": "Reset hasła - generowanie kodu",
+            "submitButton": "Wygeneruj kod",
+            "alreadyHaveACodeQuestion": "Masz już kod?",
+            "setNewPassword": "Ustaw nowe hasło!"
+        },
+        "resetPassword": {
+            "title": "Reset hasła - ustawianie nowego hasła",
+            "code": "Kod",
+            "submitButton": "Ustaw hasło",
+            "invalidCodeQuestion": "Niepoprawny kod?",
+            "generateNewCode": "Wygeneruj nowy kod!"
         }
     },
 
@@ -76,6 +85,10 @@
 
     "backend": {
         "error": {
+            "validation": {
+                "passwordSameAsUsername": "Hasło musi różnić się od nazwy użytkownika",
+                "passwordSameAsCurrentOne": "Nowe hasło musi różnić się od obecnego hasła"
+            },
             "user": {
                 "register": {
                     "usernameTaken": "Podana nazwa użytkownika jest już zajęta",
@@ -83,13 +96,17 @@
                 },
                 "authenticate": {
                     "wrongCredentials": "Niepoprawne dane logowania"
+                },
+                "resetPassword": {
+                    "invalidCode": "Niepoprawny kod"
                 }
             }
         },
         "success": {
             "user": {
                 "register": "Rejestracja powiodła się - sprawdź skrzynkę mailową aby zweryfikować swój adres e-mail",
-                "resetPasswordRequest": "Jeśli konto zostało znalezione, kod został wysłany na adres e-mail"
+                "resetPasswordRequest": "Jeśli konto zostało znalezione, kod został wysłany na adres e-mail",
+                "resetPassword": "Nowe hasło zostało ustawione"
             }
         }
     }

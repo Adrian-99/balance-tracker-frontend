@@ -26,16 +26,10 @@ const PagesRouting: React.FC = () => {
                 <Navigate to="/" replace /> :
                 <ResetPasswordRequestPage />
             } />
-            <Route path="/reset-password">
-                <Route path=":code" element={isUserLoggedIn() ?
-                    <Navigate to="/" replace /> :
-                    <ResetPasswordPage />
-                } />
-                <Route path="" element={isUserLoggedIn() ?
-                    <Navigate to="/" replace /> :
-                    <ResetPasswordPage />
-                } />
-            </Route>
+            <Route path="/reset-password" element={isUserLoggedIn() ?
+                <Navigate to="/" replace /> :
+                <ResetPasswordPage />
+            } />
             <Route path="/history" element={isUserLoggedIn() ?
                 <></> :
                 <Navigate to="/login" replace />

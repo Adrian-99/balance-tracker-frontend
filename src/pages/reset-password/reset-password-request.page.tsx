@@ -1,9 +1,9 @@
 import { LoadingButton } from "@mui/lab";
-import { Grid, TextField } from "@mui/material";
+import { Button, Divider, Grid, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PageCardComponent from "../../components/page-card.component"
 import ResetPasswordRequest from "../../data/reset-password-request";
 import { useCustomToast } from "../../hooks/custom-toast.hook";
@@ -54,6 +54,11 @@ const ResetPasswordRequestPage: React.FC = () => {
                     </Grid>
                 </Grid>
             </form>
+            <Divider sx={{ my: '16px' }} />
+            <Typography variant="body1">
+                { t("pages.resetPasswordRequest.alreadyHaveACodeQuestion") }
+                <Button to="/reset-password" component={Link}>{ t("pages.resetPasswordRequest.setNewPassword") }</Button>
+            </Typography>
         </PageCardComponent>
     );
 }
