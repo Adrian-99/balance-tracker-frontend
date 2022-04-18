@@ -22,12 +22,13 @@ interface UserOption {
 }
 
 interface IProps {
-    menuOpen: boolean,
-    userLoggedIn: boolean,
-    handleDrawerOpen: () => void
+    isMenuOpen: boolean,
+    isSmallScreen: boolean,
+    isUserLoggedIn: boolean,
+    setMenuOpen: (open: boolean) => void
 }
 
-const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawerOpen }) => {
+const NavbarComponent: React.FC<IProps> = ({ isMenuOpen, isSmallScreen, isUserLoggedIn, setMenuOpen }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { clearUserInfo, username } = useAuthentication();
@@ -77,16 +78,16 @@ const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawe
     };
 
     return (
-        <AppBar position="fixed" open={menuOpen}>
+        <AppBar position="fixed" open={!isSmallScreen && isMenuOpen}>
             <Toolbar>
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
-                    onClick={handleDrawerOpen}
+                    onClick={() => setMenuOpen(!(isSmallScreen && isMenuOpen))}
                     edge="start"
                     sx={{
                         marginRight: 5,
-                        ...(menuOpen && { display: 'none' }),
+                        ...(!isSmallScreen && isMenuOpen && { display: 'none' }),
                     }}
                 >
                     <MenuIcon />
@@ -94,7 +95,7 @@ const NavbarComponent: React.FC<IProps> = ({ menuOpen, userLoggedIn, handleDrawe
                 <Link variant="h6" noWrap color="inherit" underline="none" to='/' component={RouterLink}>
                     {t("appName")}
                 </Link>
-                {userLoggedIn &&
+                {isUserLoggedIn &&
                     <>
                         <Box sx={{ flexGrow: 1 }} />
                         <Box sx={{ flexGrow: 0 }}>
