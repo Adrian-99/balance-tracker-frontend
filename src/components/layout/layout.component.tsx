@@ -6,7 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MenuItemComponent from './menu-item.component';
-import { List as HistoryIcon,
+import { Home as HomeIcon,
+    List as HistoryIcon,
     StackedLineChart as StatisticsIcon,
     Login as LoginIcon,
     HowToReg as RegisterIcon
@@ -52,6 +53,7 @@ const LayoutComponent: React.FC<IProps> = ({ children }) => {
                         </>
                         :
                         <>
+                            <MenuItemComponent menuOpen={open} icon={<HomeIcon />} label={t("menu.home")} path="/" />
                             <MenuItemComponent menuOpen={open} icon={<LoginIcon />} label={t("menu.login")} path="/login" />
                             <MenuItemComponent menuOpen={open} icon={<RegisterIcon />} label={t("menu.register")} path="/register" />
                         </>

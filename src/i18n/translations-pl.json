@@ -1,12 +1,11 @@
 {
-    "test": "Test {{value}}",
-
     "appName": "Balance Tracker",
     "menu": {
-        "history": "Historia",
-        "statistics": "Statystyki",
+        "home": "Strona główna",
         "login": "Logowanie",
-        "register": "Rejestracja"
+        "register": "Rejestracja",
+        "history": "Historia",
+        "statistics": "Statystyki"
     },
 
     "navbar": {
@@ -22,6 +21,9 @@
     },
 
     "pages": {
+        "home": {
+            "text": "Twoje finanse w jednym miejscu"
+        },
         "register": {
             "submitButton": "Zarejestruj się",
             "accountQuestion": "Masz już konto?",
