@@ -26,8 +26,6 @@ const LoginPage: React.FC = () => {
     const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = event => {
         if (event.target.name === "usernameOrEmail") {
             usernameOrEmailRegister.onChange(event);
-        } else {
-            passwordRegister.onChange(event);
         }
 
         if (errors.usernameOrEmail?.type === "custom") {

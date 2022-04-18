@@ -25,28 +25,28 @@
         "register": {
             "submitButton": "Zarejestruj się",
             "accountQuestion": "Masz już konto?",
-            "login": "Zaloguj się!"
+            "login": "Zaloguj się"
         },
         "login": {
             "submitButton": "Zaloguj się",
             "successToast": "Zalogowano jako {{username}}",
             "forgotPasswordQuestion": "Nie pamiętasz hasła?",
-            "resetPassword": "Zresetuj hasło!",
+            "resetPassword": "Zresetuj hasło",
             "noAccountQuestion": "Nie masz jeszcze konta?",
-            "register": "Zarejestruj się!"
+            "register": "Zarejestruj się"
         },
         "resetPasswordRequest": {
             "title": "Reset hasła - generowanie kodu",
             "submitButton": "Wygeneruj kod",
             "alreadyHaveACodeQuestion": "Masz już kod?",
-            "setNewPassword": "Ustaw nowe hasło!"
+            "setNewPassword": "Ustaw nowe hasło"
         },
         "resetPassword": {
             "title": "Reset hasła - ustawianie nowego hasła",
             "code": "Kod",
             "submitButton": "Ustaw hasło",
             "invalidCodeQuestion": "Niepoprawny kod?",
-            "generateNewCode": "Wygeneruj nowy kod!"
+            "generateNewCode": "Wygeneruj nowy kod"
         }
     },
 

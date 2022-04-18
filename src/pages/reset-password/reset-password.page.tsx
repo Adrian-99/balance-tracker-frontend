@@ -24,9 +24,9 @@ const ResetPasswordPage: React.FC = () => {
 
     const onSubmit: SubmitHandler<ResetPasswordWithRepeatPassword> = data => {
         setAwaitingResponse(true);
-        // if (data.resetPasswordCode === undefined) {
-        //     data.resetPasswordCode = searchParams.get("code") as string;
-        // }
+        if (data.resetPasswordCode === undefined) {
+            data.resetPasswordCode = searchParams.get("code") as string;
+        }
         const { repeatNewPassword, ...dataToSend } = data;
         resetPassword(dataToSend)
             .then(response => {
@@ -56,14 +56,18 @@ const ResetPasswordPage: React.FC = () => {
                             variant="outlined"
                             fullWidth
                             {...register("resetPasswordCode", {
-                                required: t('validation.required') as string
-                                // validate: {
-                                //     required: value => (searchParams.get("code") === null ? value !== undefined : true)
-                                //         || t('validation.required') as string
-                                // }
+                                validate: {
+                                    required: value => {
+                                        debugger;
+                                        if (searchParams.get("code") === null && value === "") {
+                                            return t('validation.required') as string;
+                                        }
+                                        return true;
+                                    }
+                                }
                             })}
-                            defaultValue={searchParams.get("code") || ""}
-                            InputProps={{ readOnly: searchParams.get("code") !== null }}
+                            defaultValue={searchParams.get("code") || undefined}
+                            disabled={searchParams.get("code") !== null}
                             error={errors.resetPasswordCode !== undefined}
                             helperText={errors.resetPasswordCode?.message}
                         />

@@ -18,6 +18,13 @@ const PasswordFieldComponent: React.FC<IProps> = ({ label, useFormRegister, full
 
     const [showPassword, setShowPassword] = useState(false);
 
+    const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = event => {
+        useFormRegister.onChange(event);
+        if (onChange) {
+            onChange(event);
+        }
+    }
+
     return (
         <FormControl variant="outlined" sx={{ width: '100%' }} fullWidth={fullWidth} error={error}>
             <InputLabel>{label}</InputLabel>
@@ -28,7 +35,6 @@ const PasswordFieldComponent: React.FC<IProps> = ({ label, useFormRegister, full
                     <InputAdornment position="end">
                         <Tooltip title={t(showPassword ? 'password.hide' : 'password.show') as string} arrow>
                             <IconButton
-                                aria-label="toggle password visibility"
                                 onClick={() => setShowPassword(!showPassword)}
                                 edge="end"
                             >
@@ -38,7 +44,7 @@ const PasswordFieldComponent: React.FC<IProps> = ({ label, useFormRegister, full
                     </InputAdornment>
                 }
                 label={label}
-                onChange={onChange}
+                onChange={onInputChange}
             />
             <FormHelperText>
                 {helperText}
