@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthentication } from "./hooks/authentication.hook";
+import ChangePasswordPage from "./pages/change-password.page";
 import HomePage from "./pages/home.page";
 import LoginPage from "./pages/login.page";
 import RegisterPage from "./pages/register.page";
@@ -30,6 +31,11 @@ const PagesRouting: React.FC = () => {
             <Route path="/reset-password" element={isUserLoggedIn() ?
                 <Navigate to="/" replace /> :
                 <ResetPasswordPage />
+            } />
+
+            <Route path="/change-password" element={isUserLoggedIn() ?
+                <ChangePasswordPage /> :
+                <Navigate to="/login" replace />
             } />
             <Route path="/history" element={isUserLoggedIn() ?
                 <></> :

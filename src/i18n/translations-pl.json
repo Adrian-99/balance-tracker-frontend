@@ -49,6 +49,10 @@
             "submitButton": "Ustaw hasło",
             "invalidCodeQuestion": "Niepoprawny kod?",
             "generateNewCode": "Wygeneruj nowy kod"
+        },
+        "changePassword": {
+            "title": "Zmiana hasła",
+            "submitButton": "Zmień hasło"
         }
     },
 
@@ -108,7 +112,8 @@
             "user": {
                 "register": "Rejestracja powiodła się - sprawdź skrzynkę mailową aby zweryfikować swój adres e-mail",
                 "resetPasswordRequest": "Jeśli konto zostało znalezione, kod został wysłany na adres e-mail",
-                "resetPassword": "Nowe hasło zostało ustawione"
+                "resetPassword": "Nowe hasło zostało ustawione",
+                "changePassword": "Pomyślnie zmieniono hasło"
             }
         }
     }

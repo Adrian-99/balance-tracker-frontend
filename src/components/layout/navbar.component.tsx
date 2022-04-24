@@ -46,6 +46,7 @@ const NavbarComponent: React.FC<IProps> = ({ isMenuOpen, isSmallScreen, isUserLo
             name: t("navbar.user.changePassword"),
             action: () => {
                 handleCloseUserMenu();
+                navigate("/change-password");
             }
         },
         {

@@ -12,7 +12,9 @@ export const useHttp = () => {
             "Content-Type": "application/json"
         }
     };
-    const ALLOW_ANONYMOUS: string[] = ["/user/register", "/user/authenticate", "/user/refresh-token", "/user/password/reset/request"];
+    const ALLOW_ANONYMOUS: string[] = [
+        "/user/register", "/user/authenticate", "/user/refresh-token", "/user/password/reset/request", "/user/password/reset"
+    ];
     const IGNORE_UNAUTHORIZED: string[] = ["/user/authenticate"];
 
     const navigate = useNavigate();

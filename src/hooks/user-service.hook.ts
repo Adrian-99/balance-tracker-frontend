@@ -1,5 +1,6 @@
 import ActionResult from "../data/action-result";
 import Authenticate from "../data/authenticate";
+import ChangePassword from "../data/change-password";
 import ResetPassword from "../data/reset-password";
 import ResetPasswordRequest from "../data/reset-password-request";
 import Tokens from "../data/tokens";
@@ -34,5 +35,10 @@ export const useUserService = () => {
             .then(response => response.data);
     }
 
-    return { registerUser, authenticateUser, revokeUserTokens, resetUserPasswordRequest, resetPassword };
+    const changePassword = (data: ChangePassword): Promise<ActionResult> => {
+        return http.put<ActionResult>("/user/password/change", data)
+            .then(response => response.data);
+    }
+
+    return { registerUser, authenticateUser, revokeUserTokens, resetUserPasswordRequest, resetPassword, changePassword };
 }
