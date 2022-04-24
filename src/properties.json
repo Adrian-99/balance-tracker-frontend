@@ -1,3 +1,23 @@
 {
-    "apiContext": "https://localhost:7200/api"
+    "apiContext": "https://localhost:7200/api",
+    "userSettings": {
+        "username": {
+            "maxLength": 40
+        },
+        "firstName": {
+            "maxLength": 40
+        },
+        "lastName": {
+            "maxLength": 40
+        },
+        "password": {
+            "minLength": 8,
+            "maxLength": 40,
+            "smallLetterRequired": true,
+            "bigLetterRequired": true,
+            "digitRequired": true,
+            "specialCharacterRequired": true,
+            "forbidSameAsUsername": true
+        }
+    }
 }

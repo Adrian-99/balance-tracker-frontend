@@ -1,5 +1,6 @@
+import properties from "../properties.json"
 import { LoadingButton } from "@mui/lab";
-import { Button, Divider, Grid, TextField, Typography } from "@mui/material";
+import { Button, Divider, Grid, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -10,6 +11,7 @@ import PasswordFieldComponent from "../components/password-field.component";
 import UserRegister from "../data/user-register";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useUserService } from "../hooks/user-service.hook";
+import { usePasswordField } from "../hooks/password-field.hook";
 
 type UserRegisterWithRepeatPassword = UserRegister & { repeatPassword: string };
 
@@ -17,6 +19,8 @@ const RegisterPage: React.FC = () => {
     const { register, handleSubmit, getValues, setError, formState: { errors } } = useForm<UserRegisterWithRepeatPassword>();
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
+    const { passwordValidationOptions, repeatPasswordValidationOptions } = usePasswordField();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { registerUser } = useUserService();
 
@@ -54,6 +58,10 @@ const RegisterPage: React.FC = () => {
                             fullWidth
                             {...register("username", { 
                                 required: t('validation.required') as string,
+                                maxLength: { 
+                                    value: properties.userSettings.username.maxLength,
+                                    message: t('validation.maxLength', { length: properties.userSettings.username.maxLength })
+                                },
                                 pattern: { value: /^[a-zA-Z0-9_-]*$/, message: t('validation.usernamePattern') }
                             })}
                             error={errors.username !== undefined}
@@ -80,7 +88,14 @@ const RegisterPage: React.FC = () => {
                         <TextField label={t("user.firstName")}
                             variant="outlined"
                             fullWidth
-                            {...register("firstName")}
+                            {...register("firstName", {
+                                maxLength: { 
+                                    value: properties.userSettings.firstName.maxLength,
+                                    message: t('validation.maxLength', { length: properties.userSettings.firstName.maxLength })
+                                }
+                            })}
+                            error={errors.firstName !== undefined}
+                            helperText={errors.firstName?.message || (!isSmallScreen && errors.lastName !== undefined && " ")}
                         />
                     </Grid>
 
@@ -88,7 +103,14 @@ const RegisterPage: React.FC = () => {
                         <TextField label={t("user.lastName")}
                             variant="outlined"
                             fullWidth
-                            {...register("lastName")}
+                            {...register("lastName", {
+                                maxLength: { 
+                                    value: properties.userSettings.lastName.maxLength,
+                                    message: t('validation.maxLength', { length: properties.userSettings.lastName.maxLength })
+                                }
+                            })}
+                            error={errors.lastName !== undefined}
+                            helperText={errors.lastName?.message || (!isSmallScreen && errors.firstName !== undefined && " ")}
                         />
                     </Grid>
 
@@ -97,17 +119,7 @@ const RegisterPage: React.FC = () => {
                     <Grid item xs={12} md={8}>
                         <PasswordFieldComponent label={t('user.password') + " *"}
                             fullWidth
-                            useFormRegister={register('password', {
-                                required: t('validation.required') as string,
-                                minLength: { value: 8, message: t('validation.minLength', { length: 8 }) },
-                                validate: { 
-                                    mustContainSmallLetter: v => /.*[a-z].*/.test(v) || t('validation.mustContainSmallLetter') as string,
-                                    mustContainBigLetter: v => /.*[A-Z].*/.test(v) || t('validation.mustContainBigLetter') as string,
-                                    mustContainDigit: v => /.*[0-9].*/.test(v) || t('validation.mustContainDigit') as string,
-                                    mustContainSpecialChar: v => /.*[^a-zA-Z0-9].*/.test(v) || t('validation.mustContainSpecialChar') as string,
-                                    cantBeSameAsUsername: v => v.toLowerCase() !== getValues("username").toLowerCase() || t('validation.cantBeSameAsUsername') as string
-                                }
-                            })}
+                            useFormRegister={register('password', passwordValidationOptions(() => getValues("username")))}
                             error={errors.password !== undefined}
                             helperText={errors.password?.message}
                         />
@@ -116,12 +128,7 @@ const RegisterPage: React.FC = () => {
                     <Grid item xs={12} md={8}>
                         <PasswordFieldComponent label={t('user.repeatPassword') + " *"}
                             fullWidth
-                            useFormRegister={register('repeatPassword', {
-                                required: t('validation.required') as string,
-                                validate: { 
-                                    mustBeSameAsPassword: v => v === getValues("password") || t('validation.mustBeSameAsPassword') as string
-                                }
-                            })}
+                            useFormRegister={register('repeatPassword', repeatPasswordValidationOptions(() => getValues("password")))}
                             error={errors.repeatPassword !== undefined}
                             helperText={errors.repeatPassword?.message}
                         />

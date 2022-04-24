@@ -7,6 +7,7 @@ import PageCardComponent from "../components/page-card.component";
 import PasswordFieldComponent from "../components/password-field.component";
 import ChangePassword from "../data/change-password";
 import { useCustomToast } from "../hooks/custom-toast.hook";
+import { usePasswordField } from "../hooks/password-field.hook";
 import { useUserService } from "../hooks/user-service.hook";
 
 type ChangePasswordWithRepeatPassword = ChangePassword & { repeatNewPassword: string };
@@ -14,6 +15,7 @@ type ChangePasswordWithRepeatPassword = ChangePassword & { repeatNewPassword: st
 const ChangePasswordPage: React.FC = () => {
     const { t } = useTranslation();
     const { register, handleSubmit, getValues, reset, setError, formState: { errors } } = useForm<ChangePasswordWithRepeatPassword>();
+    const { passwordValidationOptions, repeatPasswordValidationOptions } = usePasswordField();
     const { changePassword } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 
@@ -46,16 +48,7 @@ const ChangePasswordPage: React.FC = () => {
                     <Grid item xs={12} md={8}>
                         <PasswordFieldComponent label={t('user.password') + " *"}
                             fullWidth
-                            useFormRegister={register('newPassword', {
-                                required: t('validation.required') as string,
-                                minLength: { value: 8, message: t('validation.minLength', { length: 8 }) },
-                                validate: { 
-                                    mustContainSmallLetter: v => /.*[a-z].*/.test(v) || t('validation.mustContainSmallLetter') as string,
-                                    mustContainBigLetter: v => /.*[A-Z].*/.test(v) || t('validation.mustContainBigLetter') as string,
-                                    mustContainDigit: v => /.*[0-9].*/.test(v) || t('validation.mustContainDigit') as string,
-                                    mustContainSpecialChar: v => /.*[^a-zA-Z0-9].*/.test(v) || t('validation.mustContainSpecialChar') as string
-                                }
-                            })}
+                            useFormRegister={register('newPassword', passwordValidationOptions())}
                             error={errors.newPassword !== undefined}
                             helperText={errors.newPassword?.message}
                         />
@@ -64,12 +57,7 @@ const ChangePasswordPage: React.FC = () => {
                     <Grid item xs={12} md={8}>
                         <PasswordFieldComponent label={t('user.repeatPassword') + " *"}
                             fullWidth
-                            useFormRegister={register('repeatNewPassword', {
-                                required: t('validation.required') as string,
-                                validate: { 
-                                    mustBeSameAsPassword: v => v === getValues("newPassword") || t('validation.mustBeSameAsPassword') as string
-                                }
-                            })}
+                            useFormRegister={register('repeatNewPassword', repeatPasswordValidationOptions(() => getValues("newPassword")))}
                             error={errors.repeatNewPassword !== undefined}
                             helperText={errors.repeatNewPassword?.message}
                         />

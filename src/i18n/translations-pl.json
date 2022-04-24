@@ -76,6 +76,7 @@
         "usernamePattern": "Dozwolone znaki: litery, cyfry, pauza (-) i podkreślenie (_)",
         "emailPattern": "Nieprawidłowy adres e-mail",
         "minLength": "Minimalna długość: {{length}} znaków",
+        "maxLength": "Maksymalna długość: {{length}} znaków",
         "mustContainSmallLetter": "Musi zawierać małą literę",
         "mustContainBigLetter": "Musi zawierać dużą literę",
         "mustContainDigit": "Musi zawierać cyfrę",
