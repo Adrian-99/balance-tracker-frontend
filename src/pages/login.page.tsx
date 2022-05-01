@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
     const { t } = useTranslation();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { authenticateUser } = useUserService();
-    const { saveUserInfo } = useAuthentication();
+    const { saveUserInfo, getUsername } = useAuthentication();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 
@@ -40,8 +40,9 @@ const LoginPage: React.FC = () => {
         setAwaitingResponse(true);
         authenticateUser(data)
             .then(response => {
-                var username = saveUserInfo(response);
-                successToast(t("pages.login.successToast", { username }));
+                saveUserInfo(response);
+                debugger;
+                successToast(t("pages.login.successToast", { username: getUsername() }));
             })
             .catch(error => {
                 var translationKey = error.response?.data?.translationKey;

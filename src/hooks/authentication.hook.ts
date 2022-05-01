@@ -1,6 +1,6 @@
-import { useLocalStorage } from "usehooks-ts";
 import Tokens from "../data/tokens"
 import jwtDecode from "jwt-decode";
+import { useLocalStorage } from "./local-storage";
 
 interface DecodedAccessToken {
     username: string;
@@ -11,15 +11,29 @@ interface DecodedAccessToken {
 }
 
 export const useAuthentication = () => {
-    const [accessToken, setAccessToken] = useLocalStorage<string | undefined>("accessToken", undefined);
-    const [refreshToken, setRefreshToken] = useLocalStorage<string | undefined>("refreshToken", undefined);
-    const [username, setUsername] = useLocalStorage<string | undefined>("username", undefined);
-    const [email, setEmail] = useLocalStorage<string | undefined>("email", undefined);
-    const [isEmailVerified, setIsEmailVerified] = useLocalStorage<boolean | undefined>("isEmailVerified", undefined);
-    const [firstName, setFirstName] = useLocalStorage<string | undefined>("firstName", undefined);
-    const [lastName, setLastName] = useLocalStorage<string | undefined>("lastName", undefined);
+    const KEYS = {
+        accessToken: "accessToken",
+        refreshToken: "refreshToken",
+        username: "username",
+        email: "email",
+        isEmailVerified: "isEmailVerified",
+        firstName: "firstName",
+        lastName: "lastName"
+    }
 
-    const saveUserInfo = (tokens: Tokens): string => {
+    const [getAccessToken, setAccessToken] = useLocalStorage<string>(KEYS.accessToken);
+    const [getRefreshToken, setRefreshToken] = useLocalStorage<string>(KEYS.refreshToken);
+    const [getUsername, setUsername] = useLocalStorage<string>(KEYS.username);
+    const [getEmail, setEmail] = useLocalStorage<string>(KEYS.email);
+    const [getIsEmailVerified, setIsEmailVerified] = useLocalStorage<boolean>(KEYS.isEmailVerified);
+    const [getFirstName, setFirstName] = useLocalStorage<string>(KEYS.firstName);
+    const [getLastName, setLastName] = useLocalStorage<string>(KEYS.lastName);
+
+    const isUserLoggedIn = (): boolean => {
+        return getAccessToken() !== undefined;
+    };
+
+    const saveUserInfo = (tokens: Tokens) => {
         var decodedToken = decodeAccessToken(tokens.accessToken);
 
         setAccessToken(tokens.accessToken);
@@ -29,8 +43,6 @@ export const useAuthentication = () => {
         setIsEmailVerified(decodedToken.isEmailVerified);
         setFirstName(decodedToken.firstName);
         setLastName(decodedToken.lastName);
-
-        return decodedToken.username;
     }
 
     const decodeAccessToken = (accessToken: string): DecodedAccessToken => {
@@ -50,10 +62,6 @@ export const useAuthentication = () => {
             lastName: decodedToken[SURNAME]
         };
     }
-
-    const isUserLoggedIn = (): boolean => {
-        return accessToken !== undefined;
-    }
     
     const clearUserInfo = () => {
         setAccessToken(undefined);
@@ -63,18 +71,17 @@ export const useAuthentication = () => {
         setIsEmailVerified(undefined);
         setFirstName(undefined);
         setLastName(undefined);
-        window.localStorage.clear();
     }
 
-    return { accessToken,
-        refreshToken,
-        username,
-        email,
-        isEmailVerified,
-        firstName,
-        lastName,
-        saveUserInfo,
+    return { getAccessToken,
+        getRefreshToken,
+        getUsername,
+        getEmail,
+        getIsEmailVerified,
+        getFirstName,
+        getLastName,
         isUserLoggedIn,
+        saveUserInfo,
         clearUserInfo
     };
 }
