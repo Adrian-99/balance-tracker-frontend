@@ -1,5 +1,12 @@
 {
     "appName": "Balance Tracker",
+
+    "general": {
+        "noData": "Brak danych",
+        "cancel": "Anuluj",
+        "save": "Zapisz"
+    },
+
     "menu": {
         "home": "Strona główna",
         "login": "Logowanie",
@@ -11,7 +18,7 @@
     "navbar": {
         "user": {
             "tooltip": "Opcje użytkownika",
-            "editProfile": "Edytuj profil",
+            "profile": "Profil",
             "changePassword": "Zmień hasło",
             "logout": "Wyloguj się"
         },
@@ -22,7 +29,7 @@
 
     "pages": {
         "home": {
-            "text": "Twoje finanse w jednym miejscu"
+            "text": "Miej swoje wydatki pod kontrolą"
         },
         "register": {
             "submitButton": "Zarejestruj się",
@@ -53,6 +60,12 @@
         "changePassword": {
             "title": "Zmiana hasła",
             "submitButton": "Zmień hasło"
+        },
+        "userProfile": {
+            "title": "Profil użytkownika",
+            "editUserData": "Edycja danych",
+            "verifyEmail": "Weryfikacja adresu e-mail",
+            "emailVerified": "Adres e-mail zweryfikowany"
         }
     },
 
@@ -114,7 +127,11 @@
                 "register": "Rejestracja powiodła się - sprawdź skrzynkę mailową aby zweryfikować swój adres e-mail",
                 "resetPasswordRequest": "Jeśli konto zostało znalezione, kod został wysłany na adres e-mail",
                 "resetPassword": "Nowe hasło zostało ustawione",
-                "changePassword": "Pomyślnie zmieniono hasło"
+                "changePassword": "Pomyślnie zmieniono hasło",
+                "data": {
+                    "emailChanged": "Zapisano zmiany - sprawdź skrzynkę mailową aby zweryfikować nowy adres e-mail",
+                    "emailNotChanged": "Zapisano zmiany"
+                }
             }
         }
     }

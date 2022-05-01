@@ -6,40 +6,54 @@ import LoginPage from "./pages/login.page";
 import RegisterPage from "./pages/register.page";
 import ResetPasswordRequestPage from "./pages/reset-password/reset-password-request.page";
 import ResetPasswordPage from "./pages/reset-password/reset-password.page";
+import UserProfilePage from "./pages/user-profile.page";
 
 const PagesRouting: React.FC = () => {
+    const defaultElementIfLoggedIn = <Navigate to="/history" replace />;
+    const defaultEmeentIfNotLoggedIn = <Navigate to="/login" replace />;
+    
     const { isUserLoggedIn } = useAuthentication();
 
     return (
         <Routes>
             <Route path="/" element={isUserLoggedIn() ?
-                <Navigate to="/history" replace /> :
+                defaultElementIfLoggedIn :
                 <HomePage />
             } />
             <Route path="/register" element={isUserLoggedIn() ?
-                <Navigate to="/" replace /> :
+                defaultElementIfLoggedIn :
                 <RegisterPage />
             } />
             <Route path="/login" element={isUserLoggedIn() ?
-                <Navigate to="/" replace /> :
+                defaultElementIfLoggedIn :
                 <LoginPage />
             } />
             <Route path="/reset-password-request" element={isUserLoggedIn() ?
-                <Navigate to="/" replace /> :
+                defaultElementIfLoggedIn :
                 <ResetPasswordRequestPage />
             } />
             <Route path="/reset-password" element={isUserLoggedIn() ?
-                <Navigate to="/" replace /> :
+                defaultElementIfLoggedIn :
                 <ResetPasswordPage />
             } />
 
             <Route path="/change-password" element={isUserLoggedIn() ?
                 <ChangePasswordPage /> :
-                <Navigate to="/login" replace />
+                defaultEmeentIfNotLoggedIn
             } />
+            <Route path="/user-profile">
+                <Route path="" element={isUserLoggedIn() ?
+                    <UserProfilePage /> :
+                    defaultEmeentIfNotLoggedIn
+                } />
+                <Route path=":action" element={isUserLoggedIn() ?
+                    <UserProfilePage /> :
+                    defaultEmeentIfNotLoggedIn
+                } />
+            </Route>
             <Route path="/history" element={isUserLoggedIn() ?
                 <></> :
-                <Navigate to="/login" replace />
+                defaultEmeentIfNotLoggedIn
             } />
             <Route path="*" element={
                 <Navigate to="/" replace />

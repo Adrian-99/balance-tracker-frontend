@@ -37,9 +37,10 @@ const NavbarComponent: React.FC<IProps> = ({ isMenuOpen, isSmallScreen, isUserLo
     
     const USER_OPTIONS: UserOption[] = [
         { 
-            name: t("navbar.user.editProfile"),
+            name: t("navbar.user.profile"),
             action: () => {
                 handleCloseUserMenu();
+                navigate("/user-profile");
             }
         }, 
         {

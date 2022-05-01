@@ -1,9 +1,12 @@
 import ActionResult from "../data/action-result";
 import Authenticate from "../data/authenticate";
 import ChangePassword from "../data/change-password";
+import ChangeUserData from "../data/change-user-data";
+import OptionalTokens from "../data/optional-tokens";
 import ResetPassword from "../data/reset-password";
 import ResetPasswordRequest from "../data/reset-password-request";
 import Tokens from "../data/tokens";
+import UserData from "../data/user-data";
 import UserRegister from "../data/user-register";
 import { useHttp } from "./http.hook";
 
@@ -31,14 +34,32 @@ export const useUserService = () => {
     }
 
     const resetPassword = (data: ResetPassword): Promise<ActionResult> => {
-        return http.put<ActionResult>("/user/password/reset", data)
+        return http.patch<ActionResult>("/user/password/reset", data)
             .then(response => response.data);
     }
 
     const changePassword = (data: ChangePassword): Promise<ActionResult> => {
-        return http.put<ActionResult>("/user/password/change", data)
+        return http.patch<ActionResult>("/user/password/change", data)
             .then(response => response.data);
     }
 
-    return { registerUser, authenticateUser, revokeUserTokens, resetUserPasswordRequest, resetPassword, changePassword };
+    const getUserData = (): Promise<UserData> => {
+        return http.get<UserData>("/user/data")
+            .then(response => response.data);
+    }
+
+    const changeUserData = (data: ChangeUserData): Promise<OptionalTokens> => {
+        return http.patch<ActionResult>("/user/data", data)
+            .then(response => response.data);
+    }
+
+    return { registerUser,
+        authenticateUser,
+        revokeUserTokens,
+        resetUserPasswordRequest,
+        resetPassword,
+        changePassword,
+        getUserData,
+        changeUserData
+    };
 }
