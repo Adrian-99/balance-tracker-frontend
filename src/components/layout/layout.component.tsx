@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
@@ -7,15 +7,15 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { StyledDrawer, DrawerHeader } from './layout-helpers';
 import { Drawer, useMediaQuery, useTheme } from '@mui/material';
 import NavbarComponent from './navbar.component';
-import { useAuthentication } from '../../hooks/authentication.hook';
 import MenuItemsListComponent from './menu-items-list.component';
+import { AuthenticationContext } from '../authentication.provider';
 
 const LayoutComponent: React.FC = ({ children }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
     const [open, setOpen] = useState(false);
     
-    const { isUserLoggedIn } = useAuthentication();
+    const { isUserLoggedIn } = useContext(AuthenticationContext);
 
     return (
         <Box sx={{ display: 'flex' }}>

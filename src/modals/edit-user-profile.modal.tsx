@@ -1,6 +1,6 @@
 import properties from "../properties.json";
 import { Grid, TextField, useMediaQuery, useTheme } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import ChangeUserData from "../data/change-user-data";
@@ -8,7 +8,7 @@ import UserData from "../data/user-data";
 import { CustomFormModal, CustomFormModalCloseReason } from "./custom-form.modal";
 import { useUserService } from "../hooks/user-service.hook";
 import { useCustomToast } from "../hooks/custom-toast.hook";
-import { useAuthentication } from "../hooks/authentication.hook";
+import { AuthenticationContext } from "../components/authentication.provider";
 
 interface IProps { 
     open: boolean;
@@ -22,7 +22,7 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, children, .
     const { handleSubmit, register, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
     const { changeUserData } = useUserService();
-    const { saveUserInfo } = useAuthentication();
+    const { saveUserInfo } = useContext(AuthenticationContext);
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);

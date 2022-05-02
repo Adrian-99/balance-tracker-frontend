@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -12,9 +12,9 @@ import { useTranslation } from 'react-i18next';
 import { AppBar } from './layout-helpers';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Link } from '@mui/material';
-import { useAuthentication } from '../../hooks/authentication.hook';
 import { useUserService } from '../../hooks/user-service.hook';
 import { useCustomToast } from '../../hooks/custom-toast.hook';
+import { AuthenticationContext } from '../authentication.provider';
 
 interface UserOption {
     name: string;
@@ -31,7 +31,7 @@ interface IProps {
 const NavbarComponent: React.FC<IProps> = ({ isMenuOpen, isSmallScreen, isUserLoggedIn, setMenuOpen }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { clearUserInfo, username } = useAuthentication();
+    const { clearUserInfo, getUsername } = useContext(AuthenticationContext);
     const { revokeUserTokens } = useUserService();
     const { successToast, errorToast } = useCustomToast();
     
@@ -102,7 +102,7 @@ const NavbarComponent: React.FC<IProps> = ({ isMenuOpen, isSmallScreen, isUserLo
                         <Box sx={{ flexGrow: 1 }} />
                         <Box sx={{ flexGrow: 0 }}>
                             <Tooltip title={t("navbar.user.tooltip") as string}>
-                                <Button color="inherit" onClick={handleOpenUserMenu}>{ username }</Button>
+                                <Button color="inherit" onClick={handleOpenUserMenu}>{ getUsername() }</Button>
                             </Tooltip>
                             <Menu
                                 sx={{ mt: '45px' }}

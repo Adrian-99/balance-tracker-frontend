@@ -1,5 +1,6 @@
+import { useContext } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useAuthentication } from "./hooks/authentication.hook";
+import { AuthenticationContext } from "./components/authentication.provider";
 import ChangePasswordPage from "./pages/change-password.page";
 import HomePage from "./pages/home.page";
 import LoginPage from "./pages/login.page";
@@ -12,7 +13,7 @@ const PagesRouting: React.FC = () => {
     const defaultElementIfLoggedIn = <Navigate to="/history" replace />;
     const defaultEmeentIfNotLoggedIn = <Navigate to="/login" replace />;
     
-    const { isUserLoggedIn } = useAuthentication();
+    const { isUserLoggedIn } = useContext(AuthenticationContext);
 
     return (
         <Routes>

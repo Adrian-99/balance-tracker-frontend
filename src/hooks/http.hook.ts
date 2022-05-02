@@ -1,9 +1,9 @@
 import properties from '../properties.json';
 import Axios, { AxiosRequestConfig } from "axios";
-import { useAuthentication } from './authentication.hook';
 import Tokens from '../data/tokens';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthenticationContext } from '../components/authentication.provider';
 
 export const useHttp = () => {
     const CONFIG: AxiosRequestConfig<any> = {
@@ -18,7 +18,7 @@ export const useHttp = () => {
     const IGNORE_UNAUTHORIZED: string[] = ["/user/authenticate"];
 
     const navigate = useNavigate();
-    const { saveUserInfo, clearUserInfo, accessToken, refreshToken } = useAuthentication();
+    const { saveUserInfo, clearUserInfo, getAccessToken, getRefreshToken } = useContext(AuthenticationContext);
 
     const [refreshTokenCall, setRefreshTokenCall] = useState<Promise<Tokens> | undefined>(undefined);
 
@@ -27,7 +27,7 @@ export const useHttp = () => {
             return refreshTokenCall;
         }
 
-        var newCall = Axios.post<Tokens>("/user/refresh-token", { refreshToken }, CONFIG)
+        var newCall = Axios.post<Tokens>("/user/refresh-token", { refreshToken: getRefreshToken() }, CONFIG)
             .then(response => {
                 setRefreshTokenCall(undefined);
                 return response.data;
@@ -49,7 +49,7 @@ export const useHttp = () => {
                 if (!config.headers) {
                     config.headers = {};
                 }
-                config.headers["Authorization"] = "Bearer " + accessToken;
+                config.headers["Authorization"] = "Bearer " + getAccessToken();
             }
             return config;
         },
