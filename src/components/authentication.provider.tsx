@@ -1,30 +1,30 @@
 import jwtDecode from "jwt-decode";
 import { createContext } from "react";
+import { useLocalStorage } from "usehooks-ts";
 import Tokens from "../data/tokens";
-import { useLocalStorage } from "../hooks/local-storage";
 
 export interface AuthenticatedUserContext {
-    getAccessToken: () => string | undefined;
-    getRefreshToken: () => string | undefined;
-    getUsername: () => string | undefined;
-    getEmail: () => string | undefined;
-    getIsEmailVerified: () => boolean | undefined;
-    getFirstName: () => string | undefined;
-    getLastName: () => string | undefined;
-    saveUserInfo: (tokens: Tokens) => void;
+    accessToken: string | undefined;
+    refreshToken: string | undefined;
+    username: string | undefined;
+    email: string | undefined;
+    isEmailVerified: boolean | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    saveUserInfo: (tokens: Tokens) => string;
     isUserLoggedIn: () => boolean;
     clearUserInfo: () => void;
 }
 
 export const AuthenticationContext = createContext<AuthenticatedUserContext>({
-    getAccessToken: () => undefined,
-    getRefreshToken: () => undefined,
-    getUsername: () => undefined,
-    getEmail: () => undefined,
-    getIsEmailVerified: () => undefined,
-    getFirstName: () => undefined,
-    getLastName: () => undefined,
-    saveUserInfo: (_t) => {},
+    accessToken: undefined,
+    refreshToken: undefined,
+    username: undefined,
+    email: undefined,
+    isEmailVerified: undefined,
+    firstName: undefined,
+    lastName: undefined,
+    saveUserInfo: (_t) => "",
     isUserLoggedIn: () => false,
     clearUserInfo: () => {}
 });
@@ -38,13 +38,13 @@ interface DecodedAccessToken {
 }
 
 const AuthenticationProvider: React.FC = ({ children }) => {
-    const [getAccessToken, setAccessToken] = useLocalStorage<string>("accessToken");
-    const [getRefreshToken, setRefreshToken] = useLocalStorage<string >("refreshToken");
-    const [getUsername, setUsername] = useLocalStorage<string>("username");
-    const [getEmail, setEmail] = useLocalStorage<string>("email");
-    const [getIsEmailVerified, setIsEmailVerified] = useLocalStorage<boolean>("isEmailVerified");
-    const [getFirstName, setFirstName] = useLocalStorage<string>("firstName");
-    const [getLastName, setLastName] = useLocalStorage<string>("lastName");
+    const [accessToken, setAccessToken] = useLocalStorage<string | undefined>("accessToken", undefined);
+    const [refreshToken, setRefreshToken] = useLocalStorage<string | undefined>("refreshToken", undefined);
+    const [username, setUsername] = useLocalStorage<string | undefined>("username", undefined);
+    const [email, setEmail] = useLocalStorage<string | undefined>("email", undefined);
+    const [isEmailVerified, setIsEmailVerified] = useLocalStorage<boolean | undefined>("isEmailVerified", undefined);
+    const [firstName, setFirstName] = useLocalStorage<string | undefined>("firstName", undefined);
+    const [lastName, setLastName] = useLocalStorage<string | undefined>("lastName", undefined);
 
     const saveUserInfo = (tokens: Tokens): string => {
         var decodedToken = decodeAccessToken(tokens.accessToken);
@@ -79,7 +79,7 @@ const AuthenticationProvider: React.FC = ({ children }) => {
     }
 
     const isUserLoggedIn = (): boolean => {
-        return getAccessToken() !== undefined;
+        return accessToken !== undefined;
     }
     
     const clearUserInfo = () => {
@@ -93,21 +93,21 @@ const AuthenticationProvider: React.FC = ({ children }) => {
         // window.localStorage.clear();
     }
 
-    const authenticationContextValue: AuthenticatedUserContext = {
-        getAccessToken,
-        getRefreshToken,
-        getUsername,
-        getEmail,
-        getIsEmailVerified,
-        getFirstName,
-        getLastName,
+    const contextValue: AuthenticatedUserContext = {
+        accessToken,
+        refreshToken,
+        username,
+        email,
+        isEmailVerified,
+        firstName,
+        lastName,
         saveUserInfo,
         isUserLoggedIn,
         clearUserInfo
     };
 
     return (
-        <AuthenticationContext.Provider value={authenticationContextValue}>
+        <AuthenticationContext.Provider value={contextValue}>
             { children }
         </AuthenticationContext.Provider>
     );

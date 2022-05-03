@@ -18,7 +18,7 @@ export const useHttp = () => {
     const IGNORE_UNAUTHORIZED: string[] = ["/user/authenticate"];
 
     const navigate = useNavigate();
-    const { saveUserInfo, clearUserInfo, getAccessToken, getRefreshToken } = useContext(AuthenticationContext);
+    const { saveUserInfo, clearUserInfo, accessToken, refreshToken } = useContext(AuthenticationContext);
 
     const [refreshTokenCall, setRefreshTokenCall] = useState<Promise<Tokens> | undefined>(undefined);
 
@@ -27,7 +27,7 @@ export const useHttp = () => {
             return refreshTokenCall;
         }
 
-        var newCall = Axios.post<Tokens>("/user/refresh-token", { refreshToken: getRefreshToken() }, CONFIG)
+        var newCall = Axios.post<Tokens>("/user/refresh-token", { refreshToken }, CONFIG)
             .then(response => {
                 setRefreshTokenCall(undefined);
                 return response.data;
@@ -49,7 +49,7 @@ export const useHttp = () => {
                 if (!config.headers) {
                     config.headers = {};
                 }
-                config.headers["Authorization"] = "Bearer " + getAccessToken();
+                config.headers["Authorization"] = "Bearer " + accessToken;
             }
             return config;
         },

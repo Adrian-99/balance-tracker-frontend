@@ -22,7 +22,7 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, children, .
     const { handleSubmit, register, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
     const { changeUserData } = useUserService();
-    const { saveUserInfo } = useContext(AuthenticationContext);
+    const { saveUserInfo, username } = useContext(AuthenticationContext);
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
@@ -60,8 +60,7 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, children, .
                 if (response.accessToken && response.refreshToken) {
                     saveUserInfo({ accessToken: response.accessToken, refreshToken: response.refreshToken });
                 }
-                setTimeout(() => onClose("save"), 1000);
-                // onClose("save");
+                onClose("save");
             }).catch(error => {
                 var translationKey = error.response?.data?.translationKey;
                 errorToast(evaluateBackendMessage(translationKey));
