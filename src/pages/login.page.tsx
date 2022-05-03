@@ -1,13 +1,13 @@
 import { LoadingButton } from "@mui/lab";
 import { Button, Divider, Grid, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { AuthenticationContext } from "../components/authentication.provider";
 import PageCardComponent from "../components/page-card.component";
 import PasswordFieldComponent from "../components/password-field.component";
 import Authenticate from "../data/authenticate";
-import { useAuthentication } from "../hooks/authentication.hook";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useUserService } from "../hooks/user-service.hook";
 
@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
     const { t } = useTranslation();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { authenticateUser } = useUserService();
-    const { saveUserInfo } = useAuthentication();
+    const { saveUserInfo } = useContext(AuthenticationContext);
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 

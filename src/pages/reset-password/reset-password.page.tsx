@@ -60,7 +60,6 @@ const ResetPasswordPage: React.FC = () => {
                             {...register("resetPasswordCode", {
                                 validate: {
                                     required: value => {
-                                        debugger;
                                         if (searchParams.get("code") === null && value === "") {
                                             return t('validation.required') as string;
                                         }

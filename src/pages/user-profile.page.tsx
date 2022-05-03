@@ -1,8 +1,10 @@
 import { CheckCircleOutline as EmailVerifiedIcon } from "@mui/icons-material";
 import { Grid, List, ListItem, Tooltip, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDebounce } from "usehooks-ts";
+import { AuthenticationContext } from "../components/authentication.provider";
 import PageCardComponent from "../components/page-card.component"
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
 import UserData from "../data/user-data";
@@ -15,14 +17,15 @@ const UserProfilePage: React.FC = () => {
     const { action } = useParams();
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const authenticationContext = useDebounce(useContext(AuthenticationContext), 10);
     const { getUserData } = useUserService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
 
     const EDIT_MODAL_URL = "edit";
-    const VERIFY_EMAIL_MODEL_URL = "verify-email";
+    const VERIFY_EMAIL_MODAL_URL = "verify-email";
     const ACTIONS = [
         { name: t("pages.userProfile.editUserData"), action: () => navigate(EDIT_MODAL_URL) },
-        { name: t("pages.userProfile.verifyEmail"), action: () => navigate(VERIFY_EMAIL_MODEL_URL) }
+        { name: t("pages.userProfile.verifyEmail"), action: () => navigate(VERIFY_EMAIL_MODAL_URL) }
     ];
 
     const [awaitingUserData, setAwaitingUserData] = useState(true);
@@ -30,7 +33,7 @@ const UserProfilePage: React.FC = () => {
 
     useEffect(() => {
         updateUserData();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [authenticationContext]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const updateUserData = () => {
         setAwaitingUserData(true);
@@ -45,14 +48,11 @@ const UserProfilePage: React.FC = () => {
             });
     };
 
-    const onModalClose = (reason: CustomFormModalCloseReason) => {
+    const onModalClose = (_reason: CustomFormModalCloseReason) => {
         navigate("/user-profile");
-        if (reason === "save") {
-            updateUserData();
-        }
     };
 
-    if (action && action !== EDIT_MODAL_URL && action !== VERIFY_EMAIL_MODEL_URL) {
+    if (action && action !== EDIT_MODAL_URL && action !== VERIFY_EMAIL_MODAL_URL) {
         onModalClose("cancel");
     }
 

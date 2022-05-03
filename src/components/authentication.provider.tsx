@@ -1,6 +1,33 @@
-import { useLocalStorage } from "usehooks-ts";
-import Tokens from "../data/tokens"
 import jwtDecode from "jwt-decode";
+import { createContext } from "react";
+import { useLocalStorage } from "usehooks-ts";
+import Tokens from "../data/tokens";
+
+export interface AuthenticatedUserContext {
+    accessToken: string | undefined;
+    refreshToken: string | undefined;
+    username: string | undefined;
+    email: string | undefined;
+    isEmailVerified: boolean | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    saveUserInfo: (tokens: Tokens) => string;
+    isUserLoggedIn: () => boolean;
+    clearUserInfo: () => void;
+}
+
+export const AuthenticationContext = createContext<AuthenticatedUserContext>({
+    accessToken: undefined,
+    refreshToken: undefined,
+    username: undefined,
+    email: undefined,
+    isEmailVerified: undefined,
+    firstName: undefined,
+    lastName: undefined,
+    saveUserInfo: (_t) => "",
+    isUserLoggedIn: () => false,
+    clearUserInfo: () => {}
+});
 
 interface DecodedAccessToken {
     username: string;
@@ -10,7 +37,7 @@ interface DecodedAccessToken {
     lastName?: string | undefined;
 }
 
-export const useAuthentication = () => {
+const AuthenticationProvider: React.FC = ({ children }) => {
     const [accessToken, setAccessToken] = useLocalStorage<string | undefined>("accessToken", undefined);
     const [refreshToken, setRefreshToken] = useLocalStorage<string | undefined>("refreshToken", undefined);
     const [username, setUsername] = useLocalStorage<string | undefined>("username", undefined);
@@ -27,8 +54,8 @@ export const useAuthentication = () => {
         setUsername(decodedToken.username);
         setEmail(decodedToken.email);
         setIsEmailVerified(decodedToken.isEmailVerified);
-        setFirstName(decodedToken.firstName);
-        setLastName(decodedToken.lastName);
+        setFirstName(decodedToken.firstName || undefined);
+        setLastName(decodedToken.lastName || undefined);
 
         return decodedToken.username;
     }
@@ -63,10 +90,11 @@ export const useAuthentication = () => {
         setIsEmailVerified(undefined);
         setFirstName(undefined);
         setLastName(undefined);
-        window.localStorage.clear();
+        // window.localStorage.clear();
     }
 
-    return { accessToken,
+    const contextValue: AuthenticatedUserContext = {
+        accessToken,
         refreshToken,
         username,
         email,
@@ -77,4 +105,12 @@ export const useAuthentication = () => {
         isUserLoggedIn,
         clearUserInfo
     };
+
+    return (
+        <AuthenticationContext.Provider value={contextValue}>
+            { children }
+        </AuthenticationContext.Provider>
+    );
 }
+
+export default AuthenticationProvider;
