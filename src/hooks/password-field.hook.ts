@@ -12,7 +12,8 @@ interface Options {
 export const usePasswordField = () => {
     const { t } = useTranslation();
 
-    const passwordValidationOptions = (usernameValueGetter?: (() => string) | undefined): Options => {
+    const passwordValidationOptions = (usernameValueGetter?: (() => string) | undefined,
+        currentPasswordGetter?: (() => string) | undefined): Options => {
         const validate: Record<string, Validate<string>> = {};
 
         if (properties.userSettings.password.smallLetterRequired) {
@@ -29,6 +30,9 @@ export const usePasswordField = () => {
         }
         if (properties.userSettings.password.forbidSameAsUsername && usernameValueGetter) {
             validate.cantBeSameAsUsername = v => v.toLowerCase() !== usernameValueGetter().toLowerCase() || t('validation.cantBeSameAsUsername') as string;
+        }
+        if (properties.userSettings.password.forbidSameAsCurrent && currentPasswordGetter) {
+            validate.cantBeSameAsCurrent = v => v !== currentPasswordGetter() || t("backend.error.validation.passwordSameAsCurrentOne") as string;
         }
 
         return {

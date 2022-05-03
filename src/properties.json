@@ -17,7 +17,8 @@
             "bigLetterRequired": true,
             "digitRequired": true,
             "specialCharacterRequired": true,
-            "forbidSameAsUsername": true
+            "forbidSameAsUsername": true,
+            "forbidSameAsCurrent": true
         }
     }
 }

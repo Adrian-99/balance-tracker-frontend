@@ -32,8 +32,10 @@ const ChangePasswordPage: React.FC = () => {
             .catch(error => {
                 var translationKey = error.response?.data?.translationKey;
                 errorToast(evaluateBackendMessage(translationKey));
-                if (translationKey === "error.validation.passwordSameAsUsername" || "error.validation.passwordSameAsCurrentOne") {
+                if (translationKey === "error.validation.passwordSameAsUsername" || translationKey === "error.validation.passwordSameAsCurrentOne") {
                     setError("newPassword", { type: "custom", message: evaluateBackendMessage(translationKey) }, { shouldFocus: true });
+                } else if (translationKey === "error.user.changePassword.wrongCurrentPassword") {
+                    setError("currentPassword", { type: "custom", message: evaluateBackendMessage(translationKey) }, { shouldFocus: true });
                 }
             })
             .finally(() => {
@@ -46,16 +48,27 @@ const ChangePasswordPage: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2} alignItems="center" justifyContent="center">
                     <Grid item xs={12} md={8}>
-                        <PasswordFieldComponent label={t('user.password') + " *"}
+                        <PasswordFieldComponent label={t('pages.changePassword.currentPassword') + " *"}
                             fullWidth
-                            useFormRegister={register('newPassword', passwordValidationOptions())}
+                            useFormRegister={register('currentPassword', {
+                                required: t("validation.required") as string
+                            })}
+                            error={errors.currentPassword !== undefined}
+                            helperText={errors.currentPassword?.message}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} md={8}>
+                        <PasswordFieldComponent label={t('pages.changePassword.newPassword') + " *"}
+                            fullWidth
+                            useFormRegister={register('newPassword', passwordValidationOptions(undefined, () => getValues("currentPassword")))}
                             error={errors.newPassword !== undefined}
                             helperText={errors.newPassword?.message}
                         />
                     </Grid>
 
                     <Grid item xs={12} md={8}>
-                        <PasswordFieldComponent label={t('user.repeatPassword') + " *"}
+                        <PasswordFieldComponent label={t('pages.changePassword.repeatNewPassword') + " *"}
                             fullWidth
                             useFormRegister={register('repeatNewPassword', repeatPasswordValidationOptions(() => getValues("newPassword")))}
                             error={errors.repeatNewPassword !== undefined}

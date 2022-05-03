@@ -59,7 +59,10 @@
         },
         "changePassword": {
             "title": "Zmiana hasła",
-            "submitButton": "Zmień hasło"
+            "submitButton": "Zmień hasło",
+            "currentPassword": "Obecne hasło",
+            "newPassword": "New hasło",
+            "repeatNewPassword": "Powtórz nowe hasło"
         },
         "userProfile": {
             "title": "Profil użytkownika",
@@ -119,6 +122,9 @@
                 },
                 "resetPassword": {
                     "invalidCode": "Niepoprawny kod"
+                },
+                "changePassword": {
+                    "wrongCurrentPassword": "Niepoprawne hasło"
                 }
             }
         },
