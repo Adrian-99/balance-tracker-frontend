@@ -2,7 +2,6 @@ import ActionResult from "../data/action-result";
 import Authenticate from "../data/authenticate";
 import ChangePassword from "../data/change-password";
 import ChangeUserData from "../data/change-user-data";
-import OptionalTokens from "../data/optional-tokens";
 import ResetPassword from "../data/reset-password";
 import ResetPasswordRequest from "../data/reset-password-request";
 import Tokens from "../data/tokens";
@@ -48,8 +47,8 @@ export const useUserService = () => {
             .then(response => response.data);
     }
 
-    const changeUserData = (data: ChangeUserData): Promise<OptionalTokens> => {
-        return http.patch<ActionResult>("/user/data", data)
+    const changeUserData = (data: ChangeUserData): Promise<Tokens> => {
+        return http.patch<Tokens>("/user/data", data)
             .then(response => response.data);
     }
 
