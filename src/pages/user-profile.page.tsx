@@ -12,6 +12,7 @@ import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useUserService } from "../hooks/user-service.hook";
 import { CustomFormModalCloseReason } from "../modals/custom-form.modal";
 import EditUserProfileModal from "../modals/edit-user-profile.modal";
+import VerifyEmailModal from "../modals/verify-email.modal";
 
 const UserProfilePage: React.FC = () => {
     const { action } = useParams();
@@ -122,6 +123,10 @@ const UserProfilePage: React.FC = () => {
                     onClose={onModalClose}
                     userData={userData}
                     showSpinner={awaitingUserData} />
+            }
+            {action === VERIFY_EMAIL_MODAL_URL &&
+                <VerifyEmailModal open={action === VERIFY_EMAIL_MODAL_URL}
+                    onClose={onModalClose} />
             }
         </PageCardComponent>
     );

@@ -17,12 +17,12 @@ interface IProps {
     userData: UserData | undefined
 };
 
-const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, children, ...other}) => {
+const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) => {
     const { t } = useTranslation();
     const { handleSubmit, register, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
     const { changeUserData } = useUserService();
-    const { saveUserInfo, username } = useContext(AuthenticationContext);
+    const { saveUserInfo } = useContext(AuthenticationContext);
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
