@@ -72,7 +72,7 @@ const AuthenticationProvider: React.FC = ({ children }) => {
         return {
             username: decodedToken[NAME_IDENTIFIER],
             email: decodedToken[EMAIL],
-            isEmailVerified: decodedToken[AUTHORIZATION_DECISION],
+            isEmailVerified: JSON.parse(decodedToken[AUTHORIZATION_DECISION]),
             firstName: decodedToken[GIVEN_NAME],
             lastName: decodedToken[SURNAME]
         };

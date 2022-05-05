@@ -33,6 +33,10 @@ const UserProfilePage: React.FC = () => {
     const [userData, setUserData] = useState<UserData | undefined>(undefined);
 
     useEffect(() => {
+        if (action && ((action === VERIFY_EMAIL_MODAL_URL && authenticationContext.isEmailVerified) ||
+            (action !== EDIT_MODAL_URL && action !== VERIFY_EMAIL_MODAL_URL))) {
+            onModalClose("cancel");
+        }
         updateUserData();
     }, [authenticationContext]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -52,10 +56,6 @@ const UserProfilePage: React.FC = () => {
     const onModalClose = (_reason: CustomFormModalCloseReason) => {
         navigate("/user-profile");
     };
-
-    if (action && action !== EDIT_MODAL_URL && action !== VERIFY_EMAIL_MODAL_URL) {
-        onModalClose("cancel");
-    }
 
     return (
         <PageCardComponent title={t("pages.userProfile.title")} actions={
@@ -118,16 +118,14 @@ const UserProfilePage: React.FC = () => {
                 :
                 <SpinnerOrNoDataComponent showSpinner={awaitingUserData} showNoData={!userData} />
             }
-            {action === EDIT_MODAL_URL &&
-                <EditUserProfileModal open={action === EDIT_MODAL_URL}
-                    onClose={onModalClose}
-                    userData={userData}
-                    showSpinner={awaitingUserData} />
-            }
-            {action === VERIFY_EMAIL_MODAL_URL &&
-                <VerifyEmailModal open={action === VERIFY_EMAIL_MODAL_URL}
-                    onClose={onModalClose} />
-            }
+
+            <EditUserProfileModal open={action === EDIT_MODAL_URL}
+                onClose={onModalClose}
+                userData={userData}
+                showSpinner={awaitingUserData} />
+            
+            <VerifyEmailModal open={action === VERIFY_EMAIL_MODAL_URL}
+                onClose={onModalClose} />
         </PageCardComponent>
     );
 }

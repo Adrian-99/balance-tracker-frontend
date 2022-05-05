@@ -76,7 +76,8 @@
         "verifyEmail": {
             "code": "Kod",
             "invalidCodeQuestion": "Niepoprawny kod?",
-            "generateNewCode": "Wygeneruj nowy kod"
+            "generateNewCode": "Wygeneruj nowy kod",
+            "submitButton": "Zweryfikuj"
         }
     },
 

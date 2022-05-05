@@ -11,6 +11,7 @@ interface CustomFormModalProps {
     title: string;
     showSpinner?: boolean | undefined;
     showNoData?: boolean | undefined;
+    submitButtonText?: string | undefined;
     showSubmitButtonSpinner?: boolean | undefined;
     disableSubmitButton?: boolean | undefined;
     onClose: (reason: CustomFormModalCloseReason) => void;
@@ -18,7 +19,8 @@ interface CustomFormModalProps {
 }
 
 export const CustomFormModal: React.FC<CustomFormModalProps> = ({
-    open,title, showSpinner, showNoData, showSubmitButtonSpinner, disableSubmitButton, onClose, onSubmit, children
+    open,title, showSpinner, showNoData, submitButtonText, showSubmitButtonSpinner, disableSubmitButton,
+    onClose, onSubmit, children
     }) => {
     const { t } = useTranslation();
 
@@ -37,7 +39,7 @@ export const CustomFormModal: React.FC<CustomFormModalProps> = ({
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => onClose("cancel")}>{t("general.cancel")}</Button>
-                        <LoadingButton variant="contained" type="submit" disabled={disableSubmitButton} loading={showSubmitButtonSpinner}>{t("general.save")}</LoadingButton>
+                        <LoadingButton variant="contained" type="submit" disabled={disableSubmitButton} loading={showSubmitButtonSpinner}>{ submitButtonText || t("general.save")}</LoadingButton>
                     </DialogActions>
                 </form>
                 :

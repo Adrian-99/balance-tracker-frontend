@@ -1,8 +1,9 @@
 import { LoadingButton } from "@mui/lab";
 import { TextField, Typography } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import { AuthenticationContext } from "../components/authentication.provider";
 import VerifyEmail from "../data/verify-email";
 import { useCustomToast } from "../hooks/custom-toast.hook";
@@ -16,13 +17,24 @@ interface IProps {
 
 const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
     const { t } = useTranslation();
-    const { register, handleSubmit, reset, setError, formState: { errors } } = useForm<VerifyEmail>();
-    const { saveUserInfo } = useContext(AuthenticationContext);
+    const { register, handleSubmit, setValue, reset, setError, formState: { errors } } = useForm<VerifyEmail>();
+    const { saveUserInfo, isEmailVerified } = useContext(AuthenticationContext);
     const { verifyEmail, resetEmailVerificationCode } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 
+    const [searchParams] = useSearchParams();
+    const [disableCodeInput, setDisableCodeInput] = useState(false);
     const [awaitingSaveResponse, setAwaitngSaveReponse] = useState(false);
     const [awaitingResetResponse, setAwaitingResetResponse] = useState(false);
+
+    useEffect(() => {
+        if (searchParams.get("code") !== null && !isEmailVerified) {
+            const code = searchParams.get("code") as string;
+            setValue("emailVerificationCode", code)
+            setDisableCodeInput(true);
+            onSubmit({ emailVerificationCode: code });
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const sendResetCodeRequest = () => {
         setAwaitingResetResponse(true);
@@ -54,6 +66,7 @@ const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
                 if (translationKey === "error.user.verifyEmail.invalidCode") {
                     setError("emailVerificationCode", { type: "custom", message: evaluateBackendMessage(translationKey) });
                 }
+                setDisableCodeInput(false);
             })
             .finally(() => {
                 setAwaitngSaveReponse(false);
@@ -68,9 +81,10 @@ const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
     return (
         <CustomFormModal open={open}
             title={t("pages.userProfile.verifyEmail")}
+            submitButtonText={t("modals.verifyEmail.submitButton")}
+            showSubmitButtonSpinner={awaitingSaveResponse}
             onClose={resetFormAndClose}
             onSubmit={handleSubmit(onSubmit)}
-            showSubmitButtonSpinner={awaitingSaveResponse}
         >
             <TextField label={t("modals.verifyEmail.code") + " *"}
                 variant="outlined"
@@ -78,6 +92,7 @@ const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
                 {...register("emailVerificationCode", { 
                     required: t('validation.required') as string
                 })}
+                disabled={disableCodeInput}
                 error={errors.emailVerificationCode !== undefined}
                 helperText={errors.emailVerificationCode?.message}
             />
