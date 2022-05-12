@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
-import { AuthenticationContext } from "../components/authentication.provider";
+import { ApplicationContext } from "../components/application-context.provider";
 import VerifyEmail from "../data/verify-email";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useUserService } from "../hooks/user-service.hook";
@@ -18,7 +18,7 @@ interface IProps {
 const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
     const { t } = useTranslation();
     const { register, handleSubmit, setValue, reset, setError, formState: { errors } } = useForm<VerifyEmail>();
-    const { saveUserInfo, isEmailVerified } = useContext(AuthenticationContext);
+    const { user: { saveUserInfo, isEmailVerified } } = useContext(ApplicationContext);
     const { verifyEmail, resetEmailVerificationCode } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 

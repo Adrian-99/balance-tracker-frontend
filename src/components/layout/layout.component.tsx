@@ -8,24 +8,24 @@ import { StyledDrawer, DrawerHeader } from './layout-helpers';
 import { Drawer, useMediaQuery, useTheme } from '@mui/material';
 import NavbarComponent from './navbar.component';
 import MenuItemsListComponent from './menu-items-list.component';
-import { AuthenticationContext } from '../authentication.provider';
+import { ApplicationContext } from '../application-context.provider';
 
 const LayoutComponent: React.FC = ({ children }) => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
     const [open, setOpen] = useState(false);
     
-    const { isUserLoggedIn } = useContext(AuthenticationContext);
+    const { user: { isUserLoggedIn } } = useContext(ApplicationContext);
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <NavbarComponent isMenuOpen={open} isUserLoggedIn={isUserLoggedIn()} isSmallScreen={isSmallScreen} setMenuOpen={setOpen} />
+            <NavbarComponent isMenuOpen={open} isUserLoggedIn={isUserLoggedIn} isSmallScreen={isSmallScreen} setMenuOpen={setOpen} />
             {isSmallScreen ? 
                 <Drawer open={open} onClose={() => setOpen(false)}>
                     <MenuItemsListComponent isMenuOpen={open}
                         setMenuOpen={setOpen}
                         isSmallScreen={isSmallScreen}
-                        isUserLoggedIn={isUserLoggedIn()}
+                        isUserLoggedIn={isUserLoggedIn}
                     />
                 </Drawer>
                 :
@@ -39,7 +39,7 @@ const LayoutComponent: React.FC = ({ children }) => {
                     <MenuItemsListComponent isMenuOpen={open}
                         setMenuOpen={setOpen}
                         isSmallScreen={isSmallScreen}
-                        isUserLoggedIn={isUserLoggedIn()}
+                        isUserLoggedIn={isUserLoggedIn}
                     />
                 </StyledDrawer>
             }

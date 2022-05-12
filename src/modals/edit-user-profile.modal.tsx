@@ -8,7 +8,7 @@ import UserData from "../data/user-data";
 import { CustomFormModal, CustomFormModalCloseReason } from "./custom-form.modal";
 import { useUserService } from "../hooks/user-service.hook";
 import { useCustomToast } from "../hooks/custom-toast.hook";
-import { AuthenticationContext } from "../components/authentication.provider";
+import { ApplicationContext } from "../components/application-context.provider";
 
 interface IProps { 
     open: boolean;
@@ -21,8 +21,8 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
     const { t } = useTranslation();
     const { handleSubmit, register, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
+    const { user: { saveUserInfo } } = useContext(ApplicationContext);
     const { changeUserData } = useUserService();
-    const { saveUserInfo } = useContext(AuthenticationContext);
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);

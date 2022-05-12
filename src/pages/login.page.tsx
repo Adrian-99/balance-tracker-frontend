@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { AuthenticationContext } from "../components/authentication.provider";
+import { ApplicationContext } from "../components/application-context.provider";
 import PageCardComponent from "../components/page-card.component";
 import PasswordFieldComponent from "../components/password-field.component";
 import Authenticate from "../data/authenticate";
@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
     const { t } = useTranslation();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { authenticateUser } = useUserService();
-    const { saveUserInfo } = useContext(AuthenticationContext);
+    const { user: { saveUserInfo } } = useContext(ApplicationContext);
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 
