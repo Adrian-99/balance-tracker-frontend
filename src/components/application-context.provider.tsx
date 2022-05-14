@@ -1,8 +1,8 @@
 import properties from '../properties.json';
 import Axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import jwtDecode from "jwt-decode";
-import { createContext, useCallback, useEffect, useState } from "react";
-import { useDebounce, useLocalStorage } from "usehooks-ts";
+import { createContext, useEffect, useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
 import ActionResult from "../data/action-result";
 import Tokens from "../data/tokens";
 
@@ -84,7 +84,7 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
 
     const [refreshTokenCall, setRefreshTokenCall] = useState<Promise<Tokens> | undefined>(undefined);
 
-    const saveUserInfo = useCallback((tokens: Tokens): string => {
+    const saveUserInfo = (tokens: Tokens): string => {
         var decodedToken = jwtDecode<any>(tokens.accessToken);
 
         setAccessToken(tokens.accessToken);
@@ -96,9 +96,9 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
         setLastName(decodedToken[ACCESS_TOKEN_KEYS.surname] || null);
 
         return decodedToken[ACCESS_TOKEN_KEYS.nameIdentifier];
-    }, []);
+    };
     
-    const clearUserInfo = useCallback(() => {
+    const clearUserInfo = () => {
         setAccessToken(null);
         setRefreshToken(null);
         setUsername(null);
@@ -107,7 +107,7 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
         setFirstName(null);
         setLastName(null);
         // window.localStorage.clear();
-    }, []);
+    };
 
 
     const refreshTokenRequest = (): Promise<Tokens> => {
@@ -129,46 +129,40 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
         return newCall;
     }
 
-    const getAxiosInstance = useCallback(() => {
-        const axiosInstance = Axios.create(HTTP_CONFIG);
+    const axiosInstance = Axios.create(HTTP_CONFIG);
 
-        axiosInstance.interceptors.request.use(
-            config => {
-                if (config.url && !HTTP_ALLOW_ANONYMOUS.includes(config.url)) {
-                    if (!config.headers) {
-                        config.headers = {};
-                    }
-                    config.headers["Authorization"] = "Bearer " + accessToken;
+    axiosInstance.interceptors.request.use(
+        config => {
+            if (config.url && !HTTP_ALLOW_ANONYMOUS.includes(config.url)) {
+                if (!config.headers) {
+                    config.headers = {};
                 }
-                return config;
-            },
-            error => Promise.reject(error)
-        );
-        axiosInstance.interceptors.response.use(
-            response => response,
-            error => {
-                if (error.response?.status === 401 && !HTTP_IGNORE_UNAUTHORIZED.includes(error.config.url)) {
-                    return refreshTokenRequest()
-                        .then(response => {
-                            saveUserInfo(response);
-                            error.config.headers["Authorization"] = "Bearer " + response.accessToken;
-                            return Axios.request(error.config);
-                        })
-                        .catch(innerError => {
-                            if (innerError.response?.status === 400) {
-                                clearUserInfo();
-                            }
-                            return Promise.reject(error);
-                        });
-                }
-                return Promise.reject(error);
+                config.headers["Authorization"] = "Bearer " + accessToken;
             }
-        );
-
-        return axiosInstance;
-    }, []);
-
-    
+            return config;
+        },
+        error => Promise.reject(error)
+    );
+    axiosInstance.interceptors.response.use(
+        response => response,
+        error => {
+            if (error.response?.status === 401 && !HTTP_IGNORE_UNAUTHORIZED.includes(error.config.url)) {
+                return refreshTokenRequest()
+                    .then(response => {
+                        saveUserInfo(response);
+                        error.config.headers["Authorization"] = "Bearer " + response.accessToken;
+                        return Axios.request(error.config);
+                    })
+                    .catch(innerError => {
+                        if (innerError.response?.status === 400) {
+                            clearUserInfo();
+                        }
+                        return Promise.reject(error);
+                    });
+            }
+            return Promise.reject(error);
+        }
+    );
 
     const contextValue: AppContext = {
         user: {
@@ -183,19 +177,21 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
             saveUserInfo,
             clearUserInfo
         },
-        http: getAxiosInstance()
+        http: axiosInstance
     };
 
-    const contextValueWithDebounce = useDebounce(contextValue, 10);
+    // const contextValueWithDebounce = useDebounce(contextValue, 10);
 
     useEffect(() => {
         if (accessToken) {
-            getAxiosInstance().get<ActionResult>("/user/validate-token");
+            setTimeout(() => {
+                axiosInstance.get<ActionResult>("/user/validate-token");
+            }, 1000);
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <ApplicationContext.Provider value={contextValueWithDebounce}>
+        <ApplicationContext.Provider value={contextValue}>
             { children }
         </ApplicationContext.Provider>
     );
