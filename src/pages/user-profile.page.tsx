@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "usehooks-ts";
-import { AuthenticationContext } from "../components/authentication.provider";
+import { ApplicationContext } from "../components/application-context.provider";
 import PageCardComponent from "../components/page-card.component"
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
 import UserData from "../data/user-data";
@@ -18,7 +18,7 @@ const UserProfilePage: React.FC = () => {
     const { action } = useParams();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const authenticationContext = useDebounce(useContext(AuthenticationContext), 10);
+    const { user } = useDebounce(useContext(ApplicationContext));
     const { getUserData } = useUserService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
 
@@ -33,12 +33,12 @@ const UserProfilePage: React.FC = () => {
     const [userData, setUserData] = useState<UserData | undefined>(undefined);
 
     useEffect(() => {
-        if (action && ((action === VERIFY_EMAIL_MODAL_URL && authenticationContext.isEmailVerified) ||
+        if (action && ((action === VERIFY_EMAIL_MODAL_URL && user.isEmailVerified) ||
             (action !== EDIT_MODAL_URL && action !== VERIFY_EMAIL_MODAL_URL))) {
             onModalClose("cancel");
         }
         updateUserData();
-    }, [authenticationContext]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const updateUserData = () => {
         setAwaitingUserData(true);

@@ -14,7 +14,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Link } from '@mui/material';
 import { useUserService } from '../../hooks/user-service.hook';
 import { useCustomToast } from '../../hooks/custom-toast.hook';
-import { AuthenticationContext } from '../authentication.provider';
+import { ApplicationContext } from '../application-context.provider';
 
 interface UserOption {
     name: string;
@@ -31,7 +31,7 @@ interface IProps {
 const NavbarComponent: React.FC<IProps> = ({ isMenuOpen, isSmallScreen, isUserLoggedIn, setMenuOpen }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { clearUserInfo, username } = useContext(AuthenticationContext);
+    const { user: { username, clearUserInfo } } = useContext(ApplicationContext);
     const { revokeUserTokens } = useUserService();
     const { successToast, errorToast } = useCustomToast();
     

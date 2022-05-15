@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { ApplicationContext } from "../components/application-context.provider";
 import ActionResult from "../data/action-result";
 import Authenticate from "../data/authenticate";
 import ChangePassword from "../data/change-password";
@@ -8,10 +10,9 @@ import Tokens from "../data/tokens";
 import UserData from "../data/user-data";
 import UserRegister from "../data/user-register";
 import VerifyEmail from "../data/verify-email";
-import { useHttp } from "./http.hook";
 
 export const useUserService = () => {
-    const { http } = useHttp();
+    const { http } = useContext(ApplicationContext);
 
     const registerUser = (data: UserRegister): Promise<ActionResult> => {
         return http.post<ActionResult>("/user/register", data)
@@ -32,6 +33,11 @@ export const useUserService = () => {
         return http.post<Tokens>("/user/authenticate", data)
             .then(response => response.data);
     };
+
+    const validateUserToken = (): Promise<ActionResult> => {
+        return http.get<ActionResult>("/user/validate-token")
+            .then(response => response.data);
+    }
 
     const revokeUserTokens = (): Promise<undefined> => {
         return http.delete<undefined>("/user/revoke-tokens")
@@ -67,6 +73,7 @@ export const useUserService = () => {
         verifyEmail,
         resetEmailVerificationCode,
         authenticateUser,
+        validateUserToken,
         revokeUserTokens,
         resetUserPasswordRequest,
         resetPassword,

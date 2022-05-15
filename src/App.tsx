@@ -9,7 +9,7 @@ import { initReactI18next } from 'react-i18next';
 import translationsPL from './i18n/translations-pl.json'
 import { SnackbarProvider } from 'notistack';
 import PagesRouting from './pages-routing';
-import AuthenticationProvider from './components/authentication.provider';
+import ApplicationContextProvider from './components/application-context.provider';
 
 const theme = createTheme(
     {
@@ -36,21 +36,21 @@ i18n.use(initReactI18next)
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <AuthenticationProvider>
-                <SnackbarProvider
-                    maxSnack={3}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right'
-                    }}
+            <SnackbarProvider
+                maxSnack={3}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                }}
                 >
-                    <BrowserRouter>
+                <BrowserRouter>
+                    <ApplicationContextProvider>
                         <LayoutComponent>
                             <PagesRouting />
                         </LayoutComponent>
-                    </BrowserRouter>
-                </SnackbarProvider>
-            </AuthenticationProvider>
+                    </ApplicationContextProvider>
+                </BrowserRouter>
+            </SnackbarProvider>
         </ThemeProvider>
     );
 }
