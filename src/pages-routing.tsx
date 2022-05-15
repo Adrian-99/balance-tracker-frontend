@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Buffer } from "buffer";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ApplicationContext } from "./components/application-context.provider";
 import ChangePasswordPage from "./pages/change-password.page";
 import HomePage from "./pages/home.page";
@@ -10,8 +11,11 @@ import ResetPasswordPage from "./pages/reset-password/reset-password.page";
 import UserProfilePage from "./pages/user-profile.page";
 
 const PagesRouting: React.FC = () => {
+    const location = useLocation();
+    const locationBase64 = Buffer.from(location.pathname + location.search).toString("base64");
+    
     const defaultElementIfLoggedIn = <Navigate to="/history" replace />;
-    const defaultEmeentIfNotLoggedIn = <Navigate to="/login" replace />;
+    const defaultEmeentIfNotLoggedIn = <Navigate to={"/login?redirectTo=" + locationBase64} replace />;
     
     const { user: { isUserLoggedIn } } = useContext(ApplicationContext);
 

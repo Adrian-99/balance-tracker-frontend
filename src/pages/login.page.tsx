@@ -1,9 +1,10 @@
 import { LoadingButton } from "@mui/lab";
+import { Buffer } from "buffer";
 import { Button, Divider, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ApplicationContext } from "../components/application-context.provider";
 import PageCardComponent from "../components/page-card.component";
 import PasswordFieldComponent from "../components/password-field.component";
@@ -14,6 +15,8 @@ import { useUserService } from "../hooks/user-service.hook";
 const LoginPage: React.FC = () => {
     const { register, handleSubmit, setError, clearErrors, formState: { errors } } = useForm<Authenticate>();
     const { t } = useTranslation();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { authenticateUser } = useUserService();
     const { user: { saveUserInfo } } = useContext(ApplicationContext);
@@ -42,6 +45,10 @@ const LoginPage: React.FC = () => {
             .then(response => {
                 var username = saveUserInfo(response);
                 successToast(t("pages.login.successToast", { username }));
+                if (searchParams.get("redirectTo") !== null) {
+                    const redirectUrl = Buffer.from(searchParams.get("redirectTo") as string, "base64").toString("binary");
+                    navigate(redirectUrl);
+                }
             })
             .catch(error => {
                 var translationKey = error.response?.data?.translationKey;

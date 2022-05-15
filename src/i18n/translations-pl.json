@@ -61,7 +61,7 @@
             "title": "Zmiana hasła",
             "submitButton": "Zmień hasło",
             "currentPassword": "Obecne hasło",
-            "newPassword": "New hasło",
+            "newPassword": "Nowe hasło",
             "repeatNewPassword": "Powtórz nowe hasło"
         },
         "userProfile": {

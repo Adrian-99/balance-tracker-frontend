@@ -91,7 +91,7 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
         setRefreshToken(tokens.refreshToken);
         setUsername(decodedToken[ACCESS_TOKEN_KEYS.nameIdentifier]);
         setEmail(decodedToken[ACCESS_TOKEN_KEYS.email]);
-        setIsEmailVerified(decodedToken[ACCESS_TOKEN_KEYS.authorizarionDecision]);
+        setIsEmailVerified(JSON.parse(decodedToken[ACCESS_TOKEN_KEYS.authorizarionDecision]));
         setFirstName(decodedToken[ACCESS_TOKEN_KEYS.givenName] || null);
         setLastName(decodedToken[ACCESS_TOKEN_KEYS.surname] || null);
 

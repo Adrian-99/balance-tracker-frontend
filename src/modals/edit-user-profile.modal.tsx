@@ -30,19 +30,21 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
     const watchedFields = watch();
 
     useEffect(() => {
-        if (!getFieldState("username").isDirty) {
-            setValue("username", userData?.username || "");
+        if (other.open) {
+            if (!getFieldState("username").isDirty) {
+                setValue("username", userData?.username || "");
+            }
+            if (!getFieldState("email").isDirty) {
+                setValue("email", userData?.email || "");
+            }
+            if (!getFieldState("firstName").isDirty) {
+                setValue("firstName", userData?.firstName || "");
+            }
+            if (!getFieldState("lastName").isDirty) {
+                setValue("lastName", userData?.lastName || "");
+            }
         }
-        if (!getFieldState("email").isDirty) {
-            setValue("email", userData?.email || "");
-        }
-        if (!getFieldState("firstName").isDirty) {
-            setValue("firstName", userData?.firstName || "");
-        }
-        if (!getFieldState("lastName").isDirty) {
-            setValue("lastName", userData?.lastName || "");
-        }
-    }, [userData, other.open]);
+    }, [userData, other.open]); // eslint-disable-line react-hooks/exhaustive-deps
     
     const areValuesChanged = () => {
         const areStringsDifferent = (str1: string | null | undefined, str2: string | null | undefined): boolean => {
