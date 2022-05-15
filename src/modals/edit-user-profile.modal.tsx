@@ -19,24 +19,30 @@ interface IProps {
 
 const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) => {
     const { t } = useTranslation();
-    const { handleSubmit, register, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
+    const { handleSubmit, register, setValue, getFieldState, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
     const { user: { saveUserInfo } } = useContext(ApplicationContext);
     const { changeUserData } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
-    const [valuesChanged, setValuesChanged] = useState(false);
-    const [initialUserData, setInitialUserData] = useState<ChangeUserData>({ username: "", email: "" });
 
     const watchedFields = watch();
 
     useEffect(() => {
-        if (userData && userData !== initialUserData) {
-            setInitialUserData(userData);
+        if (!getFieldState("username").isDirty) {
+            setValue("username", userData?.username || "");
         }
-        setValuesChanged(areValuesChanged());
-    }, [userData, watchedFields]); // eslint-disable-line react-hooks/exhaustive-deps
+        if (!getFieldState("email").isDirty) {
+            setValue("email", userData?.email || "");
+        }
+        if (!getFieldState("firstName").isDirty) {
+            setValue("firstName", userData?.firstName || "");
+        }
+        if (!getFieldState("lastName").isDirty) {
+            setValue("lastName", userData?.lastName || "");
+        }
+    }, [userData, other.open]);
     
     const areValuesChanged = () => {
         const areStringsDifferent = (str1: string | null | undefined, str2: string | null | undefined): boolean => {
@@ -46,10 +52,10 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
             return str1 !== str2;
         }
 
-        return areStringsDifferent(watchedFields.username, initialUserData.username) ||
-            areStringsDifferent(watchedFields.email, initialUserData.email) ||
-            areStringsDifferent(watchedFields.firstName, initialUserData.firstName) ||
-            areStringsDifferent(watchedFields.lastName, initialUserData.lastName);
+        return areStringsDifferent(watchedFields.username, userData?.username) ||
+            areStringsDifferent(watchedFields.email, userData?.email) ||
+            areStringsDifferent(watchedFields.firstName, userData?.firstName) ||
+            areStringsDifferent(watchedFields.lastName, userData?.lastName);
     }
     
     const onSubmit: SubmitHandler<ChangeUserData> = data => {
@@ -86,7 +92,7 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
         <CustomFormModal title={t("pages.userProfile.editUserData")}
             showNoData={!userData}
             showSubmitButtonSpinner={awaitingResponse}
-            disableSubmitButton={!valuesChanged}
+            disableSubmitButton={!areValuesChanged()}
             onClose={clearFormAndClose}
             onSubmit={handleSubmit(onSubmit)}
             {...other}
@@ -104,7 +110,6 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                             },
                             pattern: { value: /^[a-zA-Z0-9_-]*$/, message: t('validation.usernamePattern') }
                         })}
-                        defaultValue={userData?.username}
                         error={errors.username !== undefined}
                         helperText={errors.username?.message}
                     />
@@ -118,7 +123,6 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                             required: t('validation.required') as string,
                             pattern: { value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/, message: t('validation.emailPattern') }
                         })}
-                        defaultValue={userData?.email}
                         error={errors.email !== undefined}
                         helperText={errors.email?.message}
                     />
@@ -134,7 +138,6 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                                 message: t('validation.maxLength', { length: properties.userSettings.firstName.maxLength })
                             }
                         })}
-                        defaultValue={userData?.firstName}
                         error={errors.firstName !== undefined}
                         helperText={errors.firstName?.message || (!isSmallScreen && errors.lastName !== undefined && " ")}
                     />
@@ -150,7 +153,6 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                                 message: t('validation.maxLength', { length: properties.userSettings.lastName.maxLength })
                             }
                         })}
-                        defaultValue={userData?.lastName}
                         error={errors.lastName !== undefined}
                         helperText={errors.lastName?.message || (!isSmallScreen && errors.firstName !== undefined && " ")}
                     />

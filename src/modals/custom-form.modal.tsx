@@ -1,8 +1,19 @@
 import { Close as CloseIcon } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Slide } from "@mui/material";
+import { TransitionProps } from "@mui/material/transitions";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
+
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+        children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>,
+) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export type CustomFormModalCloseReason = "backdropClick" | "escapeKeyDown" | "closeIconClick" | "cancel" | "save";
 
@@ -25,7 +36,11 @@ export const CustomFormModal: React.FC<CustomFormModalProps> = ({
     const { t } = useTranslation();
 
     return (
-        <Dialog open={open} onClose={(_event, reason) => onClose(reason)} fullWidth>
+        <Dialog open={open}
+            onClose={(_event, reason) => onClose(reason)}
+            TransitionComponent={Transition}
+            fullWidth
+        >
             <DialogTitle>
                 {title}
                 <IconButton sx={{ position: "absolute", top: "12px", right: "16px" }} onClick={() => onClose("closeIconClick")}>
