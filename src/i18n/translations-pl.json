@@ -4,7 +4,21 @@
     "general": {
         "noData": "Brak danych",
         "cancel": "Anuluj",
-        "save": "Zapisz"
+        "save": "Zapisz",
+        "duration": {
+            "years": "lat",
+            "year": "rok",
+            "months": "miesięcy",
+            "month": "miesiąc",
+            "days": "dni",
+            "day": "dzień",
+            "hours": "godziny",
+            "hour": "godzinę",
+            "minutes": "minuty",
+            "minute": "minutę",
+            "seconds": "sekundy",
+            "second": "sekundę"
+        }
     },
 
     "menu": {
@@ -68,7 +82,8 @@
             "title": "Profil użytkownika",
             "editUserData": "Edycja danych",
             "verifyEmail": "Weryfikacja adresu e-mail",
-            "emailVerified": "Adres e-mail zweryfikowany"
+            "verified": "Zweryfikowany",
+            "nextChangeAt": "Zmiana możliwa za {{duration}}"
         }
     },
 
@@ -78,6 +93,9 @@
             "invalidCodeQuestion": "Niepoprawny kod?",
             "generateNewCode": "Wygeneruj nowy kod",
             "submitButton": "Zweryfikuj"
+        },
+        "editUserProfile": {
+            "allowedChangeFrequencyDays": "Zmiana możliwa raz na {{days}} dni"
         }
     },
 

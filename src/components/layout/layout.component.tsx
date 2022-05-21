@@ -5,14 +5,15 @@ import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { StyledDrawer, DrawerHeader } from './layout-helpers';
-import { Drawer, useMediaQuery, useTheme } from '@mui/material';
+import { Drawer, useTheme } from '@mui/material';
 import NavbarComponent from './navbar.component';
 import MenuItemsListComponent from './menu-items-list.component';
 import { ApplicationContext } from '../application-context.provider';
+import { useUtils } from '../../hooks/utils.hook';
 
 const LayoutComponent: React.FC = ({ children }) => {
     const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+    const { isSmallScreen } = useUtils();
     const [open, setOpen] = useState(false);
     
     const { user: { isUserLoggedIn } } = useContext(ApplicationContext);

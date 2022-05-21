@@ -61,7 +61,10 @@ export const useUserService = () => {
 
     const getUserData = (): Promise<UserData> => {
         return http.get<UserData>("/user/data")
-            .then(response => response.data);
+            .then(response => {
+                response.data.lastUsernameChangeAt = new Date(response.data.lastUsernameChangeAt);
+                return response.data;
+            });
     };
 
     const changeUserData = (data: ChangeUserData): Promise<Tokens> => {

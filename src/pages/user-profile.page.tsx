@@ -1,5 +1,6 @@
-import { CheckCircleOutline as EmailVerifiedIcon } from "@mui/icons-material";
-import { Grid, List, ListItem, Tooltip, Typography } from "@mui/material";
+import properties from "../properties.json";
+import { CheckCircleOutline as EmailVerifiedIcon, EditOff as UsernameChangeBlockedIcon } from "@mui/icons-material";
+import { Box, Chip, Grid, List, ListItem, Tooltip, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,14 +14,16 @@ import { useUserService } from "../hooks/user-service.hook";
 import { CustomFormModalCloseReason } from "../modals/custom-form.modal";
 import EditUserProfileModal from "../modals/edit-user-profile.modal";
 import VerifyEmailModal from "../modals/verify-email.modal";
+import { useUtils } from "../hooks/utils.hook";
 
 const UserProfilePage: React.FC = () => {
     const { action } = useParams();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { user } = useDebounce(useContext(ApplicationContext));
+    const { user } = useDebounce(useContext(ApplicationContext), 10);
     const { getUserData } = useUserService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
+    const { isSmallScreen, isWithinTimeframe, addDays, durationUntilString } = useUtils();
 
     const EDIT_MODAL_URL = "edit";
     const VERIFY_EMAIL_MODAL_URL = "verify-email";
@@ -73,7 +76,34 @@ const UserProfilePage: React.FC = () => {
                                 <Typography variant="body1">{t("user.username")}:</Typography>
                             </Grid>
                             <Grid item xs={12} md="auto">
-                                <Typography variant="body2">{userData.username}</Typography>
+                                <Box display="flex" flexWrap="wrap" alignItems="center">
+                                    <Typography variant="body2" sx={{ mx: "4px" }}>{userData.username}</Typography>
+                                    { isWithinTimeframe(userData.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays) &&
+                                        (isSmallScreen ? 
+                                            <Chip icon={<UsernameChangeBlockedIcon />} 
+                                                label={
+                                                    t("pages.userProfile.nextChangeAt", {
+                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays)) 
+                                                    })
+                                                }
+                                                size="small"
+                                                variant="outlined"
+                                                sx={{ mx: "4px" }}
+                                            />
+                                            :
+                                            <Tooltip title={
+                                                    t("pages.userProfile.nextChangeAt", {
+                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays)) 
+                                                    }) as string
+                                                }
+                                                arrow
+                                                sx={{ mx: "4px" }}
+                                            >
+                                                <UsernameChangeBlockedIcon />
+                                            </Tooltip>
+                                        )
+                                    }
+                                </Box>
                             </Grid>
                         </Grid>
                     </ListItem>
@@ -83,14 +113,23 @@ const UserProfilePage: React.FC = () => {
                                 <Typography variant="body1">{t("user.email")}:</Typography>
                             </Grid>
                             <Grid item xs={10} md="auto">
-                                <Typography variant="body2" display="flex" alignItems="center">
-                                    {userData.email}
+                                <Box display="flex" flexWrap="wrap" alignItems="center">
+                                    <Typography variant="body2" sx={{ mx: "4px" }}>{userData.email}</Typography>
                                     { userData.isEmailVerified &&
-                                        <Tooltip title={t("pages.userProfile.emailVerified") as string} arrow>
-                                            <EmailVerifiedIcon sx={{ ml: "4px" }} />
-                                        </Tooltip>
+                                        (isSmallScreen ?
+                                            <Chip icon={<EmailVerifiedIcon />} 
+                                                label={t("pages.userProfile.verified")}
+                                                size="small"
+                                                variant="outlined"
+                                                sx={{ mx: "4px" }}
+                                            />
+                                            :
+                                            <Tooltip title={t("pages.userProfile.verified") as string} arrow sx={{ mx: "4px" }}>
+                                                <EmailVerifiedIcon />
+                                            </Tooltip>
+                                        )
                                     }
-                                </Typography>
+                                </Box>
                             </Grid>
                         </Grid>
                     </ListItem>
@@ -100,7 +139,7 @@ const UserProfilePage: React.FC = () => {
                                 <Typography variant="body1">{t("user.firstName")}:</Typography>
                             </Grid>
                             <Grid item xs={12} md={8}>
-                                <Typography variant="body2">{userData.firstName || "—"}</Typography>
+                                <Typography variant="body2" sx={{ mx: "4px" }}>{userData.firstName || "—"}</Typography>
                             </Grid>
                         </Grid>
                     </ListItem>
@@ -110,7 +149,7 @@ const UserProfilePage: React.FC = () => {
                                 <Typography variant="body1">{t("user.lastName")}:</Typography>
                             </Grid>
                             <Grid item xs={12} md={8}>
-                                <Typography variant="body2">{userData.lastName || "—"}</Typography>
+                                <Typography variant="body2" sx={{ mx: "4px" }}>{userData.lastName || "—"}</Typography>
                             </Grid>
                         </Grid>
                     </ListItem>

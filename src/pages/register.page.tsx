@@ -1,6 +1,6 @@
 import properties from "../properties.json"
 import { LoadingButton } from "@mui/lab";
-import { Button, Divider, Grid, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Divider, Grid, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ import UserRegister from "../data/user-register";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useUserService } from "../hooks/user-service.hook";
 import { usePasswordField } from "../hooks/password-field.hook";
+import { useUtils } from "../hooks/utils.hook";
 
 type UserRegisterWithRepeatPassword = UserRegister & { repeatPassword: string };
 
@@ -19,7 +20,7 @@ const RegisterPage: React.FC = () => {
     const { register, handleSubmit, getValues, setError, formState: { errors } } = useForm<UserRegisterWithRepeatPassword>();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
+    const { isSmallScreen } = useUtils();
     const { passwordValidationOptions, repeatPasswordValidationOptions } = usePasswordField();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { registerUser } = useUserService();

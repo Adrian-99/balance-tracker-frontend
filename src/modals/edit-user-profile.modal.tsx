@@ -1,5 +1,5 @@
 import properties from "../properties.json";
-import { Grid, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import { CustomFormModal, CustomFormModalCloseReason } from "./custom-form.modal
 import { useUserService } from "../hooks/user-service.hook";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { ApplicationContext } from "../components/application-context.provider";
+import { useUtils } from "../hooks/utils.hook";
 
 interface IProps { 
     open: boolean;
@@ -20,12 +21,15 @@ interface IProps {
 const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) => {
     const { t } = useTranslation();
     const { handleSubmit, register, setValue, getFieldState, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
-    const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
+    const { isSmallScreen } = useUtils();
     const { user: { saveUserInfo } } = useContext(ApplicationContext);
     const { changeUserData } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
+    const { isWithinTimeframe, addDays, durationUntilString } = useUtils();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
+    const [disabledUsernameField, setDisabledUsernameField] = useState(false);
+    const [usernameSubtitle, setUsernameSubtitle] = useState("");
 
     const watchedFields = watch();
 
@@ -42,6 +46,17 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
             }
             if (!getFieldState("lastName").isDirty) {
                 setValue("lastName", userData?.lastName || "");
+            }
+            if (userData && isWithinTimeframe(userData?.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays)) {
+                setUsernameSubtitle(t("pages.userProfile.nextChangeAt", {
+                    duration: durationUntilString(addDays(userData.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays)) 
+                }));
+                setDisabledUsernameField(true);
+            } else {
+                setUsernameSubtitle(t("modals.editUserProfile.allowedChangeFrequencyDays",
+                    { days: properties.userSettings.username.allowedChangeFrequencyDays })
+                );
+                setDisabledUsernameField(false);
             }
         }
     }, [userData, other.open]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -112,8 +127,9 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                             },
                             pattern: { value: /^[a-zA-Z0-9_-]*$/, message: t('validation.usernamePattern') }
                         })}
+                        disabled={disabledUsernameField}
                         error={errors.username !== undefined}
-                        helperText={errors.username?.message}
+                        helperText={errors.username?.message || usernameSubtitle}
                     />
                 </Grid>
 

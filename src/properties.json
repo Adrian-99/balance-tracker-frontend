@@ -2,7 +2,8 @@
     "apiContext": "https://localhost:7200/api",
     "userSettings": {
         "username": {
-            "maxLength": 40
+            "maxLength": 40,
+            "allowedChangeFrequencyDays": 7
         },
         "firstName": {
             "maxLength": 40
