@@ -18,7 +18,7 @@ interface IProps {
 const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
     const { t } = useTranslation();
     const { register, handleSubmit, setValue, reset, setError, formState: { errors } } = useForm<VerifyEmail>();
-    const { user: { saveUserInfo, isEmailVerified } } = useContext(ApplicationContext);
+    const { user, saveUserInfo } = useContext(ApplicationContext);
     const { verifyEmail, resetEmailVerificationCode } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
 
@@ -28,7 +28,7 @@ const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
     const [awaitingResetResponse, setAwaitingResetResponse] = useState(false);
 
     useEffect(() => {
-        if (searchParams.get("code") !== null && !isEmailVerified) {
+        if (searchParams.get("code") !== null && !user?.isEmailVerified) {
             const code = searchParams.get("code") as string;
             setValue("emailVerificationCode", code)
             setDisableCodeInput(true);

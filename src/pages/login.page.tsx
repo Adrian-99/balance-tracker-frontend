@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
     const [searchParams] = useSearchParams();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { authenticateUser } = useUserService();
-    const { user: { saveUserInfo } } = useContext(ApplicationContext);
+    const { saveUserInfo } = useContext(ApplicationContext);
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 

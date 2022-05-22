@@ -16,17 +16,17 @@ const LayoutComponent: React.FC = ({ children }) => {
     const { isSmallScreen } = useUtils();
     const [open, setOpen] = useState(false);
     
-    const { user: { isUserLoggedIn } } = useContext(ApplicationContext);
+    const { user } = useContext(ApplicationContext);
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <NavbarComponent isMenuOpen={open} isUserLoggedIn={isUserLoggedIn} isSmallScreen={isSmallScreen} setMenuOpen={setOpen} />
+            <NavbarComponent isMenuOpen={open} isUserLoggedIn={user !== null} isSmallScreen={isSmallScreen} setMenuOpen={setOpen} />
             {isSmallScreen ? 
                 <Drawer open={open} onClose={() => setOpen(false)}>
                     <MenuItemsListComponent isMenuOpen={open}
                         setMenuOpen={setOpen}
                         isSmallScreen={isSmallScreen}
-                        isUserLoggedIn={isUserLoggedIn}
+                        isUserLoggedIn={user !== null}
                     />
                 </Drawer>
                 :
@@ -40,7 +40,7 @@ const LayoutComponent: React.FC = ({ children }) => {
                     <MenuItemsListComponent isMenuOpen={open}
                         setMenuOpen={setOpen}
                         isSmallScreen={isSmallScreen}
-                        isUserLoggedIn={isUserLoggedIn}
+                        isUserLoggedIn={user !== null}
                     />
                 </StyledDrawer>
             }

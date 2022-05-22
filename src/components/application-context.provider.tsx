@@ -8,13 +8,7 @@ import Tokens from "../data/tokens";
 import UserSettings from '../data/user-settings';
 
 const LOCAL_STORAGE_KEYS = {
-    accessToken: "accessToken",
-    refreshToken: "refreshToken",
-    username: "username",
-    email: "email",
-    isEmailVerified: "isEmailVerified",
-    firstName: "firstName",
-    lastName: "lastName",
+    authenticatedUser: "authenticatedUser",
     userSettings: "userSettings"
 }
 
@@ -45,48 +39,34 @@ const getValueFromLocalStorage = (key: string): any => {
     return JSON.parse(localStorage.getItem(key) || "null");
 }
 
+interface AuthenticatedUser {
+    accessToken: string;
+    refreshToken: string;
+    username: string;
+    email: string;
+    isEmailVerified: boolean;
+    firstName: string | undefined;
+    lastName: string | undefined;
+}
+
 export interface AppContext {
-    user: {
-        accessToken: string | null;
-        refreshToken: string | null;
-        username: string | null;
-        email: string | null;
-        isEmailVerified: boolean | null;
-        firstName: string | null;
-        lastName: string | null;
-        isUserLoggedIn: boolean;
-        saveUserInfo: (tokens: Tokens) => string;
-        clearUserInfo: () => void;
-    },
+    user: AuthenticatedUser | null,
+    saveUserInfo: (tokens: Tokens) => string;
+    clearUserInfo: () => void;
     userSettings: UserSettings;
     http: AxiosInstance;
 }
 
 export const ApplicationContext = createContext<AppContext>({
-    user: {
-        accessToken: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.accessToken),
-        refreshToken: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.refreshToken),
-        username: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.username),
-        email: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.email),
-        isEmailVerified: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.isEmailVerified),
-        firstName: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.firstName),
-        lastName: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.lastName),
-        isUserLoggedIn: false,
-        saveUserInfo: (_t) => "",
-        clearUserInfo: () => {}
-    },
+    user: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.authenticatedUser),
+    saveUserInfo: (_t) => "",
+    clearUserInfo: () => {},
     userSettings: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.userSettings),
     http: Axios.create(HTTP_CONFIG)
 });
 
 const ApplicationContextProvider: React.FC = ({ children }) => {
-    const [accessToken, setAccessToken] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.accessToken, null);
-    const [refreshToken, setRefreshToken] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.refreshToken, null);
-    const [username, setUsername] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.username, null);
-    const [email, setEmail] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.email, null);
-    const [isEmailVerified, setIsEmailVerified] = useLocalStorage<boolean | null>(LOCAL_STORAGE_KEYS.isEmailVerified, null);
-    const [firstName, setFirstName] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.firstName, null);
-    const [lastName, setLastName] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.lastName, null);
+    const [authenticatedUser, setAuthenticatedUser] = useLocalStorage<AuthenticatedUser | null>(LOCAL_STORAGE_KEYS.authenticatedUser, null);
     const [userSettings, setUserSettings] = useLocalStorage<UserSettings>(LOCAL_STORAGE_KEYS.userSettings, {
         usernameMaxLength: 40,
         usernameAllowedChangeFrequencyDays: 7,
@@ -107,7 +87,7 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
             return refreshTokenCall;
         }
 
-        var newCall = Axios.post<Tokens>("/user/refresh-token", { refreshToken }, HTTP_CONFIG)
+        var newCall = Axios.post<Tokens>("/user/refresh-token", { refreshToken: authenticatedUser?.refreshToken }, HTTP_CONFIG)
             .then(response => {
                 refreshTokenCall = undefined;
                 return response.data;
@@ -124,7 +104,7 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
     const newAxiosInstance = () => {
         const newAxiosInstance = Axios.create(HTTP_CONFIG);
     
-        newAxiosInstance.defaults.headers.common["Authorization"] = "Bearer " + accessToken;
+        newAxiosInstance.defaults.headers.common["Authorization"] = "Bearer " + authenticatedUser?.accessToken;
         newAxiosInstance.interceptors.request.use(
             config => {
                 if (config.headers && config.url && HTTP_ALLOW_ANONYMOUS.includes(config.url)) {
@@ -163,46 +143,33 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
     const saveUserInfo = (tokens: Tokens): string => {
         var decodedToken = jwtDecode<any>(tokens.accessToken);
 
-        setAccessToken(tokens.accessToken);
-        setRefreshToken(tokens.refreshToken);
-        setUsername(decodedToken[ACCESS_TOKEN_KEYS.nameIdentifier]);
-        setEmail(decodedToken[ACCESS_TOKEN_KEYS.email]);
-        setIsEmailVerified(JSON.parse(decodedToken[ACCESS_TOKEN_KEYS.authorizarionDecision]));
-        setFirstName(decodedToken[ACCESS_TOKEN_KEYS.givenName] || null);
-        setLastName(decodedToken[ACCESS_TOKEN_KEYS.surname] || null);
+        setAuthenticatedUser({
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            username: decodedToken[ACCESS_TOKEN_KEYS.nameIdentifier],
+            email: decodedToken[ACCESS_TOKEN_KEYS.email],
+            isEmailVerified: JSON.parse(decodedToken[ACCESS_TOKEN_KEYS.authorizarionDecision]),
+            firstName: decodedToken[ACCESS_TOKEN_KEYS.givenName] || undefined,
+            lastName: decodedToken[ACCESS_TOKEN_KEYS.surname] || undefined
+        });
 
         return decodedToken[ACCESS_TOKEN_KEYS.nameIdentifier];
     };
     
     const clearUserInfo = () => {
-        setAccessToken(null);
-        setRefreshToken(null);
-        setUsername(null);
-        setEmail(null);
-        setIsEmailVerified(null);
-        setFirstName(null);
-        setLastName(null);
+        setAuthenticatedUser(null);
     };
 
     const contextValue: AppContext = {
-        user: {
-            accessToken,
-            refreshToken,
-            username,
-            email,
-            isEmailVerified,
-            firstName,
-            lastName,
-            isUserLoggedIn: accessToken !== null,
-            saveUserInfo,
-            clearUserInfo
-        },
+        user: authenticatedUser,
+        saveUserInfo,
+        clearUserInfo,
         userSettings: userSettings,
         http: newAxiosInstance()
     };
 
     useEffect(() => {
-        if (accessToken) {
+        if (authenticatedUser?.accessToken) {
             contextValue.http.get<ActionResult>("/user/validate-token");
         }
         contextValue.http.get<UserSettings>("/user/settings")

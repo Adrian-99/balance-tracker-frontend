@@ -31,7 +31,7 @@ interface IProps {
 const NavbarComponent: React.FC<IProps> = ({ isMenuOpen, isSmallScreen, isUserLoggedIn, setMenuOpen }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { user: { username, clearUserInfo } } = useContext(ApplicationContext);
+    const { user, clearUserInfo } = useContext(ApplicationContext);
     const { revokeUserTokens } = useUserService();
     const { successToast, errorToast } = useCustomToast();
     
@@ -102,7 +102,7 @@ const NavbarComponent: React.FC<IProps> = ({ isMenuOpen, isSmallScreen, isUserLo
                         <Box sx={{ flexGrow: 1 }} />
                         <Box sx={{ flexGrow: 0 }}>
                             <Tooltip title={t("navbar.user.tooltip") as string}>
-                                <Button color="inherit" onClick={handleOpenUserMenu}>{ username }</Button>
+                                <Button color="inherit" onClick={handleOpenUserMenu}>{ user?.username }</Button>
                             </Tooltip>
                             <Menu
                                 sx={{ mt: '45px' }}
