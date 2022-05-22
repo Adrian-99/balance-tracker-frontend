@@ -1,4 +1,3 @@
-import properties from "../properties.json";
 import { CheckCircleOutline as EmailVerifiedIcon, EditOff as UsernameChangeBlockedIcon } from "@mui/icons-material";
 import { Box, Chip, Grid, List, ListItem, Tooltip, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
@@ -20,7 +19,7 @@ const UserProfilePage: React.FC = () => {
     const { action } = useParams();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { user } = useDebounce(useContext(ApplicationContext), 10);
+    const { user, userSettings } = useDebounce(useContext(ApplicationContext), 10);
     const { getUserData } = useUserService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
     const { isSmallScreen, isWithinTimeframe, addDays, durationUntilString } = useUtils();
@@ -78,12 +77,12 @@ const UserProfilePage: React.FC = () => {
                             <Grid item xs={12} md="auto">
                                 <Box display="flex" flexWrap="wrap" alignItems="center">
                                     <Typography variant="body2" sx={{ mx: "4px" }}>{userData.username}</Typography>
-                                    { isWithinTimeframe(userData.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays) &&
+                                    { isWithinTimeframe(userData.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays) &&
                                         (isSmallScreen ? 
                                             <Chip icon={<UsernameChangeBlockedIcon />} 
                                                 label={
                                                     t("pages.userProfile.nextChangeAt", {
-                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays)) 
+                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays)) 
                                                     })
                                                 }
                                                 size="small"
@@ -93,7 +92,7 @@ const UserProfilePage: React.FC = () => {
                                             :
                                             <Tooltip title={
                                                     t("pages.userProfile.nextChangeAt", {
-                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays)) 
+                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays)) 
                                                     }) as string
                                                 }
                                                 arrow

@@ -1,7 +1,6 @@
-import properties from "../properties.json"
 import { LoadingButton } from "@mui/lab";
 import { Button, Divider, Grid, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,6 +12,7 @@ import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useUserService } from "../hooks/user-service.hook";
 import { usePasswordField } from "../hooks/password-field.hook";
 import { useUtils } from "../hooks/utils.hook";
+import { ApplicationContext } from "../components/application-context.provider";
 
 type UserRegisterWithRepeatPassword = UserRegister & { repeatPassword: string };
 
@@ -24,6 +24,7 @@ const RegisterPage: React.FC = () => {
     const { passwordValidationOptions, repeatPasswordValidationOptions } = usePasswordField();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { registerUser } = useUserService();
+    const { userSettings } = useContext(ApplicationContext);
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 
@@ -60,8 +61,8 @@ const RegisterPage: React.FC = () => {
                             {...register("username", { 
                                 required: t('validation.required') as string,
                                 maxLength: { 
-                                    value: properties.userSettings.username.maxLength,
-                                    message: t('validation.maxLength', { length: properties.userSettings.username.maxLength })
+                                    value: userSettings.usernameMaxLength,
+                                    message: t('validation.maxLength', { length: userSettings.usernameMaxLength })
                                 },
                                 pattern: { value: /^[a-zA-Z0-9_-]*$/, message: t('validation.usernamePattern') }
                             })}
@@ -91,8 +92,8 @@ const RegisterPage: React.FC = () => {
                             fullWidth
                             {...register("firstName", {
                                 maxLength: { 
-                                    value: properties.userSettings.firstName.maxLength,
-                                    message: t('validation.maxLength', { length: properties.userSettings.firstName.maxLength })
+                                    value: userSettings.firstNameMaxLength,
+                                    message: t('validation.maxLength', { length: userSettings.firstNameMaxLength })
                                 }
                             })}
                             error={errors.firstName !== undefined}
@@ -106,8 +107,8 @@ const RegisterPage: React.FC = () => {
                             fullWidth
                             {...register("lastName", {
                                 maxLength: { 
-                                    value: properties.userSettings.lastName.maxLength,
-                                    message: t('validation.maxLength', { length: properties.userSettings.lastName.maxLength })
+                                    value: userSettings.lastNameMaxLength,
+                                    message: t('validation.maxLength', { length: userSettings.lastNameMaxLength })
                                 }
                             })}
                             error={errors.lastName !== undefined}

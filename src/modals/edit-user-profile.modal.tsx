@@ -1,4 +1,3 @@
-import properties from "../properties.json";
 import { Grid, TextField } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -22,7 +21,7 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
     const { t } = useTranslation();
     const { handleSubmit, register, setValue, getFieldState, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
     const { isSmallScreen } = useUtils();
-    const { user: { saveUserInfo } } = useContext(ApplicationContext);
+    const { user: { saveUserInfo }, userSettings } = useContext(ApplicationContext);
     const { changeUserData } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { isWithinTimeframe, addDays, durationUntilString } = useUtils();
@@ -47,14 +46,14 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
             if (!getFieldState("lastName").isDirty) {
                 setValue("lastName", userData?.lastName || "");
             }
-            if (userData && isWithinTimeframe(userData?.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays)) {
+            if (userData && isWithinTimeframe(userData?.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays)) {
                 setUsernameSubtitle(t("pages.userProfile.nextChangeAt", {
-                    duration: durationUntilString(addDays(userData.lastUsernameChangeAt, properties.userSettings.username.allowedChangeFrequencyDays)) 
+                    duration: durationUntilString(addDays(userData.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays)) 
                 }));
                 setDisabledUsernameField(true);
             } else {
                 setUsernameSubtitle(t("modals.editUserProfile.allowedChangeFrequencyDays",
-                    { days: properties.userSettings.username.allowedChangeFrequencyDays })
+                    { days: userSettings.usernameAllowedChangeFrequencyDays })
                 );
                 setDisabledUsernameField(false);
             }
@@ -122,8 +121,8 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                         {...register("username", { 
                             required: t('validation.required') as string,
                             maxLength: { 
-                                value: properties.userSettings.username.maxLength,
-                                message: t('validation.maxLength', { length: properties.userSettings.username.maxLength })
+                                value: userSettings.usernameMaxLength,
+                                message: t('validation.maxLength', { length: userSettings.usernameMaxLength })
                             },
                             pattern: { value: /^[a-zA-Z0-9_-]*$/, message: t('validation.usernamePattern') }
                         })}
@@ -152,8 +151,8 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                         fullWidth
                         {...register("firstName", {
                             maxLength: { 
-                                value: properties.userSettings.firstName.maxLength,
-                                message: t('validation.maxLength', { length: properties.userSettings.firstName.maxLength })
+                                value: userSettings.firstNameMaxLength,
+                                message: t('validation.maxLength', { length: userSettings.firstNameMaxLength })
                             }
                         })}
                         error={errors.firstName !== undefined}
@@ -167,8 +166,8 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                         fullWidth
                         {...register("lastName", {
                             maxLength: { 
-                                value: properties.userSettings.lastName.maxLength,
-                                message: t('validation.maxLength', { length: properties.userSettings.lastName.maxLength })
+                                value: userSettings.lastNameMaxLength,
+                                message: t('validation.maxLength', { length: userSettings.lastNameMaxLength })
                             }
                         })}
                         error={errors.lastName !== undefined}
