@@ -44,8 +44,8 @@ const UserProfilePage: React.FC = () => {
     const updateUserData = () => {
         setAwaitingUserData(true);
         getUserData()
-            .then(data => {
-                setUserData(data);
+            .then(response => {
+                setUserData(response.data);
             }).catch(error => {
                 errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
                 setUserData(undefined);

@@ -3,7 +3,7 @@ import Axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import jwtDecode from "jwt-decode";
 import { createContext, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import ActionResult from "../data/action-result";
+import ApiResponse from "../data/api-response";
 import Tokens from "../data/tokens";
 import UserSettings from '../data/user-settings';
 
@@ -33,7 +33,7 @@ const HTTP_ALLOW_ANONYMOUS: string[] = [
 
 const HTTP_IGNORE_UNAUTHORIZED: string[] = ["/user/authenticate"]
 
-let refreshTokenCall: Promise<Tokens> | undefined = undefined;
+let refreshTokenCall: Promise<ApiResponse<Tokens>> | undefined = undefined;
 
 const getValueFromLocalStorage = (key: string): any => {
     return JSON.parse(localStorage.getItem(key) || "null");
@@ -82,12 +82,12 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
         passwordForbidSameAsCurrent: true
     });
 
-    const refreshTokenRequest = (): Promise<Tokens> => {
+    const refreshTokenRequest = (): Promise<ApiResponse<Tokens>> => {
         if (refreshTokenCall) {
             return refreshTokenCall;
         }
 
-        var newCall = Axios.post<Tokens>("/user/refresh-token", { refreshToken: authenticatedUser?.refreshToken }, HTTP_CONFIG)
+        var newCall = Axios.post<ApiResponse<Tokens>>("/user/refresh-token", { refreshToken: authenticatedUser?.refreshToken }, HTTP_CONFIG)
             .then(response => {
                 refreshTokenCall = undefined;
                 return response.data;
@@ -120,9 +120,9 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
                 if (error.response?.status === 401 && !HTTP_IGNORE_UNAUTHORIZED.includes(error.config.url)) {
                     return refreshTokenRequest()
                         .then(response => {
-                            saveUserInfo(response);
-                            newAxiosInstance.defaults.headers.common["Authorization"] = "Bearer " + response.accessToken;
-                            error.config.headers["Authorization"] = "Bearer " + response.accessToken;
+                            saveUserInfo(response.data);
+                            newAxiosInstance.defaults.headers.common["Authorization"] = "Bearer " + response.data.accessToken;
+                            error.config.headers["Authorization"] = "Bearer " + response.data.accessToken;
                             return Axios.request(error.config);
                         })
                         .catch(innerError => {
@@ -170,10 +170,10 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
 
     useEffect(() => {
         if (authenticatedUser?.accessToken) {
-            contextValue.http.get<ActionResult>("/user/validate-token");
+            contextValue.http.get<ApiResponse<string>>("/user/validate-token");
         }
-        contextValue.http.get<UserSettings>("/user/settings")
-            .then(response => setUserSettings(response.data));
+        contextValue.http.get<ApiResponse<UserSettings>>("/user/settings")
+            .then(response => setUserSettings(response.data.data));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

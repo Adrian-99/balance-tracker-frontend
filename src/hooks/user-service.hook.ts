@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ApplicationContext } from "../components/application-context.provider";
-import ActionResult from "../data/action-result";
+import ApiResponse from "../data/api-response";
 import Authenticate from "../data/authenticate";
 import ChangePassword from "../data/change-password";
 import ChangeUserData from "../data/change-user-data";
@@ -14,61 +14,61 @@ import VerifyEmail from "../data/verify-email";
 export const useUserService = () => {
     const { http } = useContext(ApplicationContext);
 
-    const registerUser = (data: UserRegister): Promise<ActionResult> => {
-        return http.post<ActionResult>("/user/register", data)
+    const registerUser = (data: UserRegister): Promise<ApiResponse<string>> => {
+        return http.post<ApiResponse<string>>("/user/register", data)
             .then(response => response.data);
     };
 
-    const verifyEmail = (data: VerifyEmail): Promise<Tokens> => {
-        return http.patch<Tokens>("/user/verify-email", data)
+    const verifyEmail = (data: VerifyEmail): Promise<ApiResponse<Tokens>> => {
+        return http.patch<ApiResponse<Tokens>>("/user/verify-email", data)
             .then(response => response.data);
     };
 
-    const resetEmailVerificationCode = (): Promise<ActionResult> => {
-        return http.post<ActionResult>("/user/verify-email/reset-code")
+    const resetEmailVerificationCode = (): Promise<ApiResponse<string>> => {
+        return http.post<ApiResponse<string>>("/user/verify-email/reset-code")
             .then(response => response.data);
     };
 
-    const authenticateUser = (data: Authenticate): Promise<Tokens> => {
-        return http.post<Tokens>("/user/authenticate", data)
+    const authenticateUser = (data: Authenticate): Promise<ApiResponse<Tokens>> => {
+        return http.post<ApiResponse<Tokens>>("/user/authenticate", data)
             .then(response => response.data);
     };
 
-    const validateUserToken = (): Promise<ActionResult> => {
-        return http.get<ActionResult>("/user/validate-token")
+    const validateUserToken = (): Promise<ApiResponse<string>> => {
+        return http.get<ApiResponse<string>>("/user/validate-token")
             .then(response => response.data);
     }
 
-    const revokeUserTokens = (): Promise<undefined> => {
-        return http.delete<undefined>("/user/revoke-tokens")
+    const revokeUserTokens = (): Promise<ApiResponse<string>> => {
+        return http.delete<ApiResponse<string>>("/user/revoke-tokens")
             .then(response => response.data);
     };
 
-    const resetUserPasswordRequest = (data: ResetPasswordRequest): Promise<ActionResult> => {
-        return http.post<ActionResult>("/user/password/reset/request", data)
+    const resetUserPasswordRequest = (data: ResetPasswordRequest): Promise<ApiResponse<string>> => {
+        return http.post<ApiResponse<string>>("/user/password/reset/request", data)
             .then(response => response.data);
     };
 
-    const resetPassword = (data: ResetPassword): Promise<ActionResult> => {
-        return http.patch<ActionResult>("/user/password/reset", data)
+    const resetPassword = (data: ResetPassword): Promise<ApiResponse<string>> => {
+        return http.patch<ApiResponse<string>>("/user/password/reset", data)
             .then(response => response.data);
     };
 
-    const changePassword = (data: ChangePassword): Promise<ActionResult> => {
-        return http.patch<ActionResult>("/user/password/change", data)
+    const changePassword = (data: ChangePassword): Promise<ApiResponse<string>> => {
+        return http.patch<ApiResponse<string>>("/user/password/change", data)
             .then(response => response.data);
     };
 
-    const getUserData = (): Promise<UserData> => {
-        return http.get<UserData>("/user/data")
+    const getUserData = (): Promise<ApiResponse<UserData>> => {
+        return http.get<ApiResponse<UserData>>("/user/data")
             .then(response => {
-                response.data.lastUsernameChangeAt = new Date(response.data.lastUsernameChangeAt);
+                response.data.data.lastUsernameChangeAt = new Date(response.data.data.lastUsernameChangeAt);
                 return response.data;
             });
     };
 
-    const changeUserData = (data: ChangeUserData): Promise<Tokens> => {
-        return http.patch<Tokens>("/user/data", data)
+    const changeUserData = (data: ChangeUserData): Promise<ApiResponse<Tokens>> => {
+        return http.patch<ApiResponse<Tokens>>("/user/data", data)
             .then(response => response.data);
     };
 

@@ -79,8 +79,8 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
         changeUserData(data)
             .then(response => {
                 successToast(evaluateBackendMessage(response.translationKey));
-                if (response.accessToken && response.refreshToken) {
-                    saveUserInfo(response);
+                if (response.data.accessToken && response.data.refreshToken) {
+                    saveUserInfo(response.data);
                 }
                 onClose("save");
             }).catch(error => {

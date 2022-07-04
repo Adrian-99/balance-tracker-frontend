@@ -55,8 +55,8 @@ const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
         verifyEmail(data)
             .then(response => {
                 successToast(evaluateBackendMessage(response.translationKey));
-                if (response.accessToken && response.refreshToken) {
-                    saveUserInfo(response);
+                if (response.data.accessToken && response.data.refreshToken) {
+                    saveUserInfo(response.data);
                 }
                 onClose("save");
             })

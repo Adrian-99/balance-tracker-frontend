@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
         setAwaitingResponse(true);
         authenticateUser(data)
             .then(response => {
-                var username = saveUserInfo(response);
+                var username = saveUserInfo(response.data);
                 successToast(t("pages.login.successToast", { username }));
                 if (searchParams.get("redirectTo") !== null) {
                     const redirectUrl = Buffer.from(searchParams.get("redirectTo") as string, "base64").toString("binary");
