@@ -9,6 +9,7 @@ import RegisterPage from "./pages/register.page";
 import ResetPasswordRequestPage from "./pages/reset-password/reset-password-request.page";
 import ResetPasswordPage from "./pages/reset-password/reset-password.page";
 import UserProfilePage from "./pages/user-profile.page";
+import HistoryPage from "./pages/history.page";
 
 const PagesRouting: React.FC = () => {
     const location = useLocation();
@@ -57,7 +58,7 @@ const PagesRouting: React.FC = () => {
                 } />
             </Route>
             <Route path="/history" element={user ?
-                <></> :
+                <HistoryPage /> :
                 defaultEmeentIfNotLoggedIn
             } />
             <Route path="*" element={

@@ -18,7 +18,26 @@
             "minute": "minutę",
             "seconds": "sekundy",
             "second": "sekundę"
-        }
+        },
+        "date": {
+            "today": "Dziś",
+            "yesterday": "Wczoraj",
+            "months": {
+                "1": "stycznia",
+                "2": "lutego",
+                "3": "marca",
+                "4": "kwietnia",
+                "5": "maja",
+                "6": "czerwca",
+                "7": "licpa",
+                "8": "sierpnia",
+                "9": "września",
+                "10": "października",
+                "11": "listopada",
+                "12": "grudnia"
+            }
+        },
+        "currencyValue": "{{value}} zł"
     },
 
     "menu": {
@@ -84,6 +103,17 @@
             "verifyEmail": "Weryfikacja adresu e-mail",
             "verified": "Zweryfikowany",
             "nextChangeAt": "Zmiana możliwa za {{duration}}"
+        },
+        "history": {
+            "title": "Historia",
+            "header": {
+                "date": "Data",
+                "name": "Nazwa",
+                "category": "Kategoria",
+                "tags": "Tagi",
+                "value": "Wartość",
+                "description": "Opis"
+            }
         }
     },
 
@@ -172,5 +202,86 @@
                 }
             }
         }
+    },
+
+    "categories": {
+        "salary": "Wynagrodzenia",
+        "allowanceIncome": "Kieszonkowe",
+        "giftIncome": "Darowizny",
+        "deposit": "Wpłaty w bankomacie",
+        "bonus": "Premie, nagrody",
+        "pension": "Emerytury, renty",
+        "interestIncome": "Odsetki, zwroty z inwestycji",
+        "sale": "Sprzedaże",
+        "cashIncome": "Gotówka",
+        "rentIncome": "Przychody z najmu",
+        "bankTransferIncome": "Przelewy przychodzący",
+        "otherIncome": "Inne przychody",
+        "groceries": "Artykuły spożywcze",
+        "cleaningSupplies": "Chemia, środki czystości",
+        "cigarettes": "Papierosy",
+        "alcohol": "Alkohol",
+        "beauty": "Uroda, fryzjer, kosmetyczka",
+        "pets": "Zwierzęta domowe",
+        "cosmetics": "Kosmetyki",
+        "onlineShopping": "Zakupy przez Internet",
+        "restaurant": "Restauracje, kawiarnie",
+        "cinema": "Kina, teatry",
+        "pub": "Puby, kluby",
+        "sport": "Sport",
+        "travelling": "Podróże",
+        "hobby": "Hobby",
+        "books": "Książki",
+        "newspapers": "Gazety, czasopisma",
+        "multimedia": "Multimedia",
+        "hotels": "Hotele",
+        "fuel": "Paliwo",
+        "publicTransport": "Transport publiczny",
+        "transportService": "Naprawy śr. transportu",
+        "transportParts": "Części, akcesoria",
+        "taxi": "Taxi",
+        "transportPurchase": "Zakup śr. transportu",
+        "airTickets": "Bilety lotnicze",
+        "rentCost": "Czynsz",
+        "runningWater": "Woda",
+        "trash": "Śmieci",
+        "electricity": "Prąd",
+        "gas": "Gaz",
+        "media": "Internet, TV, telefon",
+        "insurance": "Ubezpieczenia",
+        "clothes": "Ubrania",
+        "shoes": "Obuwie",
+        "jewellery": "Dodatki, biżuteria",
+        "clothesService": "Pralnia, krawiec, szewc",
+        "housePurchase": "Zakup domu, mieszkania",
+        "houseEquipment": "Wyposażenie domu, mieszkania",
+        "houseRenovation": "Remonty",
+        "houseCleaning": "Sprzątanie",
+        "householdAppliance": "Sprzęt RTV, AGD",
+        "computers": "Komputery, konsole",
+        "houseDecorations": "Artykuły dekoracyjne",
+        "garden": "Ogród",
+        "medicines": "Lekarstwa",
+        "healthcare": "Opieka medyczna",
+        "healthAccessories": "Akcesoria medyczne",
+        "glasses": "Okulary, soczewki",
+        "schoolFees": "Czesne, opłaty szkolne",
+        "trainings": "Kursy, szkolenia",
+        "stationery": "Artykuły szkolne, biurowe",
+        "giftCost": "Prezenty, upominki",
+        "loan": "Pożyczki",
+        "taxes": "Podatki",
+        "bankingCharges": "Opłaty bankowe",
+        "interestCost": "Odsetki",
+        "fines": "Kary, mandaty",
+        "childCare": "Opieka nad dzieckiem",
+        "childSchoolFees": "Opłaty ze przedszkole, szkołę",
+        "childClothes": "Ubrania, akcesoria dla dzieci",
+        "childToys": "Zabawki",
+        "allowanceCost": "Kieszonkowe dla dzieci",
+        "bankTransferCost": "Przelowy wychodzące",
+        "withdrawal": "Wypłaty z bankomatu",
+        "creditRepayment": "Spłaty kredytu, pożyczki",
+        "otherCost": "Inne koszty"
     }
 }
