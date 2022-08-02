@@ -1,13 +1,15 @@
 import { KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
-import { Chip, Collapse, createTheme, IconButton, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
+import { Button, Chip, Collapse, createTheme, IconButton, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import { Box } from "@mui/system";
 import moment from "moment";
 import React from "react";
 import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import PageCardComponent from "../components/page-card.component";
+import SearchFieldComponent from "../components/search-field.component";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
 import TableHeaderComponent from "../components/table-header.component";
 import Category from "../data/category";
@@ -22,6 +24,7 @@ import { useUtils } from "../hooks/utils.hook";
 
 const HistoryPage: React.FC = () => {
     const { t } = useTranslation();
+    const { register, handleSubmit, setValue } = useForm<EntryFilter>();
     const { getAllCategories } = useCategoryService();
     const { getEntriesPaged } = useEntryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
@@ -40,8 +43,9 @@ const HistoryPage: React.FC = () => {
     
     const [searchParams, setSearchParams] = useSearchParams();
     const [awaitingResponse, setAwaitingResponse] = useState<boolean>(false);
+    const [isFilterSet, setIsFilterSet] = useState<boolean>(false);
     const [entryParams, setEntryParams] = useState<Pageable & EntryFilter>({
-        pageNumber: 0,
+        pageNumber: 1,
         pageSize: 10,
         sortBy: "date",
         sortDescending: true
@@ -90,6 +94,16 @@ const HistoryPage: React.FC = () => {
             tagNames: searchParams.get(TAG_NAMES)?.split(',')
         };
 
+        setValue("searchValue", params.searchValue);
+
+        setIsFilterSet(
+            params.searchValue !== undefined ||
+            params.dateFrom !== undefined ||
+            params.dateTo !== undefined ||
+            (params.categoriesKeywords !== undefined && params.categoriesKeywords.length > 0) ||
+            (params.tagNames !== undefined && params.tagNames.length > 0)
+        );
+
         if (sortByCorrect) {
             setEntryParams(params);
             setAwaitingResponse(true);
@@ -124,6 +138,20 @@ const HistoryPage: React.FC = () => {
 
     const onRowsPerPageChange = (rowsPerPage: number) => {
         updateQueryParams({ ...entryParams, pageNumber: 1, pageSize: rowsPerPage });
+    }
+
+    const onFilterSubmit: SubmitHandler<EntryFilter> = data => {
+        const { sortBy, sortDescending, ...otherData } = data;
+        updateQueryParams({ ...entryParams, pageNumber: 1, ...otherData });
+    }
+
+    const clearFilter = () => {
+        updateQueryParams({
+            pageNumber: 1,
+            pageSize: entryParams.pageSize,
+            sortBy: entryParams.sortBy,
+            sortDescending: entryParams.sortDescending
+        });
     }
 
     const updateQueryParams = (newParams: Pageable & EntryFilter) => {
@@ -165,6 +193,23 @@ const HistoryPage: React.FC = () => {
 
     return (
         <PageCardComponent title={t("pages.history.title")} width={12}>
+            <Box display="flex" gap="8px" alignItems="center">
+                <Box display="flex" flexWrap="wrap" gap="4px" alignItems="center">
+                    <form onSubmit={handleSubmit(onFilterSubmit)}>
+                        <SearchFieldComponent
+                            label={t("general.search")}
+                            useFormRegister={register("searchValue")}
+                            onSubmit={handleSubmit(onFilterSubmit)}
+                            size="small"
+                        />
+                    </form>
+                </Box>
+                { isFilterSet &&
+                    <Button variant="text" onClick={clearFilter}>
+                        { t("general.clearFilters") }
+                    </Button>
+                }
+            </Box>
             <TableContainer>
                 <Table style={{ tableLayout: "fixed" }}>
                     <TableHead>

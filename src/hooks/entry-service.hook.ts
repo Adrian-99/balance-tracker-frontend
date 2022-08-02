@@ -13,6 +13,7 @@ export const useEntryService = () => {
             pageNumber: parameters.pageNumber,
             pageSize: parameters.pageSize,
             sortBy: (parameters.sortDescending ? '-' : '') + parameters.sortBy,
+            searchValue: parameters.searchValue,
             dateFrom: parameters.dateFrom?.toDateString(),
             dateTo: parameters.dateTo?.toDateString(),
             categoriesKeywords: parameters.categoriesKeywords?.join(','),

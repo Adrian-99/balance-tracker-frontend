@@ -5,6 +5,12 @@
         "noData": "Brak danych",
         "cancel": "Anuluj",
         "save": "Zapisz",
+        "passwordInput": {
+            "show": "Pokaż hasło",
+            "hide": "Ukryj hasło"
+        },
+        "search": "Szukaj",
+        "clearFilters": "Wyczyść filtry",
         "duration": {
             "years": "lat",
             "year": "rok",
@@ -29,7 +35,7 @@
                 "4": "kwietnia",
                 "5": "maja",
                 "6": "czerwca",
-                "7": "licpa",
+                "7": "lipca",
                 "8": "sierpnia",
                 "9": "września",
                 "10": "października",
@@ -137,11 +143,6 @@
         "lastName": "Nazwisko",
         "password": "Hasło",
         "repeatPassword": "Powtórz hasło"
-    },
-
-    "password": {
-        "show": "Pokaż hasło",
-        "hide": "Ukryj hasło"
     },
 
     "validation": {

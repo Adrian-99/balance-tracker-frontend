@@ -33,7 +33,7 @@ const PasswordFieldComponent: React.FC<IProps> = ({ label, useFormRegister, full
                 {...useFormRegister}
                 endAdornment={
                     <InputAdornment position="end">
-                        <Tooltip title={t(showPassword ? 'password.hide' : 'password.show') as string} arrow>
+                        <Tooltip title={t(showPassword ? 'general.passwordInput.hide' : 'general.passwordInput.show') as string} arrow>
                             <IconButton
                                 onClick={() => setShowPassword(!showPassword)}
                                 edge="end"
