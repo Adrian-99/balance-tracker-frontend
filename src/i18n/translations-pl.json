@@ -28,6 +28,8 @@
         "date": {
             "today": "Dziś",
             "yesterday": "Wczoraj",
+            "from": "Data od",
+            "to": "Data do",
             "months": {
                 "1": "stycznia",
                 "2": "lutego",
@@ -41,6 +43,11 @@
                 "10": "października",
                 "11": "listopada",
                 "12": "grudnia"
+            },
+            "formatLetters": {
+                "year": "R",
+                "month": "M",
+                "day": "D"
             }
         },
         "currencyValue": "{{value}} zł"
@@ -156,7 +163,8 @@
         "mustContainDigit": "Musi zawierać cyfrę",
         "mustContainSpecialChar": "Musi zawierać znak specjalny",
         "cantBeSameAsUsername": "Musi różnić się od nazwy użytkownika",
-        "mustBeSameAsPassword": "Hasła nie są takie same"
+        "mustBeSameAsPassword": "Hasła nie są takie same",
+        "incorrectDate": "Niepoprawna data"
     },
 
     "toast": {

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
+import DatePickerComponent from "../components/date-picker.component";
 import PageCardComponent from "../components/page-card.component";
 import SearchFieldComponent from "../components/search-field.component";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
@@ -24,13 +25,15 @@ import { useUtils } from "../hooks/utils.hook";
 
 const HistoryPage: React.FC = () => {
     const { t } = useTranslation();
-    const { register, handleSubmit, setValue } = useForm<EntryFilter>();
+    const { register, control, handleSubmit, setValue } = useForm<EntryFilter>();
     const { getAllCategories } = useCategoryService();
     const { getEntriesPaged } = useEntryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
     const { relativeDateString, currencyValueString } = useUtils();
 
     const THEME = createTheme(useTheme(), plPL);
+
+    const DATE_FORMAT = "YYYY-MM-DD";
 
     const PAGE_NUMBER = "pageNumber";
     const PAGE_SIZE = "pageSize";
@@ -48,7 +51,12 @@ const HistoryPage: React.FC = () => {
         pageNumber: 1,
         pageSize: 10,
         sortBy: "date",
-        sortDescending: true
+        sortDescending: true,
+        searchValue: null,
+        dateFrom: null,
+        dateTo: null,
+        categoriesKeywords: [],
+        tagNames: []
     });
 
     const [categories, setCategories] = useState<Category[]>([]);
@@ -87,21 +95,22 @@ const HistoryPage: React.FC = () => {
             pageSize: Number.parseInt(searchParams.get(PAGE_SIZE) || '10'),
             sortBy: sortByTyped,
             sortDescending: (!searchParams.get(SORT_BY) || (searchParams.get(SORT_BY)?.startsWith('-') && sortByCorrect)) || false,
-            searchValue: searchParams.get(SEARCH_VALUE) || undefined,
-            dateFrom: dateFromString ? new Date(dateFromString) : undefined,
-            dateTo: dateToString ? new Date(dateToString) : undefined,
-            categoriesKeywords: searchParams.get(CATEGORIES_KEYWORDS)?.split(','),
-            tagNames: searchParams.get(TAG_NAMES)?.split(',')
+            searchValue: searchParams.get(SEARCH_VALUE) || null,
+            dateFrom: dateFromString ? moment(dateFromString, DATE_FORMAT).toDate() : null,
+            dateTo: dateToString ? moment(dateToString, DATE_FORMAT).toDate() : null,
+            categoriesKeywords: searchParams.get(CATEGORIES_KEYWORDS)?.split(',') || [],
+            tagNames: searchParams.get(TAG_NAMES)?.split(',') || []
         };
 
         setValue("searchValue", params.searchValue);
+        setValue("dateFrom", params.dateFrom);
 
         setIsFilterSet(
-            params.searchValue !== undefined ||
-            params.dateFrom !== undefined ||
-            params.dateTo !== undefined ||
-            (params.categoriesKeywords !== undefined && params.categoriesKeywords.length > 0) ||
-            (params.tagNames !== undefined && params.tagNames.length > 0)
+            params.searchValue !== null ||
+            params.dateFrom !== null ||
+            params.dateTo !== null ||
+            params.categoriesKeywords.length > 0 ||
+            params.tagNames.length > 0
         );
 
         if (sortByCorrect) {
@@ -150,7 +159,12 @@ const HistoryPage: React.FC = () => {
             pageNumber: 1,
             pageSize: entryParams.pageSize,
             sortBy: entryParams.sortBy,
-            sortDescending: entryParams.sortDescending
+            sortDescending: entryParams.sortDescending,
+            searchValue: null,
+            dateFrom: null,
+            dateTo: null,
+            categoriesKeywords: [],
+            tagNames: []
         });
     }
 
@@ -160,10 +174,10 @@ const HistoryPage: React.FC = () => {
             ...(newParams.pageSize !== 10 && { [PAGE_SIZE]: newParams.pageSize.toString() }),
             ...((newParams.sortBy !== "date" || !newParams.sortDescending) && { [SORT_BY]: (newParams.sortDescending ? '-' : '') + newParams.sortBy }),
             ...(newParams.searchValue && { [SEARCH_VALUE]: newParams.searchValue }),
-            ...(newParams.dateFrom && { [DATE_FROM]: newParams.dateFrom.toDateString() }),
-            ...(newParams.dateTo && { [DATE_TO]: newParams.dateTo.toDateString() }),
-            ...(newParams.categoriesKeywords && { [CATEGORIES_KEYWORDS]: newParams.categoriesKeywords.join(',') }),
-            ...(newParams.tagNames && { [TAG_NAMES]: newParams.tagNames.join(',') }),
+            ...(newParams.dateFrom && { [DATE_FROM]: moment(newParams.dateFrom).format(DATE_FORMAT) }),
+            ...(newParams.dateTo && { [DATE_TO]: moment(newParams.dateTo).format(DATE_FORMAT) }),
+            ...(newParams.categoriesKeywords.length && { [CATEGORIES_KEYWORDS]: newParams.categoriesKeywords.join(',') }),
+            ...(newParams.tagNames.length && { [TAG_NAMES]: newParams.tagNames.join(',') }),
         });
     }
 
@@ -194,16 +208,26 @@ const HistoryPage: React.FC = () => {
     return (
         <PageCardComponent title={t("pages.history.title")} width={12}>
             <Box display="flex" gap="8px" alignItems="center">
-                <Box display="flex" flexWrap="wrap" gap="4px" alignItems="center">
-                    <form onSubmit={handleSubmit(onFilterSubmit)}>
+                <form onSubmit={handleSubmit(onFilterSubmit)} autoComplete="off">
+                    <Box display="flex" flexWrap="wrap" gap="8px" alignItems="center">
                         <SearchFieldComponent
                             label={t("general.search")}
                             useFormRegister={register("searchValue")}
                             onSubmit={handleSubmit(onFilterSubmit)}
                             size="small"
                         />
-                    </form>
-                </Box>
+                        <DatePickerComponent
+                            formFieldName="dateFrom"
+                            control={control}
+                            label={t("general.date.from")}
+                            dateFormat={DATE_FORMAT.replaceAll('-', '.')}
+                            autoSubmit
+                            submitFunction={handleSubmit(onFilterSubmit)}
+                            size="small"
+                        />
+                        <Button type="submit" sx={{ display: "none" }}></Button>
+                    </Box>
+                </form>
                 { isFilterSet &&
                     <Button variant="text" onClick={clearFilter}>
                         { t("general.clearFilters") }

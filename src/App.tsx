@@ -10,6 +10,11 @@ import translationsPL from './i18n/translations-pl.json'
 import { SnackbarProvider } from 'notistack';
 import PagesRouting from './pages-routing';
 import ApplicationContextProvider from './components/application-context.provider';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import plPLPickersLocaleText from './i18n/plPLPickersLocaleText';
+import moment from 'moment';
+import 'moment/locale/pl';
 
 const theme = createTheme(
     {
@@ -31,7 +36,9 @@ i18n.use(initReactI18next)
                 translation: translationsPL
             }
         }
-    })
+    });
+
+moment.locale("pl");
 
 function App() {
     return (
@@ -45,9 +52,14 @@ function App() {
                 >
                 <BrowserRouter>
                     <ApplicationContextProvider>
-                        <LayoutComponent>
-                            <PagesRouting />
-                        </LayoutComponent>
+                        <LocalizationProvider
+                            dateAdapter={AdapterMoment}
+                            localeText={plPLPickersLocaleText}
+                        >
+                            <LayoutComponent>
+                                <PagesRouting />
+                            </LayoutComponent>
+                        </LocalizationProvider>
                     </ApplicationContextProvider>
                 </BrowserRouter>
             </SnackbarProvider>
