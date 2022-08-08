@@ -25,7 +25,7 @@ import { useUtils } from "../hooks/utils.hook";
 
 const HistoryPage: React.FC = () => {
     const { t } = useTranslation();
-    const { register, control, handleSubmit, setValue } = useForm<EntryFilter>();
+    const { register, control, handleSubmit, setValue, getValues, reset } = useForm<EntryFilter>();
     const { getAllCategories } = useCategoryService();
     const { getEntriesPaged } = useEntryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
@@ -104,6 +104,7 @@ const HistoryPage: React.FC = () => {
 
         setValue("searchValue", params.searchValue);
         setValue("dateFrom", params.dateFrom);
+        setValue("dateTo", params.dateTo);
 
         setIsFilterSet(
             params.searchValue !== null ||
@@ -155,6 +156,7 @@ const HistoryPage: React.FC = () => {
     }
 
     const clearFilter = () => {
+        reset();
         updateQueryParams({
             pageNumber: 1,
             pageSize: entryParams.pageSize,
@@ -209,7 +211,7 @@ const HistoryPage: React.FC = () => {
         <PageCardComponent title={t("pages.history.title")} width={12}>
             <Box display="flex" gap="8px" alignItems="center">
                 <form onSubmit={handleSubmit(onFilterSubmit)} autoComplete="off">
-                    <Box display="flex" flexWrap="wrap" gap="8px" alignItems="center">
+                    <Box display="flex" flexWrap="wrap" gap="8px" alignItems="flex-start">
                         <SearchFieldComponent
                             label={t("general.search")}
                             useFormRegister={register("searchValue")}
@@ -221,6 +223,17 @@ const HistoryPage: React.FC = () => {
                             control={control}
                             label={t("general.date.from")}
                             dateFormat={DATE_FORMAT.replaceAll('-', '.')}
+                            maxDate={getValues("dateTo") || undefined}
+                            autoSubmit
+                            submitFunction={handleSubmit(onFilterSubmit)}
+                            size="small"
+                        />
+                        <DatePickerComponent
+                            formFieldName="dateTo"
+                            control={control}
+                            label={t("general.date.to")}
+                            dateFormat={DATE_FORMAT.replaceAll('-', '.')}
+                            minDate={getValues("dateFrom") || undefined}
                             autoSubmit
                             submitFunction={handleSubmit(onFilterSubmit)}
                             size="small"
