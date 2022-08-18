@@ -1,6 +1,7 @@
-import { useMediaQuery, useTheme } from "@mui/material";
+import { Box, SvgIcon, useMediaQuery, useTheme } from "@mui/material";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
+import Category from "../data/category";
 
 export const useUtils = () => {
     const { t } = useTranslation();
@@ -57,5 +58,18 @@ export const useUtils = () => {
         return t("general.currencyValue", { value: Number(value).toFixed(2).replace('.', ',') });
     };
 
-    return { isSmallScreen, isWithinTimeframe, addDays, durationUntilString, relativeDateString, currencyValueString };
+    const renderCategory = (category: Category): JSX.Element => {
+        return (
+            <Box display="flex" flexWrap="wrap" columnGap="4px" alignItems="center">
+                <SvgIcon sx={{ color: category.iconColor }}>
+                    <path d={category.icon}></path>
+                </SvgIcon>
+                <span>
+                    { t("categories." + category.keyword) }
+                </span>
+            </Box>
+        );
+    }
+
+    return { isSmallScreen, isWithinTimeframe, addDays, durationUntilString, relativeDateString, currencyValueString, renderCategory };
 }

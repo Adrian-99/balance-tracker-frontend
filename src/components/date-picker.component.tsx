@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { SxProps, TextField, Theme } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import moment from "moment";
 import { Control, Controller, Validate } from "react-hook-form";
@@ -14,10 +14,11 @@ interface IProps {
     autoSubmit?: boolean;
     submitFunction?: () => void;
     size?: "medium" | "small";
+    sx?: SxProps<Theme>;
 }
 
 const DatePickerComponent: React.FC<IProps> = ({ formFieldName,control, label, dateFormat, minDate, maxDate,
-        autoSubmit, submitFunction, size }) => {
+        autoSubmit, submitFunction, size, sx }) => {
     const { t } = useTranslation();
 
     const translatedDateFormat = dateFormat.replaceAll('Y', t("general.date.formatLetters.year"))
@@ -56,8 +57,9 @@ const DatePickerComponent: React.FC<IProps> = ({ formFieldName,control, label, d
                     onAccept={() => triggerAutoSubmit()}
                     renderInput={props => 
                         <TextField
-                            size={size || "medium"}
                             {...props}
+                            size={size || "medium"}
+                            sx={sx}
                             inputProps={{
                                 ...props.inputProps,
                                 placeholder: translatedDateFormat

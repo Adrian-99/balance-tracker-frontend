@@ -1,16 +1,17 @@
 import { Search as SearchIcon } from "@mui/icons-material";
-import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Tooltip } from "@mui/material";
+import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, SxProps, Theme, Tooltip } from "@mui/material";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 interface IProps {
-    label: string,
-    useFormRegister: UseFormRegisterReturn,
-    onSubmit: () => void,
-    size?: "small" | "medium"
+    label: string;
+    useFormRegister: UseFormRegisterReturn;
+    onSubmit: () => void;
+    size?: "small" | "medium";
+    sx?: SxProps<Theme>;
 }
 
-const SearchFieldComponent: React.FC<IProps> = ({ label, useFormRegister, onSubmit, size }) => {
+const SearchFieldComponent: React.FC<IProps> = ({ label, useFormRegister, onSubmit, size, sx }) => {
     const { t } = useTranslation();
 
     return (
@@ -33,6 +34,7 @@ const SearchFieldComponent: React.FC<IProps> = ({ label, useFormRegister, onSubm
                 }
                 label={label}
                 size={size}
+                sx={sx}
             />
         </FormControl>
     );

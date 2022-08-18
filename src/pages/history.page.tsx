@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
+import CategorySelectComponent from "../components/category-select-component";
 import DatePickerComponent from "../components/date-picker.component";
 import PageCardComponent from "../components/page-card.component";
 import SearchFieldComponent from "../components/search-field.component";
@@ -29,7 +30,7 @@ const HistoryPage: React.FC = () => {
     const { getAllCategories } = useCategoryService();
     const { getEntriesPaged } = useEntryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
-    const { relativeDateString, currencyValueString } = useUtils();
+    const { relativeDateString, currencyValueString, renderCategory } = useUtils();
 
     const THEME = createTheme(useTheme(), plPL);
 
@@ -105,6 +106,7 @@ const HistoryPage: React.FC = () => {
         setValue("searchValue", params.searchValue);
         setValue("dateFrom", params.dateFrom);
         setValue("dateTo", params.dateTo);
+        setValue("categoriesKeywords", params.categoriesKeywords);
 
         setIsFilterSet(
             params.searchValue !== null ||
@@ -192,16 +194,7 @@ const HistoryPage: React.FC = () => {
     const showCategory = (categoryKeyword: string): JSX.Element => {
         let category = categories.find(c => c.keyword === categoryKeyword);
         if (category) {
-            return (
-                <Box display="flex" flexWrap="wrap" columnGap="4px" alignItems="center">
-                    <SvgIcon sx={{ color: category.iconColor }}>
-                        <path d={category.icon}></path>
-                    </SvgIcon>
-                    <span>
-                        { t("categories." + category.keyword) }
-                    </span>
-                </Box>
-            );
+            return renderCategory(category);
         } else {
             return <Box>—</Box>;
         }
@@ -217,6 +210,7 @@ const HistoryPage: React.FC = () => {
                             useFormRegister={register("searchValue")}
                             onSubmit={handleSubmit(onFilterSubmit)}
                             size="small"
+                            sx={{ width: "200px" }}
                         />
                         <DatePickerComponent
                             formFieldName="dateFrom"
@@ -227,6 +221,7 @@ const HistoryPage: React.FC = () => {
                             autoSubmit
                             submitFunction={handleSubmit(onFilterSubmit)}
                             size="small"
+                            sx={{ width: "200px" }}
                         />
                         <DatePickerComponent
                             formFieldName="dateTo"
@@ -237,6 +232,18 @@ const HistoryPage: React.FC = () => {
                             autoSubmit
                             submitFunction={handleSubmit(onFilterSubmit)}
                             size="small"
+                            sx={{ width: "200px" }}
+                        />
+                        <CategorySelectComponent
+                            formFieldName="categoriesKeywords"
+                            control={control}
+                            label={t("general.categories")}
+                            categories={categories}
+                            multiple
+                            autoSubmit
+                            submitFunction={handleSubmit(onFilterSubmit)}
+                            size="small"
+                            sx={{ minWidth: "250px", maxWidth: "400px" }}
                         />
                         <Button type="submit" sx={{ display: "none" }}></Button>
                     </Box>

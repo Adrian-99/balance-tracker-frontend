@@ -50,7 +50,8 @@
                 "day": "D"
             }
         },
-        "currencyValue": "{{value}} zł"
+        "currencyValue": "{{value}} zł",
+        "categories": "Kategorie"
     },
 
     "menu": {
