@@ -1,5 +1,5 @@
 import { KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
-import { Button, Chip, Collapse, createTheme, IconButton, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
+import { Button, Chip, Collapse, createTheme, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import { Box } from "@mui/system";
 import moment from "moment";
@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
-import CategorySelectComponent from "../components/category-select-component";
+import CategorySelectComponent from "../components/autocomplete/category-select.component";
+import TagSelectComponent from "../components/autocomplete/tag-select.component";
 import DatePickerComponent from "../components/date-picker.component";
 import PageCardComponent from "../components/page-card.component";
 import SearchFieldComponent from "../components/search-field.component";
@@ -19,15 +20,18 @@ import Entry from "../data/entry";
 import EntryFilter from "../data/entry-filter";
 import Page from "../data/page";
 import Pageable from "../data/pageable";
+import Tag from "../data/tag";
 import { useCategoryService } from "../hooks/category-service.hook";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useEntryService } from "../hooks/entry-service.hook";
+import { useTagService } from "../hooks/tag-service.hook";
 import { useUtils } from "../hooks/utils.hook";
 
 const HistoryPage: React.FC = () => {
     const { t } = useTranslation();
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm<EntryFilter>();
     const { getAllCategories } = useCategoryService();
+    const { getAllTags } = useTagService();
     const { getEntriesPaged } = useEntryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
     const { relativeDateString, currencyValueString, renderCategory } = useUtils();
@@ -43,7 +47,7 @@ const HistoryPage: React.FC = () => {
     const DATE_FROM = "dateFrom";
     const DATE_TO = "dateTo";
     const CATEGORIES_KEYWORDS = "categoriesKeywords";
-    const TAG_NAMES = "tagNames";
+    const TAGS_NAMES = "tagsNames";
     
     const [searchParams, setSearchParams] = useSearchParams();
     const [awaitingResponse, setAwaitingResponse] = useState<boolean>(false);
@@ -57,10 +61,11 @@ const HistoryPage: React.FC = () => {
         dateFrom: null,
         dateTo: null,
         categoriesKeywords: [],
-        tagNames: []
+        tagsNames: []
     });
 
     const [categories, setCategories] = useState<Category[]>([]);
+    const [tags, setTags] = useState<Tag[]>([]);
     const [entriesPage, setEntriesPage] = useState<Page<Entry> | undefined>(undefined);
     const [expandedRows, setExapndedRows] = useState<boolean[]>([]);
 
@@ -68,6 +73,14 @@ const HistoryPage: React.FC = () => {
         getAllCategories()
             .then(response => {
                 setCategories(response.data);
+            })
+            .catch(error => {
+                errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+            });
+        
+        getAllTags()
+            .then(response => {
+                setTags(response.data);
             })
             .catch(error => {
                 errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
@@ -100,20 +113,21 @@ const HistoryPage: React.FC = () => {
             dateFrom: dateFromString ? moment(dateFromString, DATE_FORMAT).toDate() : null,
             dateTo: dateToString ? moment(dateToString, DATE_FORMAT).toDate() : null,
             categoriesKeywords: searchParams.get(CATEGORIES_KEYWORDS)?.split(',') || [],
-            tagNames: searchParams.get(TAG_NAMES)?.split(',') || []
+            tagsNames: searchParams.get(TAGS_NAMES)?.split(',') || []
         };
 
         setValue("searchValue", params.searchValue);
         setValue("dateFrom", params.dateFrom);
         setValue("dateTo", params.dateTo);
         setValue("categoriesKeywords", params.categoriesKeywords);
+        setValue("tagsNames", params.tagsNames);
 
         setIsFilterSet(
             params.searchValue !== null ||
             params.dateFrom !== null ||
             params.dateTo !== null ||
             params.categoriesKeywords.length > 0 ||
-            params.tagNames.length > 0
+            params.tagsNames.length > 0
         );
 
         if (sortByCorrect) {
@@ -168,7 +182,7 @@ const HistoryPage: React.FC = () => {
             dateFrom: null,
             dateTo: null,
             categoriesKeywords: [],
-            tagNames: []
+            tagsNames: []
         });
     }
 
@@ -181,7 +195,7 @@ const HistoryPage: React.FC = () => {
             ...(newParams.dateFrom && { [DATE_FROM]: moment(newParams.dateFrom).format(DATE_FORMAT) }),
             ...(newParams.dateTo && { [DATE_TO]: moment(newParams.dateTo).format(DATE_FORMAT) }),
             ...(newParams.categoriesKeywords.length && { [CATEGORIES_KEYWORDS]: newParams.categoriesKeywords.join(',') }),
-            ...(newParams.tagNames.length && { [TAG_NAMES]: newParams.tagNames.join(',') }),
+            ...(newParams.tagsNames.length && { [TAGS_NAMES]: newParams.tagsNames.join(',') }),
         });
     }
 
@@ -239,6 +253,17 @@ const HistoryPage: React.FC = () => {
                             control={control}
                             label={t("general.categories")}
                             categories={categories}
+                            multiple
+                            autoSubmit
+                            submitFunction={handleSubmit(onFilterSubmit)}
+                            size="small"
+                            sx={{ minWidth: "250px", maxWidth: "400px" }}
+                        />
+                        <TagSelectComponent
+                            formFieldName="tagsNames"
+                            control={control}
+                            label={t("general.tags")}
+                            tags={tags}
                             multiple
                             autoSubmit
                             submitFunction={handleSubmit(onFilterSubmit)}
@@ -318,7 +343,7 @@ const HistoryPage: React.FC = () => {
                                             <TableCell>
                                                 { entry.tags.length ?
                                                     entry.tags.map(tag =>
-                                                        <Chip key={tag} size="small" label={tag}/>
+                                                        <Chip key={tag.name} size="small" label={tag.name}/>
                                                     )
                                                 :
                                                     '—'

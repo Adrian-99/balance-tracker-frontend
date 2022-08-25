@@ -20,7 +20,7 @@ export const useEntryService = () => {
             dateFrom: parameters.dateFrom !== null ? moment(parameters.dateFrom).format(DATE_FORMAT) : null,
             dateTo: parameters.dateTo !== null ? moment(parameters.dateTo).format(DATE_FORMAT) : null,
             categoriesKeywords: parameters.categoriesKeywords?.join(','),
-            tagNames: parameters.tagNames?.join(',')
+            tagsNames: parameters.tagsNames?.join(',')
         }
         return http.get<Page<Entry>>("/entry", { params })
             .then(response => response.data);

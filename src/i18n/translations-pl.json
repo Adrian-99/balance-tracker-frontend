@@ -51,7 +51,8 @@
             }
         },
         "currencyValue": "{{value}} zł",
-        "categories": "Kategorie"
+        "categories": "Kategorie",
+        "tags": "Tagi"
     },
 
     "menu": {

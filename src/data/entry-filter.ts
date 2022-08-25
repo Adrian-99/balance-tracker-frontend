@@ -5,5 +5,5 @@ export default interface EntryFilter {
     dateFrom: Date | null;
     dateTo: Date | null;
     categoriesKeywords: string[];
-    tagNames: string[];
+    tagsNames: string[];
 }
