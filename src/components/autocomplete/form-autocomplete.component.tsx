@@ -2,19 +2,23 @@ import { Autocomplete, Checkbox, Chip, createTheme, SxProps, TextField, Theme, T
 import { plPL } from "@mui/material/locale";
 import { Control, Controller } from "react-hook-form";
 
-interface IProps<T> {
+export interface FormAutocompleteProps<T> {
     formFieldName: string;
     control: Control<any, any>;
     label: string;
     options: T[];
-    renderOption: (option: T) => JSX.Element;
-    getOptionLabel: (option: T) => string;
-    getOptionValue: (option: T) => any;
     multiple?: boolean;
     autoSubmit?: boolean;
     submitFunction?: () => void;
     size?: "small" | "medium";
+    fullWidth?: boolean;
     sx?: SxProps<Theme>;
+}
+
+interface IProps<T> extends FormAutocompleteProps<T> {
+    renderOption: (option: T) => JSX.Element;
+    getOptionLabel: (option: T) => string;
+    getOptionValue: (option: T) => any;
 }
 
 const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>) => {
@@ -52,6 +56,7 @@ const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>)
                         limitTags={2}
                         getLimitTagsText={more => <Chip label={`+${more}`} size={componentProps.size} />}
                         size={componentProps.size}
+                        fullWidth={componentProps.fullWidth}
                         sx={componentProps.sx}
                         value={
                             componentProps.options.filter(o => Array.isArray(value) ?

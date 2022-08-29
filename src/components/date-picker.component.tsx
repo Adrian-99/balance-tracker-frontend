@@ -14,52 +14,53 @@ interface IProps {
     autoSubmit?: boolean;
     submitFunction?: () => void;
     size?: "medium" | "small";
+    fullWidth?: boolean;
     sx?: SxProps<Theme>;
 }
 
-const DatePickerComponent: React.FC<IProps> = ({ formFieldName,control, label, dateFormat, minDate, maxDate,
-        autoSubmit, submitFunction, size, sx }) => {
+const DatePickerComponent: React.FC<IProps> = componentProps => {
     const { t } = useTranslation();
 
-    const translatedDateFormat = dateFormat.replaceAll('Y', t("general.date.formatLetters.year"))
+    const translatedDateFormat = componentProps.dateFormat.replaceAll('Y', t("general.date.formatLetters.year"))
         .replaceAll('M', t("general.date.formatLetters.month"))
         .replaceAll('D', t("general.date.formatLetters.day"));
 
     const getDateValidationRules = (): Record<string, Validate<Date>> => {
         return {
-            validDate: value => value === null || moment(value, dateFormat, true).isValid() || t("validation.incorrectDate") as string,
-            ...(minDate && {
-                pastMinDate: value => value === null || moment(value).isSameOrAfter(minDate) ||
-                    t("validation.minDate", { date: moment(minDate).format(dateFormat) }) as string
+            validDate: value => value === null || moment(value, componentProps.dateFormat, true).isValid() || t("validation.incorrectDate") as string,
+            ...(componentProps.minDate && {
+                pastMinDate: value => value === null || moment(value).isSameOrAfter(componentProps.minDate) ||
+                    t("validation.minDate", { date: moment(componentProps.minDate).format(componentProps.dateFormat) }) as string
             }),
-            ...(maxDate && {
-                beforeMaxDate: value => value === null || moment(value).isSameOrBefore(maxDate) ||
-                    t("validation.maxDate", { date: moment(maxDate).format(dateFormat) }) as string
+            ...(componentProps.maxDate && {
+                beforeMaxDate: value => value === null || moment(value).isSameOrBefore(componentProps.maxDate) ||
+                    t("validation.maxDate", { date: moment(componentProps.maxDate).format(componentProps.dateFormat) }) as string
             })
         }
     }
 
     const triggerAutoSubmit = () => {
-        if (autoSubmit && submitFunction) {
-            submitFunction();
+        if (componentProps.autoSubmit && componentProps.submitFunction) {
+            componentProps.submitFunction();
         }
     }
 
     return (
         <Controller
-            name={formFieldName}
-            control={control}
+            name={componentProps.formFieldName}
+            control={componentProps.control}
             rules={{ validate: getDateValidationRules() }}
             render={({ field: { value, onChange }, fieldState: { error } }) =>
                 <DatePicker
-                    label={label}
+                    label={componentProps.label}
                     onChange={newValue => onChange(newValue?.toString().length ? moment(newValue).toDate() : null)}
                     onAccept={() => triggerAutoSubmit()}
                     renderInput={props => 
                         <TextField
                             {...props}
-                            size={size || "medium"}
-                            sx={sx}
+                            size={componentProps.size || "medium"}
+                            fullWidth={componentProps.fullWidth}
+                            sx={componentProps.sx}
                             inputProps={{
                                 ...props.inputProps,
                                 placeholder: translatedDateFormat
@@ -68,7 +69,7 @@ const DatePickerComponent: React.FC<IProps> = ({ formFieldName,control, label, d
                                 if (props.onChange) {
                                     props.onChange(event);
                                 }
-                                let parsedDate = moment(event.target.value, dateFormat, true);
+                                let parsedDate = moment(event.target.value, componentProps.dateFormat, true);
                                 if (parsedDate.isValid()) {
                                     onChange(parsedDate.toDate());
                                     triggerAutoSubmit();
@@ -81,9 +82,9 @@ const DatePickerComponent: React.FC<IProps> = ({ formFieldName,control, label, d
                         />
                     }
                     value={value}
-                    minDate={minDate ? moment(minDate) : undefined}
-                    maxDate={maxDate ? moment(maxDate) : undefined}
-                    inputFormat={dateFormat}
+                    minDate={componentProps.minDate ? moment(componentProps.minDate) : undefined}
+                    maxDate={componentProps.maxDate ? moment(componentProps.maxDate) : undefined}
+                    inputFormat={componentProps.dateFormat}
                 />
             }
         />

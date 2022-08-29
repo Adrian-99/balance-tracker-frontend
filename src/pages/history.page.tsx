@@ -1,5 +1,5 @@
-import { KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
-import { Button, Chip, Collapse, createTheme, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
+import { ExpandMore as ExpandMoreIcon, KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, Collapse, createTheme, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import { Box } from "@mui/system";
 import moment from "moment";
@@ -34,7 +34,7 @@ const HistoryPage: React.FC = () => {
     const { getAllTags } = useTagService();
     const { getEntriesPaged } = useEntryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
-    const { relativeDateString, currencyValueString, renderCategory } = useUtils();
+    const { isSmallScreen, isExtraSmallScreen, relativeDateString, currencyValueString, renderCategory } = useUtils();
 
     const THEME = createTheme(useTheme(), plPL);
 
@@ -214,65 +214,96 @@ const HistoryPage: React.FC = () => {
         }
     }
 
-    return (
-        <PageCardComponent title={t("pages.history.title")} width={12}>
-            <Box display="flex" gap="8px" alignItems="center">
-                <form onSubmit={handleSubmit(onFilterSubmit)} autoComplete="off">
-                    <Box display="flex" flexWrap="wrap" gap="8px" alignItems="flex-start">
-                        <SearchFieldComponent
-                            label={t("general.search")}
-                            useFormRegister={register("searchValue")}
-                            onSubmit={handleSubmit(onFilterSubmit)}
-                            size="small"
-                            sx={{ width: "200px" }}
-                        />
-                        <DatePickerComponent
-                            formFieldName="dateFrom"
-                            control={control}
-                            label={t("general.date.from")}
-                            dateFormat={DATE_FORMAT.replaceAll('-', '.')}
-                            maxDate={getValues("dateTo") || undefined}
-                            autoSubmit
-                            submitFunction={handleSubmit(onFilterSubmit)}
-                            size="small"
-                            sx={{ width: "200px" }}
-                        />
-                        <DatePickerComponent
-                            formFieldName="dateTo"
-                            control={control}
-                            label={t("general.date.to")}
-                            dateFormat={DATE_FORMAT.replaceAll('-', '.')}
-                            minDate={getValues("dateFrom") || undefined}
-                            autoSubmit
-                            submitFunction={handleSubmit(onFilterSubmit)}
-                            size="small"
-                            sx={{ width: "200px" }}
-                        />
-                        <CategorySelectComponent
-                            formFieldName="categoriesKeywords"
-                            control={control}
-                            label={t("general.categories")}
-                            categories={categories}
-                            multiple
-                            autoSubmit
-                            submitFunction={handleSubmit(onFilterSubmit)}
-                            size="small"
-                            sx={{ minWidth: "250px", maxWidth: "400px" }}
-                        />
+    const showFiltersForm = (horizontally: boolean): JSX.Element => {
+        return (
+            <form onSubmit={handleSubmit(onFilterSubmit)} autoComplete="off">
+                <Box display="flex" flexWrap="wrap" gap="8px" alignItems="flex-start">
+                    <SearchFieldComponent
+                        label={t("general.search")}
+                        useFormRegister={register("searchValue")}
+                        onSubmit={handleSubmit(onFilterSubmit)}
+                        size="small"
+                        fullWidth={!horizontally}
+                        sx={{ ...(horizontally && { width: "200px" }) }}
+                    />
+                    <DatePickerComponent
+                        formFieldName="dateFrom"
+                        control={control}
+                        label={t("general.date.from")}
+                        dateFormat={DATE_FORMAT.replaceAll('-', '.')}
+                        maxDate={getValues("dateTo") || undefined}
+                        autoSubmit
+                        submitFunction={handleSubmit(onFilterSubmit)}
+                        size="small"
+                        fullWidth={!horizontally}
+                        sx={{ ...(horizontally && { width: "200px" }) }}
+                    />
+                    <DatePickerComponent
+                        formFieldName="dateTo"
+                        control={control}
+                        label={t("general.date.to")}
+                        dateFormat={DATE_FORMAT.replaceAll('-', '.')}
+                        minDate={getValues("dateFrom") || undefined}
+                        autoSubmit
+                        submitFunction={handleSubmit(onFilterSubmit)}
+                        size="small"
+                        fullWidth={!horizontally}
+                        sx={{ ...(horizontally && { width: "200px" }) }}
+                    />
+                    <CategorySelectComponent
+                        formFieldName="categoriesKeywords"
+                        control={control}
+                        label={t("general.categories")}
+                        options={categories}
+                        multiple
+                        autoSubmit
+                        submitFunction={handleSubmit(onFilterSubmit)}
+                        size="small"
+                        fullWidth={!horizontally}
+                        sx={{ ...(horizontally && { minWidth: "250px", maxWidth: "400px" }) }}
+                    />
+                    { tags.length > 0 &&
                         <TagSelectComponent
                             formFieldName="tagsNames"
                             control={control}
                             label={t("general.tags")}
-                            tags={tags}
+                            options={tags}
                             multiple
                             autoSubmit
                             submitFunction={handleSubmit(onFilterSubmit)}
                             size="small"
-                            sx={{ minWidth: "250px", maxWidth: "400px" }}
+                            fullWidth={!horizontally}
+                            sx={{ ...(horizontally && { minWidth: "250px", maxWidth: "400px" }) }}
                         />
-                        <Button type="submit" sx={{ display: "none" }}></Button>
-                    </Box>
-                </form>
+                    }
+                    <Button type="submit" sx={{ display: "none" }}></Button>
+                </Box>
+            </form>
+        );
+    }
+
+    return (
+        <PageCardComponent title={t("pages.history.title")} width={12}>
+            <Box display="flex" flexDirection={isSmallScreen ? "column" : "row"} gap="8px" alignItems="center">
+                { isSmallScreen ?
+                    <Accordion elevation={0} sx={{ border: "solid 1px", borderColor: "grey.300" }}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Stack direction="row" spacing={1}>
+                                <Typography>
+                                    { t("general.filters") }
+                                </Typography>
+                                {/* <Typography color="text.secondary">
+                                    Active filters here
+                                </Typography> */}
+                            </Stack>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            { showFiltersForm(false) }
+                        </AccordionDetails>
+                    </Accordion>
+                    :
+                    showFiltersForm(true)
+                }
                 { isFilterSet &&
                     <Button variant="text" onClick={clearFilter}>
                         { t("general.clearFilters") }

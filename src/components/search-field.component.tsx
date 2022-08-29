@@ -8,14 +8,15 @@ interface IProps {
     useFormRegister: UseFormRegisterReturn;
     onSubmit: () => void;
     size?: "small" | "medium";
+    fullWidth?: boolean;
     sx?: SxProps<Theme>;
 }
 
-const SearchFieldComponent: React.FC<IProps> = ({ label, useFormRegister, onSubmit, size, sx }) => {
+const SearchFieldComponent: React.FC<IProps> = ({ label, useFormRegister, onSubmit, size, fullWidth, sx }) => {
     const { t } = useTranslation();
 
     return (
-        <FormControl variant="outlined" size={size}>
+        <FormControl variant="outlined" size={size} fullWidth={fullWidth}>
             <InputLabel>{label}</InputLabel>
             <OutlinedInput
                 type="text"
