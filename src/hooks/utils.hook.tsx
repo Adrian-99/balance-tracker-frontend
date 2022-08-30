@@ -6,6 +6,7 @@ import Category from "../data/category";
 export const useUtils = () => {
     const { t } = useTranslation();
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down("md"));
+    const isExtraSmallScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
     const isWithinTimeframe = (from: Date, timeframeDays: number): boolean => {
         var duration = moment.duration(moment(Date.now()).diff(from));
@@ -71,5 +72,8 @@ export const useUtils = () => {
         );
     }
 
-    return { isSmallScreen, isWithinTimeframe, addDays, durationUntilString, relativeDateString, currencyValueString, renderCategory };
+    return { 
+        isSmallScreen, isExtraSmallScreen, isWithinTimeframe, addDays, durationUntilString,
+        relativeDateString, currencyValueString, renderCategory
+    };
 }

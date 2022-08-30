@@ -1,7 +1,6 @@
 import { ExpandMore as ExpandMoreIcon, KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, Collapse, createTheme, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Collapse, createTheme, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
-import { Box } from "@mui/system";
 import moment from "moment";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -205,12 +204,32 @@ const HistoryPage: React.FC = () => {
         setExapndedRows(expandedRowsCopy);
     }
 
+    const tableWidthColspan = (): number => {
+        if (isExtraSmallScreen) {
+            return 4;
+        } else if (isSmallScreen) {
+            return 5;
+        } else {
+            return 6;
+        }
+    }
+
     const showCategory = (categoryKeyword: string): JSX.Element => {
         let category = categories.find(c => c.keyword === categoryKeyword);
         if (category) {
             return renderCategory(category);
         } else {
             return <Box>—</Box>;
+        }
+    }
+
+    const showTags = (tags: Tag[]): JSX.Element[] => {
+        if (tags.length) {
+            return tags.map(tag => 
+                <Chip key={tag.name} size="small" label={tag.name}/>
+            );
+        } else {
+            return [ <span>—</span> ];
         }
     }
 
@@ -311,7 +330,7 @@ const HistoryPage: React.FC = () => {
                 }
             </Box>
             <TableContainer>
-                <Table style={{ tableLayout: "fixed" }}>
+                <Table style={{ tableLayout: "fixed" }} size={isExtraSmallScreen ? "small" : "medium"}>
                     <TableHead>
                         <TableRow>
                             <TableHeaderComponent
@@ -330,14 +349,18 @@ const HistoryPage: React.FC = () => {
                                 sortDescending={entryParams.sortDescending}
                                 onSortChange={onSortChange}
                             />
-                            <TableHeaderComponent
-                                columnKey="category"
-                                columnLabel={t("pages.history.header.category")}
-                            />
-                            <TableHeaderComponent
-                                columnKey="tags"
-                                columnLabel={t("pages.history.header.tags")}
-                            />
+                            { !isExtraSmallScreen &&
+                                <TableHeaderComponent
+                                    columnKey="category"
+                                    columnLabel={t("pages.history.header.category")}
+                                />
+                            }
+                            { !isSmallScreen &&
+                                <TableHeaderComponent
+                                    columnKey="tags"
+                                    columnLabel={t("pages.history.header.tags")}
+                                />
+                            }
                             <TableHeaderComponent
                                 columnKey="value"
                                 columnLabel={t("pages.history.header.value")}
@@ -347,8 +370,7 @@ const HistoryPage: React.FC = () => {
                                 sortDescending={entryParams.sortDescending}
                                 onSortChange={onSortChange}
                             />
-                            <TableCell key="expandDetailsButton" style={{ width: "32px", paddingRight: "4px" }} />
-                            <TableCell key="moreButton" style={{ width: "32px", paddingLeft: "4px" }} />
+                            <TableCell key="actionButtons" style={isSmallScreen ? { width: "34px" } : { width: "68px" }} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -356,7 +378,7 @@ const HistoryPage: React.FC = () => {
                             React.Children.toArray(
                                 entriesPage.data.map((entry, index) =>
                                     <>
-                                        <TableRow sx={{ '& > *': { borderBottom: 'none' } }}>
+                                        <TableRow sx={{ '& > *': { borderBottom: 'none !important' } }}>
                                             <TableCell>
                                                 <Tooltip
                                                     title={moment(entry.date).format("YYYY.MM.DD HH:mm:ss")}
@@ -370,39 +392,62 @@ const HistoryPage: React.FC = () => {
                                                 </Tooltip>
                                             </TableCell>
                                             <TableCell>{entry.name}</TableCell>
-                                            <TableCell>{ showCategory(entry.categoryKeyword) }</TableCell>
-                                            <TableCell>
-                                                { entry.tags.length ?
-                                                    entry.tags.map(tag =>
-                                                        <Chip key={tag.name} size="small" label={tag.name}/>
-                                                    )
-                                                :
-                                                    '—'
-                                                }
-                                            </TableCell>
-                                            <TableCell align="right" style={{ borderBottom: "none" }}>
-                                                { currencyValueString(entry.value) }
-                                            </TableCell>
-                                            <TableCell style={{ width: "32px", padding: "0px 4px 0px 16px" }}>
+                                            { !isExtraSmallScreen &&
+                                                <TableCell>{ showCategory(entry.categoryKeyword) }</TableCell>
+                                            }
+                                            { !isSmallScreen &&
+                                                <TableCell>{ showTags(entry.tags) }</TableCell>
+                                            }
+                                            <TableCell align="right">{ currencyValueString(entry.value) }</TableCell>
+                                            <TableCell style={isSmallScreen ? { width: "34px" } : { width: "68px" }}>
                                                 <IconButton size="small" onClick={() => expandRow(index)}>
                                                     { expandedRows[index] ? <ArrowUpIcon /> : <ArrowDownIcon /> }
                                                 </IconButton>
-                                            </TableCell>
-                                            <TableCell style={{ width: "32px", padding: "0px 16px 0px 4px" }}>
-                                                <IconButton size="small">
-                                                    <MoreIcon />
-                                                </IconButton>
+                                                { !isSmallScreen &&
+                                                    <IconButton size="small">
+                                                        <MoreIcon />
+                                                    </IconButton>
+                                                }
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell colSpan={7} style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                            <TableCell colSpan={tableWidthColspan()} style={{ paddingTop: 0, paddingBottom: 0 }}>
                                                 <Collapse in={expandedRows[index]} timeout="auto" unmountOnExit>
-                                                    <Typography variant="subtitle2">
-                                                        { t("pages.history.header.description") }
-                                                    </Typography>
-                                                    <Typography variant="body2" style={{ paddingBottom: "16px" }}>
-                                                        { entry.description || '—' }
-                                                    </Typography>
+                                                    <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                                                        <Box>
+                                                            { isExtraSmallScreen &&
+                                                                <>
+                                                                    <Typography variant="subtitle2">
+                                                                        { t("pages.history.header.category") }
+                                                                    </Typography>
+                                                                    <Typography variant="body2" style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
+                                                                        { showCategory(entry.categoryKeyword) }
+                                                                    </Typography>
+                                                                </>
+                                                            }
+                                                            { isSmallScreen &&
+                                                                <>
+                                                                    <Typography variant="subtitle2">
+                                                                        { t("pages.history.header.tags") }
+                                                                    </Typography>
+                                                                    <Typography variant="body2" style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
+                                                                        { showTags(entry.tags) }
+                                                                    </Typography>
+                                                                </>
+                                                            }
+                                                            <Typography variant="subtitle2">
+                                                                { t("pages.history.header.description") }
+                                                            </Typography>
+                                                            <Typography variant="body2" style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
+                                                                { entry.description || '—' }
+                                                            </Typography>
+                                                        </Box>
+                                                        { isSmallScreen &&
+                                                            <IconButton size="small">
+                                                                <MoreIcon />
+                                                            </IconButton>
+                                                        }
+                                                    </Box>
                                                 </Collapse>
                                             </TableCell>
                                         </TableRow>
@@ -411,7 +456,7 @@ const HistoryPage: React.FC = () => {
                             )
                             :
                             <TableRow>
-                                <TableCell colSpan={7}>
+                                <TableCell colSpan={tableWidthColspan()}>
                                     <SpinnerOrNoDataComponent showSpinner={awaitingResponse} showNoData={!entriesPage?.data.length} />
                                 </TableCell>
                             </TableRow>
@@ -424,8 +469,8 @@ const HistoryPage: React.FC = () => {
                         count={entriesPage?.totalCount || 0}
                         page={entryParams.pageNumber - 1}
                         rowsPerPage={entryParams.pageSize}
-                        showFirstButton={true}
-                        showLastButton={true}
+                        showFirstButton={!isExtraSmallScreen}
+                        showLastButton={!isExtraSmallScreen}
                         onPageChange={(_event, page) => onPageChange(page)}
                         onRowsPerPageChange={(event) => onRowsPerPageChange(Number.parseInt(event.target.value))}
                     />

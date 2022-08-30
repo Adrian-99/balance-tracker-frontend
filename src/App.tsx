@@ -22,7 +22,16 @@ const theme = createTheme(
         //   primary: {
         //     main: "#ff0000"
         //   }
-        // }
+        // },
+        components: {
+            MuiTableCell: {
+                styleOverrides: {
+                    root: ({ ownerState }) => ({
+                        ...(ownerState.size === "small" && { padding: "6px 2px" })
+                    })
+                }
+            }
+        }
     },
     plPL
 );
