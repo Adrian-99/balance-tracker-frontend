@@ -2,14 +2,15 @@ import { ExpandMore as ExpandMoreIcon, KeyboardArrowDown as ArrowDownIcon, Keybo
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Collapse, createTheme, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import moment from "moment";
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
+import { ApplicationContext } from "../components/application-context.provider";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
 import TagSelectComponent from "../components/autocomplete/tag-select.component";
-import DatePickerComponent from "../components/date-picker.component";
+import DateTimePickerComponent from "../components/date-time-picker.component";
 import PageCardComponent from "../components/page-card.component";
 import SearchFieldComponent from "../components/search-field.component";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
@@ -25,10 +26,13 @@ import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useEntryService } from "../hooks/entry-service.hook";
 import { useTagService } from "../hooks/tag-service.hook";
 import { useUtils } from "../hooks/utils.hook";
+import { CustomFormModalCloseReason } from "../modals/custom-form.modal";
+import EditEntryModal from "../modals/edit-entry.modal";
 
 const HistoryPage: React.FC = () => {
     const { t } = useTranslation();
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm<EntryFilter>();
+    const { user } = useContext(ApplicationContext);
     const { getAllCategories } = useCategoryService();
     const { getAllTags } = useTagService();
     const { getEntriesPaged } = useEntryService();
@@ -47,6 +51,10 @@ const HistoryPage: React.FC = () => {
     const DATE_TO = "dateTo";
     const CATEGORIES_KEYWORDS = "categoriesKeywords";
     const TAGS_NAMES = "tagsNames";
+
+    const ACTIONS = user?.isEmailVerified ? 
+        [ { name: t("pages.history.addEntry"), action: () => openAddEntryModal() } ] :
+        [];
     
     const [searchParams, setSearchParams] = useSearchParams();
     const [awaitingResponse, setAwaitingResponse] = useState<boolean>(false);
@@ -67,6 +75,8 @@ const HistoryPage: React.FC = () => {
     const [tags, setTags] = useState<Tag[]>([]);
     const [entriesPage, setEntriesPage] = useState<Page<Entry> | undefined>(undefined);
     const [expandedRows, setExapndedRows] = useState<boolean[]>([]);
+    const [editEntryModalOpen, setEditEntryModalOpen] = useState(false);
+    const [entryToEdit, setEntryToEdit] = useState<Entry>();
 
     useEffect(() => {
         getAllCategories()
@@ -131,21 +141,25 @@ const HistoryPage: React.FC = () => {
 
         if (sortByCorrect) {
             setEntryParams(params);
-            setAwaitingResponse(true);
-            getEntriesPaged(params)
-                .then(response => {
-                    setEntriesPage(response);
-                    setExapndedRows(new Array<boolean>(response.data.length));
-                    setAwaitingResponse(false);
-                })
-                .catch(error => {
-                    errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
-                    setAwaitingResponse(false);
-                });
+            getEntries(params);
         } else {
             updateQueryParams(params);
         }
     }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const getEntries = (params?: Pageable & EntryFilter) => {
+        setAwaitingResponse(true);
+        getEntriesPaged(params || entryParams)
+            .then(response => {
+                setEntriesPage(response);
+                setExapndedRows(new Array<boolean>(response.data.length));
+                setAwaitingResponse(false);
+            })
+            .catch(error => {
+                errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+                setAwaitingResponse(false);
+            });
+    }
 
     const onSortChange = (sortColumn: string) => {
         if (sortColumn === entryParams.sortBy) {
@@ -198,6 +212,28 @@ const HistoryPage: React.FC = () => {
         });
     }
 
+    const openAddEntryModal = () => {
+        if (!editEntryModalOpen) {
+            setEntryToEdit(undefined);
+            setEditEntryModalOpen(true);
+        }
+    }
+
+    const openEditEntryModal = (entry: Entry) => {
+        if (!editEntryModalOpen) {
+            setEntryToEdit(entry);
+            setEditEntryModalOpen(true);
+        }
+    }
+
+    const onModalClose = (reason: CustomFormModalCloseReason) => {
+        setEntryToEdit(undefined);
+        setEditEntryModalOpen(false);
+        if (reason === "save") {
+            getEntries();
+        }
+    }
+
     const expandRow = (rowIndex: number) => {
         let expandedRowsCopy = new Array(...expandedRows);
         expandedRowsCopy[rowIndex] = !expandedRowsCopy[rowIndex];
@@ -229,7 +265,7 @@ const HistoryPage: React.FC = () => {
                 <Chip key={tag.name} size="small" label={tag.name}/>
             );
         } else {
-            return [ <span>—</span> ];
+            return [ <span key="no-tag">—</span> ];
         }
     }
 
@@ -245,11 +281,12 @@ const HistoryPage: React.FC = () => {
                         fullWidth={!horizontally}
                         sx={{ ...(horizontally && { width: "200px" }) }}
                     />
-                    <DatePickerComponent
+                    <DateTimePickerComponent
+                        type="date"
                         formFieldName="dateFrom"
                         control={control}
                         label={t("general.date.from")}
-                        dateFormat={DATE_FORMAT.replaceAll('-', '.')}
+                        dateTimeFormat={DATE_FORMAT.replaceAll('-', '.')}
                         maxDate={getValues("dateTo") || undefined}
                         autoSubmit
                         submitFunction={handleSubmit(onFilterSubmit)}
@@ -257,11 +294,12 @@ const HistoryPage: React.FC = () => {
                         fullWidth={!horizontally}
                         sx={{ ...(horizontally && { width: "200px" }) }}
                     />
-                    <DatePickerComponent
+                    <DateTimePickerComponent
+                        type="date"
                         formFieldName="dateTo"
                         control={control}
                         label={t("general.date.to")}
-                        dateFormat={DATE_FORMAT.replaceAll('-', '.')}
+                        dateTimeFormat={DATE_FORMAT.replaceAll('-', '.')}
                         minDate={getValues("dateFrom") || undefined}
                         autoSubmit
                         submitFunction={handleSubmit(onFilterSubmit)}
@@ -285,7 +323,7 @@ const HistoryPage: React.FC = () => {
                         <TagSelectComponent
                             formFieldName="tagsNames"
                             control={control}
-                            label={t("general.tags")}
+                            label={t("general.entry.tags")}
                             options={tags}
                             multiple
                             autoSubmit
@@ -302,7 +340,7 @@ const HistoryPage: React.FC = () => {
     }
 
     return (
-        <PageCardComponent title={t("pages.history.title")} width={12}>
+        <PageCardComponent title={t("pages.history.title")} width={12} actions={ACTIONS}>
             <Box display="flex" flexDirection={isSmallScreen ? "column" : "row"} gap="8px" alignItems="center">
                 { isSmallScreen ?
                     <Accordion elevation={0} sx={{ border: "solid 1px", borderColor: "grey.300" }}>
@@ -335,7 +373,7 @@ const HistoryPage: React.FC = () => {
                         <TableRow>
                             <TableHeaderComponent
                                 columnKey="date"
-                                columnLabel={t("pages.history.header.date")}
+                                columnLabel={t("general.entry.date")}
                                 sortable={true}
                                 sortBy={entryParams.sortBy}
                                 sortDescending={entryParams.sortDescending}
@@ -343,7 +381,7 @@ const HistoryPage: React.FC = () => {
                             />
                             <TableHeaderComponent
                                 columnKey="name"
-                                columnLabel={t("pages.history.header.name")}
+                                columnLabel={t("general.entry.name")}
                                 sortable={true}
                                 sortBy={entryParams.sortBy}
                                 sortDescending={entryParams.sortDescending}
@@ -352,18 +390,18 @@ const HistoryPage: React.FC = () => {
                             { !isExtraSmallScreen &&
                                 <TableHeaderComponent
                                     columnKey="category"
-                                    columnLabel={t("pages.history.header.category")}
+                                    columnLabel={t("general.entry.category")}
                                 />
                             }
                             { !isSmallScreen &&
                                 <TableHeaderComponent
                                     columnKey="tags"
-                                    columnLabel={t("pages.history.header.tags")}
+                                    columnLabel={t("general.entry.tags")}
                                 />
                             }
                             <TableHeaderComponent
                                 columnKey="value"
-                                columnLabel={t("pages.history.header.value")}
+                                columnLabel={t("general.entry.value")}
                                 align="right"
                                 sortable={true}
                                 sortBy={entryParams.sortBy}
@@ -418,28 +456,30 @@ const HistoryPage: React.FC = () => {
                                                             { isExtraSmallScreen &&
                                                                 <>
                                                                     <Typography variant="subtitle2">
-                                                                        { t("pages.history.header.category") }
+                                                                        { t("general.entry.category") }
                                                                     </Typography>
-                                                                    <Typography variant="body2" style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
+                                                                    <Box style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
                                                                         { showCategory(entry.categoryKeyword) }
-                                                                    </Typography>
+                                                                    </Box>
                                                                 </>
                                                             }
                                                             { isSmallScreen &&
                                                                 <>
                                                                     <Typography variant="subtitle2">
-                                                                        { t("pages.history.header.tags") }
+                                                                        { t("general.entry.tags") }
                                                                     </Typography>
-                                                                    <Typography variant="body2" style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
+                                                                    <Box style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
                                                                         { showTags(entry.tags) }
-                                                                    </Typography>
+                                                                    </Box>
                                                                 </>
                                                             }
                                                             <Typography variant="subtitle2">
-                                                                { t("pages.history.header.description") }
+                                                                { t("general.entry.description") }
                                                             </Typography>
                                                             <Typography variant="body2" style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
-                                                                { entry.description || '—' }
+                                                                <pre style={{ fontFamily: "inherit", margin: 0 }}>
+                                                                    { entry.description || '—' }
+                                                                </pre>
                                                             </Typography>
                                                         </Box>
                                                         { isSmallScreen &&
@@ -476,6 +516,14 @@ const HistoryPage: React.FC = () => {
                     />
                 </ThemeProvider>
             </TableContainer>
+
+            <EditEntryModal
+                open={editEntryModalOpen}
+                onClose={onModalClose}
+                categories={categories}
+                tags={tags}
+                entry={entryToEdit}
+            />
         </PageCardComponent>
     );
 }

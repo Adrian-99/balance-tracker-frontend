@@ -11,8 +11,8 @@ const CategorySelectComponent: React.FC<FormAutocompleteProps<Category>> = props
         <FormAutocompleteComponent
             {...props}
             renderOption={renderCategory}
-            getOptionLabel={c => t("categories." + c.keyword)}
-            getOptionValue={c => c.keyword}
+            getOptionLabel={c => c !== undefined ? t("categories." + c.keyword) : ""}
+            getOptionValue={c => c !== undefined ? c.keyword : undefined}
         />
     );
 }

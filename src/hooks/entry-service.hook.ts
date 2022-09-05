@@ -1,6 +1,8 @@
 import moment from "moment";
 import { useContext } from "react"
 import { ApplicationContext } from "../components/application-context.provider"
+import ApiResponse from "../data/api-response";
+import EditEntry from "../data/edit-entry";
 import Entry from "../data/entry";
 import EntryFilter from "../data/entry-filter";
 import Page from "../data/page";
@@ -26,5 +28,10 @@ export const useEntryService = () => {
             .then(response => response.data);
     };
 
-    return { getEntriesPaged };
+    const createEntry = (data: EditEntry): Promise<ApiResponse<string>> => {
+        return http.post<ApiResponse<string>>("/entry", data)
+            .then(response => response.data);
+    }
+
+    return { getEntriesPaged, createEntry };
 }

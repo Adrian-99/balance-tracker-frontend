@@ -48,8 +48,15 @@ export const CustomFormModal: React.FC<CustomFormModalProps> = ({
                 </IconButton>
             </DialogTitle>
             {!showSpinner && !showNoData ?
-                <form onSubmit={onSubmit}>
-                    <DialogContent>
+                <form
+                    onSubmit={onSubmit}
+                    style={{
+                        overflowY: "auto",
+                        display: "flex",
+                        flexDirection: "column"
+                    }}
+                >
+                    <DialogContent dividers>
                         {children}
                     </DialogContent>
                     <DialogActions>

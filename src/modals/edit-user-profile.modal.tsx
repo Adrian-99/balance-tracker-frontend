@@ -24,7 +24,7 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
     const { saveUserInfo, userSettings } = useContext(ApplicationContext);
     const { changeUserData } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
-    const { isWithinTimeframe, addDays, durationUntilString } = useUtils();
+    const { isWithinTimeframe, addDays, durationUntilString, areStringsDifferent } = useUtils();
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
     const [disabledUsernameField, setDisabledUsernameField] = useState(false);
@@ -61,13 +61,6 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
     }, [userData, other.open]); // eslint-disable-line react-hooks/exhaustive-deps
     
     const areValuesChanged = () => {
-        const areStringsDifferent = (str1: string | null | undefined, str2: string | null | undefined): boolean => {
-            if ((str1 === null || str1 === undefined || str1 === "") && (str2 === null || str2 === undefined || str2 === "")) {
-                return false;
-            }
-            return str1 !== str2;
-        }
-
         return areStringsDifferent(watchedFields.username, userData?.username) ||
             areStringsDifferent(watchedFields.email, userData?.email) ||
             areStringsDifferent(watchedFields.firstName, userData?.firstName) ||

@@ -1,12 +1,14 @@
 import { Autocomplete, Checkbox, Chip, createTheme, SxProps, TextField, Theme, ThemeProvider, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import { Control, Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 export interface FormAutocompleteProps<T> {
     formFieldName: string;
     control: Control<any, any>;
     label: string;
     options: T[];
+    required?: boolean;
     multiple?: boolean;
     autoSubmit?: boolean;
     submitFunction?: () => void;
@@ -22,6 +24,7 @@ interface IProps<T> extends FormAutocompleteProps<T> {
 }
 
 const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>) => {
+    const { t } = useTranslation();
     const THEME = createTheme(useTheme(), plPL);
 
     const triggerAutoSubmit = () => {
@@ -35,14 +38,23 @@ const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>)
             <Controller
                 name={componentProps.formFieldName}
                 control={componentProps.control}
-                render={({ field: { value, onChange }}) => 
+                rules={{ ...(componentProps.required && { required: t("validation.required") as string })}}
+                render={({ field: { value, onChange }, fieldState: { error }}) => 
                     <Autocomplete
                         options={componentProps.options}
                         multiple={componentProps.multiple}
                         disableCloseOnSelect={componentProps.multiple}
                         autoHighlight
                         renderInput={params =>
-                            <TextField {...params} size={componentProps.size} label={componentProps.label} />
+                            <TextField {...params}
+                                size={componentProps.size}
+                                label={componentProps.required && !componentProps.label.endsWith("*") ?
+                                    componentProps.label + " *" :
+                                    componentProps.label
+                                }
+                                error={error !== undefined}
+                                helperText={error?.message}
+                            />
                         }
                         renderOption={(props, option, { selected }) =>
                             <li {...props}>
@@ -59,18 +71,29 @@ const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>)
                         fullWidth={componentProps.fullWidth}
                         sx={componentProps.sx}
                         value={
-                            componentProps.options.filter(o => Array.isArray(value) ?
-                                value.includes(componentProps.getOptionValue(o)) :
-                                value === componentProps.getOptionValue(o)
-                            )
+                            componentProps.multiple ?
+                                componentProps.options.filter(o => Array.isArray(value) ?
+                                    value.includes(componentProps.getOptionValue(o)) :
+                                    value === componentProps.getOptionValue(o)
+                                ) :
+                                componentProps.options.find(o => value === componentProps.getOptionValue(o)) || null
                         }
                         onChange={(event, value) => {
-                            let convertedValue: string[] = [];
-                            if (value) {
-                                if (Array.isArray(value)) {
-                                    convertedValue = value.map(componentProps.getOptionValue);
+                            let convertedValue: string[] | string | undefined;
+                            if (componentProps.multiple) {
+                                convertedValue = [];
+                                if (value) {
+                                    if (Array.isArray(value)) {
+                                        convertedValue = value.map(componentProps.getOptionValue);
+                                    } else {
+                                        convertedValue.push(componentProps.getOptionValue(value));
+                                    }
+                                }
+                            } else {
+                                if (value && !Array.isArray(value)) {
+                                    convertedValue = componentProps.getOptionValue(value);
                                 } else {
-                                    convertedValue.push(componentProps.getOptionValue(value));
+                                    convertedValue = undefined;
                                 }
                             }
                             onChange({...event, target: {...event.target, value: convertedValue}});

@@ -70,10 +70,21 @@ export const useUtils = () => {
                 </span>
             </Box>
         );
+    };
+
+    const areStringsDifferent = (str1: string | null | undefined, str2: string | null | undefined): boolean => {
+        if ((str1 === null || str1 === undefined || str1 === "") && (str2 === null || str2 === undefined || str2 === "")) {
+            return false;
+        }
+        return str1 !== str2;
+    };
+
+    const areArraysDifferent = (arr1: any[], arr2: any[]): boolean => {
+        return arr1.length === arr2.length && arr1.every(element => arr2.includes(element));
     }
 
     return { 
         isSmallScreen, isExtraSmallScreen, isWithinTimeframe, addDays, durationUntilString,
-        relativeDateString, currencyValueString, renderCategory
+        relativeDateString, currencyValueString, renderCategory, areStringsDifferent, areArraysDifferent
     };
 }

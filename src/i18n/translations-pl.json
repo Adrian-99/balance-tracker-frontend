@@ -48,12 +48,23 @@
             "formatLetters": {
                 "year": "R",
                 "month": "M",
-                "day": "D"
+                "day": "D",
+                "hour": "g",
+                "minute": "m",
+                "second": "s"
             }
         },
+        "entry": {
+            "date": "Data",
+            "name": "Nazwa",
+            "category": "Kategoria",
+            "tags": "Tagi",
+            "value": "Wartość",
+            "description": "Opis"
+        },
+        "currency": "zł",
         "currencyValue": "{{value}} zł",
-        "categories": "Kategorie",
-        "tags": "Tagi"
+        "categories": "Kategorie"
     },
 
     "menu": {
@@ -122,14 +133,9 @@
         },
         "history": {
             "title": "Historia",
-            "header": {
-                "date": "Data",
-                "name": "Nazwa",
-                "category": "Kategoria",
-                "tags": "Tagi",
-                "value": "Wartość",
-                "description": "Opis"
-            }
+            "addEntry": "Dodaj wpis",
+            "editEntry": "Edytuj wpis",
+            "deleteEntry": "Usuń wpis"
         }
     },
 
@@ -159,6 +165,7 @@
         "required": "Pole jest wymagane",
         "usernamePattern": "Dozwolone znaki: litery, cyfry, pauza (-) i podkreślenie (_)",
         "emailPattern": "Nieprawidłowy adres e-mail",
+        "valuePattern": "Niepoprawna wartość",
         "minLength": "Minimalna długość: {{length}} znaków",
         "maxLength": "Maksymalna długość: {{length}} znaków",
         "mustContainSmallLetter": "Musi zawierać małą literę",
@@ -293,7 +300,7 @@
         "childClothes": "Ubrania, akcesoria dla dzieci",
         "childToys": "Zabawki",
         "allowanceCost": "Kieszonkowe dla dzieci",
-        "bankTransferCost": "Przelowy wychodzące",
+        "bankTransferCost": "Przelewy wychodzące",
         "withdrawal": "Wypłaty z bankomatu",
         "creditRepayment": "Spłaty kredytu, pożyczki",
         "otherCost": "Inne koszty"

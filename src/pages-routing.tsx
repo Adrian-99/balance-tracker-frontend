@@ -16,7 +16,7 @@ const PagesRouting: React.FC = () => {
     const locationBase64 = Buffer.from(location.pathname + location.search).toString("base64");
     
     const defaultElementIfLoggedIn = <Navigate to="/history" replace />;
-    const defaultEmeentIfNotLoggedIn = <Navigate to={"/login?redirectTo=" + locationBase64} replace />;
+    const defaultElementIfNotLoggedIn = <Navigate to={"/login?redirectTo=" + locationBase64} replace />;
     
     const { user } = useContext(ApplicationContext);
 
@@ -45,21 +45,21 @@ const PagesRouting: React.FC = () => {
 
             <Route path="/change-password" element={user ?
                 <ChangePasswordPage /> :
-                defaultEmeentIfNotLoggedIn
+                defaultElementIfNotLoggedIn
             } />
             <Route path="/user-profile">
                 <Route path="" element={user ?
                     <UserProfilePage /> :
-                    defaultEmeentIfNotLoggedIn
+                    defaultElementIfNotLoggedIn
                 } />
                 <Route path=":action" element={user ?
                     <UserProfilePage /> :
-                    defaultEmeentIfNotLoggedIn
+                    defaultElementIfNotLoggedIn
                 } />
             </Route>
             <Route path="/history" element={user ?
                 <HistoryPage /> :
-                defaultEmeentIfNotLoggedIn
+                defaultElementIfNotLoggedIn
             } />
             <Route path="*" element={
                 <Navigate to="/" replace />

@@ -1,11 +1,8 @@
-import Tag from "./tag";
-
-export default interface Entry {
-    id: string;
+export default interface EditEntry {
     date: Date;
     value: number;
     name: string;
     description?: string;
     categoryKeyword: string;
-    tags: Tag[];
+    tagNames: string[];
 }
