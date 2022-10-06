@@ -17,13 +17,17 @@ export interface FormAutocompleteProps<T> {
     sx?: SxProps<Theme>;
 }
 
-interface IProps<T> extends FormAutocompleteProps<T> {
-    renderOption: (option: T) => JSX.Element;
-    getOptionLabel: (option: T) => string;
-    getOptionValue: (option: T) => any;
+interface IProps<Option, Value> extends FormAutocompleteProps<Option> {
+    renderOption: (option: Option) => JSX.Element;
+    getOptionLabel: (option: Option) => string;
+    getOptionValue: (option: Option) => Value;
+    allowAdding?: boolean;
+    getNewOption?: (inputValue: string) => Option;
 }
 
-const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>) => {
+const FormAutocompleteComponent = <Option extends object, Value extends unknown>(componentProps: IProps<Option, Value>) => {
+    type NewOption = Option & { isNotAdded?: boolean };
+    
     const { t } = useTranslation();
     const THEME = createTheme(useTheme(), plPL);
 
@@ -31,7 +35,37 @@ const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>)
         if (componentProps.autoSubmit && componentProps.submitFunction) {
             componentProps.submitFunction();
         }
-    }
+    };
+
+    const convertAnyOptionToValue = (option: Option | string): Value | undefined => {
+        if (typeof option !== "string") {
+            return componentProps.getOptionValue(option);
+        } else if (componentProps.allowAdding && componentProps.getNewOption) {
+            return componentProps.getOptionValue(componentProps.getNewOption(option));
+        } else {
+            return undefined;
+        }
+    };
+
+    const convertAnyOptionsToValue = (options: (Option | string)[]): Value[] => {
+        return options.map(convertAnyOptionToValue).filter(v => v) as Value[];
+    };
+
+    const evaluateSelectedOptions = (value: any): Option[] | Option | null => {
+        let valueArray: (Value | string)[] = Array.isArray(value) ? Array.from(value) : [value];
+        const filteredOptions = componentProps.options.filter(o => {
+            let valueIndex = valueArray.findIndex(v => v === componentProps.getOptionValue(o));
+            if (valueIndex !== -1) {
+                valueArray = valueArray.splice(valueIndex, 1);
+                return true;
+            } else {
+                return false;
+            }
+        });
+        if (valueArray.length > 0 && componentProps.allowAdding && componentProps.getNewOption !== undefined) {
+            valueArray.map(v => componentProps.getNewOption(v))
+        }
+    };
 
     return (
         <ThemeProvider theme={THEME}>
@@ -58,44 +92,63 @@ const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>)
                         }
                         renderOption={(props, option, { selected }) =>
                             <li {...props}>
+                                {/* { componentProps.allowAdding && componentProps.getNewOption && option instanceof NewOption ?
+
+                                    :
+                                
+                                } */}
                                 { componentProps.multiple && 
                                     <Checkbox checked={selected} size={componentProps.size} />
                                 }
                                 { componentProps.renderOption(option) }
                             </li>
                         }
+                        filterOptions={(options, props) => {
+                            if (props.inputValue.length) {
+                                const filteredOptions = options.filter(
+                                    o => componentProps.getOptionLabel(o).toLocaleLowerCase().includes(props.inputValue.toLocaleLowerCase())
+                                );
+                                if (componentProps.allowAdding && componentProps.getNewOption) {
+                                    const isExactMatch = filteredOptions.some(
+                                        o => componentProps.getOptionLabel(o).toLocaleLowerCase() === props.inputValue.toLocaleLowerCase()
+                                    );
+                                    if (!isExactMatch) {
+                                        let addOption: NewOption = { ...componentProps.getNewOption(props.inputValue), isNotAdded: true };
+                                        filteredOptions.push(addOption);
+                                    }
+                                }
+                                return filteredOptions;
+                            } else {
+                                return options;
+                            }
+                        }}
                         getOptionLabel={componentProps.getOptionLabel}
                         limitTags={2}
                         getLimitTagsText={more => <Chip label={`+${more}`} size={componentProps.size} />}
+                        freeSolo={componentProps.allowAdding && componentProps.getNewOption !== undefined}
                         size={componentProps.size}
                         fullWidth={componentProps.fullWidth}
                         sx={componentProps.sx}
-                        value={
-                            componentProps.multiple ?
-                                componentProps.options.filter(o => Array.isArray(value) ?
-                                    value.includes(componentProps.getOptionValue(o)) :
-                                    value === componentProps.getOptionValue(o)
-                                ) :
-                                componentProps.options.find(o => value === componentProps.getOptionValue(o)) || null
-                        }
+                        value={evaluateSelectedOptions(value)}
                         onChange={(event, value) => {
-                            let convertedValue: string[] | string | undefined;
+                            let convertedValue: Value[] | Value | undefined;
                             if (componentProps.multiple) {
                                 convertedValue = [];
                                 if (value) {
                                     if (Array.isArray(value)) {
-                                        convertedValue = value.map(componentProps.getOptionValue);
+                                        convertedValue = convertAnyOptionsToValue(value);
                                     } else {
-                                        convertedValue.push(componentProps.getOptionValue(value));
+                                        convertedValue.push(...convertAnyOptionsToValue([value]));
                                     }
                                 }
                             } else {
                                 if (value && !Array.isArray(value)) {
-                                    convertedValue = componentProps.getOptionValue(value);
+                                    convertedValue = convertAnyOptionToValue(value);
                                 } else {
                                     convertedValue = undefined;
                                 }
                             }
+                            console.log(convertedValue);
                             onChange({...event, target: {...event.target, value: convertedValue}});
                             triggerAutoSubmit();
                         }}

@@ -161,6 +161,7 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, ent
                         label={t("general.entry.tags")}
                         options={tags}
                         multiple
+                        allowAdding
                         fullWidth
                     />
                 </Grid>

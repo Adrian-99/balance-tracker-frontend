@@ -64,7 +64,8 @@
         },
         "currency": "zł",
         "currencyValue": "{{value}} zł",
-        "categories": "Kategorie"
+        "categories": "Kategorie",
+        "addOption": "Dodaj \"{{option}}\""
     },
 
     "menu": {
