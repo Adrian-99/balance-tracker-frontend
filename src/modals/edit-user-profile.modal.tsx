@@ -21,7 +21,7 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
     const { t } = useTranslation();
     const { handleSubmit, register, setValue, getFieldState, setError, reset, watch, formState: { errors } } = useForm<ChangeUserData>();
     const { isSmallScreen } = useUtils();
-    const { saveUserInfo, userSettings } = useContext(ApplicationContext);
+    const { saveUserInfo, validationRules } = useContext(ApplicationContext);
     const { changeUserData } = useUserService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { isWithinTimeframe, addDays, durationUntilString, areStringsDifferent } = useUtils();
@@ -46,14 +46,14 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
             if (!getFieldState("lastName").isDirty) {
                 setValue("lastName", userData?.lastName || "");
             }
-            if (userData && isWithinTimeframe(userData?.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays)) {
+            if (userData && isWithinTimeframe(userData?.lastUsernameChangeAt, validationRules.userUsernameAllowedChangeFrequencyDays)) {
                 setUsernameSubtitle(t("pages.userProfile.nextChangeAt", {
-                    duration: durationUntilString(addDays(userData.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays)) 
+                    duration: durationUntilString(addDays(userData.lastUsernameChangeAt, validationRules.userUsernameAllowedChangeFrequencyDays)) 
                 }));
                 setDisabledUsernameField(true);
             } else {
                 setUsernameSubtitle(t("modals.editUserProfile.allowedChangeFrequencyDays",
-                    { days: userSettings.usernameAllowedChangeFrequencyDays })
+                    { days: validationRules.userUsernameAllowedChangeFrequencyDays })
                 );
                 setDisabledUsernameField(false);
             }
@@ -114,8 +114,8 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                         {...register("username", { 
                             required: t('validation.required') as string,
                             maxLength: { 
-                                value: userSettings.usernameMaxLength,
-                                message: t('validation.maxLength', { length: userSettings.usernameMaxLength })
+                                value: validationRules.userUsernameMaxLength,
+                                message: t('validation.maxLength', { length: validationRules.userUsernameMaxLength })
                             },
                             pattern: { value: /^[a-zA-Z0-9_-]*$/, message: t('validation.usernamePattern') }
                         })}
@@ -144,8 +144,8 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                         fullWidth
                         {...register("firstName", {
                             maxLength: { 
-                                value: userSettings.firstNameMaxLength,
-                                message: t('validation.maxLength', { length: userSettings.firstNameMaxLength })
+                                value: validationRules.userFirstNameMaxLength,
+                                message: t('validation.maxLength', { length: validationRules.userFirstNameMaxLength })
                             }
                         })}
                         error={errors.firstName !== undefined}
@@ -159,8 +159,8 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                         fullWidth
                         {...register("lastName", {
                             maxLength: { 
-                                value: userSettings.lastNameMaxLength,
-                                message: t('validation.maxLength', { length: userSettings.lastNameMaxLength })
+                                value: validationRules.userLastNameMaxLength,
+                                message: t('validation.maxLength', { length: validationRules.userLastNameMaxLength })
                             }
                         })}
                         error={errors.lastName !== undefined}

@@ -18,7 +18,7 @@ const UserProfilePage: React.FC = () => {
     const { action } = useParams();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { user, userSettings } = useContext(ApplicationContext);
+    const { user, validationRules } = useContext(ApplicationContext);
     const { getUserData } = useUserService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
     const { isSmallScreen, isWithinTimeframe, addDays, durationUntilString } = useUtils();
@@ -76,12 +76,12 @@ const UserProfilePage: React.FC = () => {
                             <Grid item xs={12} md="auto">
                                 <Box display="flex" flexWrap="wrap" alignItems="center">
                                     <Typography variant="body2" sx={{ mx: "4px" }}>{userData.username}</Typography>
-                                    { isWithinTimeframe(userData.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays) &&
+                                    { isWithinTimeframe(userData.lastUsernameChangeAt, validationRules.userUsernameAllowedChangeFrequencyDays) &&
                                         (isSmallScreen ? 
                                             <Chip icon={<UsernameChangeBlockedIcon />} 
                                                 label={
                                                     t("pages.userProfile.nextChangeAt", {
-                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays)) 
+                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, validationRules.userUsernameAllowedChangeFrequencyDays)) 
                                                     })
                                                 }
                                                 size="small"
@@ -91,7 +91,7 @@ const UserProfilePage: React.FC = () => {
                                             :
                                             <Tooltip title={
                                                     t("pages.userProfile.nextChangeAt", {
-                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, userSettings.usernameAllowedChangeFrequencyDays)) 
+                                                        duration: durationUntilString(addDays(userData.lastUsernameChangeAt, validationRules.userUsernameAllowedChangeFrequencyDays)) 
                                                     }) as string
                                                 }
                                                 arrow

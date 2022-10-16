@@ -12,40 +12,40 @@ interface Options {
 
 export const usePasswordField = () => {
     const { t } = useTranslation();
-    const { userSettings } = useContext(ApplicationContext);
+    const { validationRules } = useContext(ApplicationContext);
 
     const passwordValidationOptions = (usernameValueGetter?: (() => string) | undefined,
         currentPasswordGetter?: (() => string) | undefined): Options => {
         const validate: Record<string, Validate<string>> = {};
 
-        if (userSettings.passwordSmallLetterRequired) {
+        if (validationRules.userPasswordSmallLetterRequired) {
             validate.mustContainSmallLetter = v => /.*[a-z].*/.test(v) || t('validation.mustContainSmallLetter') as string;
         }
-        if (userSettings.passwordBigLetterRequired) {
+        if (validationRules.userPasswordBigLetterRequired) {
             validate.mustContainBigLetter = v => /.*[A-Z].*/.test(v) || t('validation.mustContainBigLetter') as string;
         }
-        if (userSettings.passwordDigitRequired) {
+        if (validationRules.userPasswordDigitRequired) {
             validate.mustContainDigit = v => /.*[0-9].*/.test(v) || t('validation.mustContainDigit') as string;
         }
-        if (userSettings.passwordSpecialCharacterRequired) {
+        if (validationRules.userPasswordSpecialCharacterRequired) {
             validate.mustContainSpecialChar = v => /.*[^a-zA-Z0-9].*/.test(v) || t('validation.mustContainSpecialChar') as string;
         }
-        if (userSettings.passwordForbidSameAsUsername && usernameValueGetter) {
+        if (validationRules.userPasswordForbidSameAsUsername && usernameValueGetter) {
             validate.cantBeSameAsUsername = v => v.toLowerCase() !== usernameValueGetter().toLowerCase() || t('validation.cantBeSameAsUsername') as string;
         }
-        if (userSettings.passwordForbidSameAsCurrent && currentPasswordGetter) {
+        if (validationRules.userPasswordForbidSameAsCurrent && currentPasswordGetter) {
             validate.cantBeSameAsCurrent = v => v !== currentPasswordGetter() || t("backend.error.validation.passwordSameAsCurrentOne") as string;
         }
 
         return {
             required: t('validation.required') as string,
             minLength: {
-                value: userSettings.passwordMinLength,
-                message: t('validation.minLength', { length: userSettings.passwordMinLength })
+                value: validationRules.userPasswordMinLength,
+                message: t('validation.minLength', { length: validationRules.userPasswordMinLength })
             },
             maxLength: {
-                value: userSettings.passwordMaxLength,
-                message: t('validation.maxLength', { length: userSettings.passwordMaxLength })
+                value: validationRules.userPasswordMaxLength,
+                message: t('validation.maxLength', { length: validationRules.userPasswordMaxLength })
             },
             validate
         };

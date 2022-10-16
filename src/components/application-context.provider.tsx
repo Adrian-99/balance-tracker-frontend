@@ -5,11 +5,11 @@ import { createContext, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import ApiResponse from "../data/api-response";
 import Tokens from "../data/tokens";
-import UserSettings from '../data/user-settings';
+import ValidationRules from '../data/validation-rules';
 
 const LOCAL_STORAGE_KEYS = {
     authenticatedUser: "authenticatedUser",
-    userSettings: "userSettings"
+    valiationRules: "validationRules"
 }
 
 const ACCESS_TOKEN_KEYS = {
@@ -28,7 +28,12 @@ const HTTP_CONFIG: AxiosRequestConfig<any> = {
 }
 
 const HTTP_ALLOW_ANONYMOUS: string[] = [
-    "/user/register", "/user/authenticate", "/user/refresh-token", "/user/password/reset/request", "/user/password/reset"
+    "/user/register",
+    "/user/authenticate",
+    "/user/refresh-token",
+    "/user/password/reset/request",
+    "/user/password/reset",
+    "/validation-rule/all"
 ]
 
 const HTTP_IGNORE_UNAUTHORIZED: string[] = ["/user/authenticate"]
@@ -53,7 +58,7 @@ export interface AppContext {
     user: AuthenticatedUser | null,
     saveUserInfo: (tokens: Tokens) => string;
     clearUserInfo: () => void;
-    userSettings: UserSettings;
+    validationRules: ValidationRules;
     http: AxiosInstance;
 }
 
@@ -61,25 +66,28 @@ export const ApplicationContext = createContext<AppContext>({
     user: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.authenticatedUser),
     saveUserInfo: (_t) => "",
     clearUserInfo: () => {},
-    userSettings: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.userSettings),
+    validationRules: getValueFromLocalStorage(LOCAL_STORAGE_KEYS.valiationRules),
     http: Axios.create(HTTP_CONFIG)
 });
 
 const ApplicationContextProvider: React.FC = ({ children }) => {
     const [authenticatedUser, setAuthenticatedUser] = useLocalStorage<AuthenticatedUser | null>(LOCAL_STORAGE_KEYS.authenticatedUser, null);
-    const [userSettings, setUserSettings] = useLocalStorage<UserSettings>(LOCAL_STORAGE_KEYS.userSettings, {
-        usernameMaxLength: 40,
-        usernameAllowedChangeFrequencyDays: 7,
-        firstNameMaxLength: 40,
-        lastNameMaxLength: 40,
-        passwordMinLength: 8,
-        passwordMaxLength: 40,
-        passwordSmallLetterRequired: true,
-        passwordBigLetterRequired: true,
-        passwordDigitRequired: true,
-        passwordSpecialCharacterRequired: true,
-        passwordForbidSameAsUsername: true,
-        passwordForbidSameAsCurrent: true
+    const [validationRules, setValidationRules] = useLocalStorage<ValidationRules>(LOCAL_STORAGE_KEYS.valiationRules, {
+        userUsernameMaxLength: 40,
+        userUsernameAllowedChangeFrequencyDays: 7,
+        userFirstNameMaxLength: 40,
+        userLastNameMaxLength: 40,
+        userPasswordMinLength: 8,
+        userPasswordMaxLength: 40,
+        userPasswordSmallLetterRequired: true,
+        userPasswordBigLetterRequired: true,
+        userPasswordDigitRequired: true,
+        userPasswordSpecialCharacterRequired: true,
+        userPasswordForbidSameAsUsername: true,
+        userPasswordForbidSameAsCurrent: true,
+        entryNameMaxLength: 100,
+        entryDescriptionMaxLength: 1000,
+        tagNameMaxLength: 50
     });
 
     const refreshTokenRequest = (): Promise<ApiResponse<Tokens>> => {
@@ -164,7 +172,7 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
         user: authenticatedUser,
         saveUserInfo,
         clearUserInfo,
-        userSettings: userSettings,
+        validationRules: validationRules,
         http: newAxiosInstance()
     };
 
@@ -172,8 +180,8 @@ const ApplicationContextProvider: React.FC = ({ children }) => {
         if (authenticatedUser?.accessToken) {
             contextValue.http.get<ApiResponse<string>>("/user/validate-token");
         }
-        contextValue.http.get<ApiResponse<UserSettings>>("/user/settings")
-            .then(response => setUserSettings(response.data.data));
+        contextValue.http.get<ApiResponse<ValidationRules>>("/validation-rule/all")
+            .then(response => setValidationRules(response.data.data));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

@@ -24,7 +24,7 @@ const RegisterPage: React.FC = () => {
     const { passwordValidationOptions, repeatPasswordValidationOptions } = usePasswordField();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { registerUser } = useUserService();
-    const { userSettings } = useContext(ApplicationContext);
+    const { validationRules } = useContext(ApplicationContext);
 
     const [awaitingResponse, setAwaitingResponse] = useState(false);
 
@@ -61,8 +61,8 @@ const RegisterPage: React.FC = () => {
                             {...register("username", { 
                                 required: t('validation.required') as string,
                                 maxLength: { 
-                                    value: userSettings.usernameMaxLength,
-                                    message: t('validation.maxLength', { length: userSettings.usernameMaxLength })
+                                    value: validationRules.userUsernameMaxLength,
+                                    message: t('validation.maxLength', { length: validationRules.userUsernameMaxLength })
                                 },
                                 pattern: { value: /^[a-zA-Z0-9_-]*$/, message: t('validation.usernamePattern') }
                             })}
@@ -92,8 +92,8 @@ const RegisterPage: React.FC = () => {
                             fullWidth
                             {...register("firstName", {
                                 maxLength: { 
-                                    value: userSettings.firstNameMaxLength,
-                                    message: t('validation.maxLength', { length: userSettings.firstNameMaxLength })
+                                    value: validationRules.userFirstNameMaxLength,
+                                    message: t('validation.maxLength', { length: validationRules.userFirstNameMaxLength })
                                 }
                             })}
                             error={errors.firstName !== undefined}
@@ -107,8 +107,8 @@ const RegisterPage: React.FC = () => {
                             fullWidth
                             {...register("lastName", {
                                 maxLength: { 
-                                    value: userSettings.lastNameMaxLength,
-                                    message: t('validation.maxLength', { length: userSettings.lastNameMaxLength })
+                                    value: validationRules.userLastNameMaxLength,
+                                    message: t('validation.maxLength', { length: validationRules.userLastNameMaxLength })
                                 }
                             })}
                             error={errors.lastName !== undefined}

@@ -476,10 +476,8 @@ const HistoryPage: React.FC = () => {
                                                             <Typography variant="subtitle2">
                                                                 { t("general.entry.description") }
                                                             </Typography>
-                                                            <Typography variant="body2" style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
-                                                                <pre style={{ fontFamily: "inherit", margin: 0 }}>
-                                                                    { entry.description || '—' }
-                                                                </pre>
+                                                            <Typography variant="body2" style={{ whiteSpace: "pre-line", paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
+                                                                { entry.description || '—' }
                                                             </Typography>
                                                         </Box>
                                                         { isSmallScreen &&
