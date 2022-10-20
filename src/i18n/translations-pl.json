@@ -5,6 +5,8 @@
         "noData": "Brak danych",
         "cancel": "Anuluj",
         "save": "Zapisz",
+        "yes": "Tak",
+        "no": "Nie",
         "passwordInput": {
             "show": "Pokaż hasło",
             "hide": "Ukryj hasło"
@@ -148,6 +150,9 @@
         },
         "editUserProfile": {
             "allowedChangeFrequencyDays": "Zmiana możliwa raz na {{days}} dni"
+        },
+        "deleteEntry": {
+            "confirmationQuestion": "Czy na pewno chcesz usunąć wpis \"{{name}}\"?"
         }
     },
 

@@ -26,7 +26,9 @@ import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useEntryService } from "../hooks/entry-service.hook";
 import { useTagService } from "../hooks/tag-service.hook";
 import { useUtils } from "../hooks/utils.hook";
+import { ConfirmationModalCloseReason } from "../modals/confirmation.modal";
 import { CustomFormModalCloseReason } from "../modals/custom-form.modal";
+import { DeleteEntryModal } from "../modals/delete-entry.modal";
 import EditEntryModal from "../modals/edit-entry.modal";
 
 const HistoryPage: React.FC = () => {
@@ -76,7 +78,8 @@ const HistoryPage: React.FC = () => {
     const [entriesPage, setEntriesPage] = useState<Page<Entry> | undefined>(undefined);
     const [expandedRows, setExapndedRows] = useState<boolean[]>([]);
     const [editEntryModalOpen, setEditEntryModalOpen] = useState(false);
-    const [entryToEdit, setEntryToEdit] = useState<Entry>();
+    const [deleteEntryModalOpen, setDeleteEntryModalOpen] = useState(false);
+    const [selectedEntry, setSelectedEntry] = useState<Entry>();
     const [entryOptionsAnchor, setEntryOptionsAnchor] = useState<null | HTMLElement>(null);
     const entryOptionsOpen = Boolean(entryOptionsAnchor);
 
@@ -216,7 +219,7 @@ const HistoryPage: React.FC = () => {
 
     const openEntryOptions = (event: React.MouseEvent<HTMLButtonElement>, entry: Entry) => {
         setEntryOptionsAnchor(event.currentTarget);
-        setEntryToEdit(entry);
+        setSelectedEntry(entry);
     }
 
     const closeEntryOptions = () => {
@@ -224,23 +227,31 @@ const HistoryPage: React.FC = () => {
     }
 
     const openAddEntryModal = () => {
-        if (!editEntryModalOpen) {
-            setEntryToEdit(undefined);
+        if (!editEntryModalOpen && !deleteEntryModalOpen) {
+            setSelectedEntry(undefined);
             setEditEntryModalOpen(true);
         }
     }
 
     const openEditEntryModal = () => {
-        if (!editEntryModalOpen) {
+        if (!editEntryModalOpen && !deleteEntryModalOpen) {
             setEditEntryModalOpen(true);
             closeEntryOptions();
         }
     }
 
-    const onModalClose = (reason: CustomFormModalCloseReason) => {
-        setEntryToEdit(undefined);
+    const openDeleteEntryModal = () => {
+        if (!editEntryModalOpen && !deleteEntryModalOpen) {
+            setDeleteEntryModalOpen(true);
+            closeEntryOptions();
+        }
+    }
+
+    const onModalClose = (reason: CustomFormModalCloseReason | ConfirmationModalCloseReason) => {
+        setSelectedEntry(undefined);
         setEditEntryModalOpen(false);
-        if (reason === "save") {
+        setDeleteEntryModalOpen(false);
+        if (reason === "save" || reason === "yes") {
             getEntries();
         }
     }
@@ -519,7 +530,7 @@ const HistoryPage: React.FC = () => {
                             onClose={closeEntryOptions}
                         >
                             <MenuItem onClick={openEditEntryModal}>{t("pages.history.editEntry")}</MenuItem>
-                            <MenuItem onClick={openEditEntryModal}>{t("pages.history.deleteEntry")}</MenuItem>
+                            <MenuItem onClick={openDeleteEntryModal}>{t("pages.history.deleteEntry")}</MenuItem>
                         </Menu>
                     </TableBody>
                 </Table>
@@ -542,7 +553,13 @@ const HistoryPage: React.FC = () => {
                 onClose={onModalClose}
                 categories={categories}
                 tags={tags}
-                entry={entryToEdit}
+                entry={selectedEntry}
+            />
+
+            <DeleteEntryModal
+                open={deleteEntryModalOpen}
+                onClose={onModalClose}
+                entry={selectedEntry}
             />
         </PageCardComponent>
     );

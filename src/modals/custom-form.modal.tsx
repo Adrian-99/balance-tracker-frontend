@@ -1,23 +1,13 @@
-import { Close as CloseIcon } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Slide } from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
+import { Button, DialogActions, DialogContent } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
+import { BaseModal, BaseModalCloseReason } from "./base.modal";
 
-const Transition = React.forwardRef(function Transition(
-    props: TransitionProps & {
-        children: React.ReactElement<any, any>;
-    },
-    ref: React.Ref<unknown>,
-) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
+export type CustomFormModalCloseReason = BaseModalCloseReason | "cancel" | "save";
 
-export type CustomFormModalCloseReason = "backdropClick" | "escapeKeyDown" | "closeIconClick" | "cancel" | "save";
-
-interface CustomFormModalProps {
+interface IProps {
     open: boolean;
     title: string;
     showSpinner?: boolean | undefined;
@@ -29,24 +19,18 @@ interface CustomFormModalProps {
     onSubmit: React.FormEventHandler<HTMLFormElement>;
 }
 
-export const CustomFormModal: React.FC<CustomFormModalProps> = ({
-    open,title, showSpinner, showNoData, submitButtonText, showSubmitButtonSpinner, disableSubmitButton,
+export const CustomFormModal: React.FC<IProps> = ({
+    open, title, showSpinner, showNoData, submitButtonText, showSubmitButtonSpinner, disableSubmitButton,
     onClose, onSubmit, children
     }) => {
     const { t } = useTranslation();
 
     return (
-        <Dialog open={open}
-            onClose={(_event, reason) => onClose(reason)}
-            TransitionComponent={Transition}
-            fullWidth
+        <BaseModal
+            open={open}
+            title={title}
+            onClose={onClose}
         >
-            <DialogTitle>
-                {title}
-                <IconButton sx={{ position: "absolute", top: "12px", right: "16px" }} onClick={() => onClose("closeIconClick")}>
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
             {!showSpinner && !showNoData ?
                 <form
                     onSubmit={onSubmit}
@@ -61,12 +45,18 @@ export const CustomFormModal: React.FC<CustomFormModalProps> = ({
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => onClose("cancel")}>{t("general.cancel")}</Button>
-                        <LoadingButton variant="contained" type="submit" disabled={disableSubmitButton} loading={showSubmitButtonSpinner}>{ submitButtonText || t("general.save")}</LoadingButton>
+                        <LoadingButton variant="contained"
+                            type="submit"
+                            disabled={disableSubmitButton}
+                            loading={showSubmitButtonSpinner}
+                        >
+                            { submitButtonText || t("general.save")}
+                        </LoadingButton>
                     </DialogActions>
                 </form>
                 :
                 <SpinnerOrNoDataComponent showSpinner={showSpinner || false} showNoData={showNoData || false} />
             }
-        </Dialog>
+        </BaseModal>
     );
 }

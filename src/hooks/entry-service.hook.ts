@@ -38,5 +38,10 @@ export const useEntryService = () => {
             .then(response => response.data);
     }
 
-    return { getEntriesPaged, createEntry, editEntry };
+    const deleteEntry = (id: string): Promise<ApiResponse<string>> => {
+        return http.delete<ApiResponse<string>>(`/entry/${id}`)
+            .then(response => response.data);
+    }
+
+    return { getEntriesPaged, createEntry, editEntry, deleteEntry };
 }
