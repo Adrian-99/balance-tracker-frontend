@@ -80,7 +80,7 @@ export const useUtils = () => {
     };
 
     const areArraysDifferent = (arr1: any[], arr2: any[]): boolean => {
-        return arr1.length === arr2.length && arr1.every(element => arr2.includes(element));
+        return arr1.length !== arr2.length || arr1.some(element => !arr2.includes(element));
     }
 
     return { 

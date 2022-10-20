@@ -33,5 +33,10 @@ export const useEntryService = () => {
             .then(response => response.data);
     }
 
-    return { getEntriesPaged, createEntry };
+    const editEntry = (id: string, data: EditEntry): Promise<ApiResponse<string>> => {
+        return http.put<ApiResponse<string>>(`/entry/${id}`, data)
+            .then(response => response.data);
+    }
+
+    return { getEntriesPaged, createEntry, editEntry };
 }

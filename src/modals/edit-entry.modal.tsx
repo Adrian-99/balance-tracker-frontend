@@ -1,11 +1,13 @@
 import { Grid, InputAdornment, TextField } from "@mui/material";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { ApplicationContext } from "../components/application-context.provider";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
 import TagSelectComponent from "../components/autocomplete/tag-select.component";
 import DateTimePickerComponent from "../components/date-time-picker.component";
+import ApiResponse from "../data/api-response";
 import Category from "../data/category";
 import EditEntry from "../data/edit-entry";
 import Entry from "../data/entry";
@@ -26,7 +28,8 @@ interface IProps {
 const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, entry }) => {
     const { t } = useTranslation();
     const { handleSubmit, register, setValue, getFieldState, reset, watch, control, formState: { errors } } = useForm<EditEntry>();
-    const { createEntry } = useEntryService();
+    const { validationRules } = useContext(ApplicationContext);
+    const { createEntry, editEntry } = useEntryService();
     const { successToast, errorToast, evaluateBackendMessage } = useCustomToast();
     const { areStringsDifferent, areArraysDifferent } = useUtils();
 
@@ -37,7 +40,7 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, ent
     useEffect(() => {
         if (open) {
             if (!getFieldState("date").isDirty) {
-                setValue("date", entry?.date || new Date());
+                setValue("date", moment(entry?.date).toDate());
             }
             if (!getFieldState("value").isDirty && entry?.value) {
                 setValue("value", entry?.value);
@@ -48,8 +51,8 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, ent
             if (!getFieldState("description").isDirty) {
                 setValue("description", entry?.description || "");
             }
-            if (!getFieldState("categoryKeyword").isDirty && entry?.categoryKeyword) {
-                setValue("categoryKeyword", entry?.categoryKeyword);
+            if (!getFieldState("categoryKeyword").isDirty) {
+                setValue("categoryKeyword", entry?.categoryKeyword || "");
             }
             if (!getFieldState("tagNames").isDirty) {
                 setValue("tagNames", entry?.tags.map(t => t.name) || []);
@@ -68,7 +71,13 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, ent
 
     const onSubmit: SubmitHandler<EditEntry> = data => {
         setAwaitingResponse(true);
-        createEntry(data)
+        let saveAction: Promise<ApiResponse<string>>;
+        if (entry) {
+            saveAction = editEntry(entry.id, data);
+        } else {
+            saveAction = createEntry(data);
+        }
+        saveAction
             .then(response => {
                 successToast(evaluateBackendMessage(response.translationKey));
                 clearFormAndClose("save");
@@ -89,7 +98,7 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, ent
     return (
         <CustomFormModal title={entry ? t("pages.history.editEntry") : t("pages.history.addEntry")}
             showSubmitButtonSpinner={awaitingResponse}
-            disableSubmitButton={entry && areValuesChanged()}
+            disableSubmitButton={entry && !areValuesChanged()}
             onClose={clearFormAndClose}
             onSubmit={handleSubmit(onSubmit)}
             open={open}
@@ -128,7 +137,8 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, ent
                         variant="outlined"
                         fullWidth
                         {...register("name", {
-                            required: t("validation.required") as string
+                            required: t("validation.required") as string,
+                            maxLength: { value: validationRules.entryNameMaxLength, message: t("validation.maxLength", { length: validationRules.entryNameMaxLength }) }
                         })}
                         error={errors.name !== undefined}
                         helperText={errors.name?.message}
@@ -139,7 +149,11 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, ent
                         label={t("general.entry.description")}
                         variant="outlined"
                         fullWidth
-                        {...register("description")}
+                        {...register("description", {
+                            maxLength: { value: validationRules.entryDescriptionMaxLength, message: t("validation.maxLength", { length: validationRules.entryDescriptionMaxLength }) }
+                        })}
+                        error={errors.description !== undefined}
+                        helperText={errors.description?.message}
                         multiline
                         maxRows={6}
                     />

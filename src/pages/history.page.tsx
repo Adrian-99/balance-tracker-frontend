@@ -1,5 +1,5 @@
 import { ExpandMore as ExpandMoreIcon, KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Collapse, createTheme, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Collapse, createTheme, IconButton, Menu, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import moment from "moment";
 import React, { useContext } from "react";
@@ -77,6 +77,8 @@ const HistoryPage: React.FC = () => {
     const [expandedRows, setExapndedRows] = useState<boolean[]>([]);
     const [editEntryModalOpen, setEditEntryModalOpen] = useState(false);
     const [entryToEdit, setEntryToEdit] = useState<Entry>();
+    const [entryOptionsAnchor, setEntryOptionsAnchor] = useState<null | HTMLElement>(null);
+    const entryOptionsOpen = Boolean(entryOptionsAnchor);
 
     useEffect(() => {
         getAllCategories()
@@ -212,6 +214,15 @@ const HistoryPage: React.FC = () => {
         });
     }
 
+    const openEntryOptions = (event: React.MouseEvent<HTMLButtonElement>, entry: Entry) => {
+        setEntryOptionsAnchor(event.currentTarget);
+        setEntryToEdit(entry);
+    }
+
+    const closeEntryOptions = () => {
+        setEntryOptionsAnchor(null);
+    }
+
     const openAddEntryModal = () => {
         if (!editEntryModalOpen) {
             setEntryToEdit(undefined);
@@ -219,10 +230,10 @@ const HistoryPage: React.FC = () => {
         }
     }
 
-    const openEditEntryModal = (entry: Entry) => {
+    const openEditEntryModal = () => {
         if (!editEntryModalOpen) {
-            setEntryToEdit(entry);
             setEditEntryModalOpen(true);
+            closeEntryOptions();
         }
     }
 
@@ -442,7 +453,7 @@ const HistoryPage: React.FC = () => {
                                                     { expandedRows[index] ? <ArrowUpIcon /> : <ArrowDownIcon /> }
                                                 </IconButton>
                                                 { !isSmallScreen &&
-                                                    <IconButton size="small">
+                                                    <IconButton size="small" onClick={event => openEntryOptions(event, entry)}>
                                                         <MoreIcon />
                                                     </IconButton>
                                                 }
@@ -476,12 +487,16 @@ const HistoryPage: React.FC = () => {
                                                             <Typography variant="subtitle2">
                                                                 { t("general.entry.description") }
                                                             </Typography>
-                                                            <Typography variant="body2" style={{ whiteSpace: "pre-line", paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
+                                                            <Typography variant="body2" style={{
+                                                                    whiteSpace: "pre-line",
+                                                                    overflowWrap: "anywhere",
+                                                                    paddingBottom: isExtraSmallScreen ? "6px" : "16px" 
+                                                                }}>
                                                                 { entry.description || '—' }
                                                             </Typography>
                                                         </Box>
                                                         { isSmallScreen &&
-                                                            <IconButton size="small">
+                                                            <IconButton size="small" onClick={event => openEntryOptions(event, entry)}>
                                                                 <MoreIcon />
                                                             </IconButton>
                                                         }
@@ -499,6 +514,13 @@ const HistoryPage: React.FC = () => {
                                 </TableCell>
                             </TableRow>
                         }
+                        <Menu anchorEl={entryOptionsAnchor}
+                            open={entryOptionsOpen}
+                            onClose={closeEntryOptions}
+                        >
+                            <MenuItem onClick={openEditEntryModal}>{t("pages.history.editEntry")}</MenuItem>
+                            <MenuItem onClick={openEditEntryModal}>{t("pages.history.deleteEntry")}</MenuItem>
+                        </Menu>
                     </TableBody>
                 </Table>
                 <ThemeProvider theme={THEME}>

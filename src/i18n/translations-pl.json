@@ -221,6 +221,11 @@
                     "emailChanged": "Zapisano zmiany - sprawdź skrzynkę mailową aby zweryfikować nowy adres e-mail",
                     "emailNotChanged": "Zapisano zmiany"
                 }
+            },
+            "entry": {
+                "create": "Pomyślnie dodano nowy wpis",
+                "edit": "Pomyślnie zapisano zmiany",
+                "delete": "Pomyślnie usunięto wpis"
             }
         }
     },
