@@ -2,6 +2,7 @@ import { List, ListItemButton, ListItemIcon, ListItemText, Tooltip } from '@mui/
 import React from 'react';
 import { Home as HomeIcon,
     List as HistoryIcon,
+    LocalOffer as TagsIcon,
     StackedLineChart as StatisticsIcon,
     Login as LoginIcon,
     HowToReg as RegisterIcon
@@ -29,6 +30,7 @@ const MenuItemsListComponent: React.FC<IProps> = ({ isMenuOpen, setMenuOpen, isS
     const menuItemsProps: MenuItemProps[] = isUserLoggedIn ?
         [ 
             { icon: <HistoryIcon />, label: t("menu.history"), path: "/history" },
+            { icon: <TagsIcon />, label: t("menu.tags"), path: "/tags" },
             { icon: <StatisticsIcon />, label: t("menu.statistics"), path: "/statistics" }
         ]
         :

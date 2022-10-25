@@ -11,7 +11,6 @@ import ApiResponse from "../data/api-response";
 import Category from "../data/category";
 import EditEntry from "../data/edit-entry";
 import Entry from "../data/entry";
-import Tag from "../data/tag";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useEntryService } from "../hooks/entry-service.hook";
 import { useUtils } from "../hooks/utils.hook";
@@ -21,11 +20,11 @@ interface IProps {
     open: boolean;
     onClose: (reason: CustomFormModalCloseReason) => void;
     categories: Category[];
-    tags: Tag[];
+    tagNames: string[];
     entry?: Entry;
 }
 
-const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, entry }) => {
+const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tagNames, entry }) => {
     const { t } = useTranslation();
     const { handleSubmit, register, setValue, getFieldState, reset, watch, control, formState: { errors } } = useForm<EditEntry>();
     const { validationRules } = useContext(ApplicationContext);
@@ -173,7 +172,7 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tags, ent
                         formFieldName="tagNames"
                         control={control}
                         label={t("general.entry.tags")}
-                        options={tags}
+                        options={tagNames}
                         multiple
                         fullWidth
                     />

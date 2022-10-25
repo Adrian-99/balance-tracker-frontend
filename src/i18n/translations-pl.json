@@ -7,6 +7,7 @@
         "save": "Zapisz",
         "yes": "Tak",
         "no": "Nie",
+        "view": "Zobacz",
         "passwordInput": {
             "show": "Pokaż hasło",
             "hide": "Ukryj hasło"
@@ -64,6 +65,10 @@
             "value": "Wartość",
             "description": "Opis"
         },
+        "tag": {
+            "name": "Nazwa",
+            "entriesCount": "Liczba wpisów"
+        },
         "currency": "zł",
         "currencyValue": "{{value}} zł",
         "categories": "Kategorie"
@@ -74,6 +79,7 @@
         "login": "Logowanie",
         "register": "Rejestracja",
         "history": "Historia",
+        "tags": "Tagi",
         "statistics": "Statystyki"
     },
 
@@ -138,6 +144,12 @@
             "addEntry": "Dodaj wpis",
             "editEntry": "Edytuj wpis",
             "deleteEntry": "Usuń wpis"
+        },
+        "tags": {
+            "title": "Tagi",
+            "addTag": "Dodaj tag",
+            "editTag": "Edytuj tag",
+            "deleteTag": "Usuń tag"
         }
     },
 

@@ -1,5 +1,5 @@
-import { ExpandMore as ExpandMoreIcon, KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Collapse, createTheme, IconButton, Menu, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
+import { KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
+import { Box, Button, Chip, Collapse, createTheme, IconButton, Menu, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import moment from "moment";
 import React, { useContext } from "react";
@@ -11,6 +11,7 @@ import { ApplicationContext } from "../components/application-context.provider";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
 import TagSelectComponent from "../components/autocomplete/tag-select.component";
 import DateTimePickerComponent from "../components/date-time-picker.component";
+import { FiltersComponent } from "../components/filters.component";
 import PageCardComponent from "../components/page-card.component";
 import SearchFieldComponent from "../components/search-field.component";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
@@ -36,7 +37,7 @@ const HistoryPage: React.FC = () => {
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm<EntryFilter>();
     const { user } = useContext(ApplicationContext);
     const { getAllCategories } = useCategoryService();
-    const { getAllTags } = useTagService();
+    const { getTagNames } = useTagService();
     const { getEntriesPaged } = useEntryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
     const { isSmallScreen, isExtraSmallScreen, relativeDateString, currencyValueString, renderCategory } = useUtils();
@@ -52,7 +53,7 @@ const HistoryPage: React.FC = () => {
     const DATE_FROM = "dateFrom";
     const DATE_TO = "dateTo";
     const CATEGORIES_KEYWORDS = "categoriesKeywords";
-    const TAGS_NAMES = "tagsNames";
+    const TAG_NAMES = "tagNames";
 
     const ACTIONS = user?.isEmailVerified ? 
         [ { name: t("pages.history.addEntry"), action: () => openAddEntryModal() } ] :
@@ -74,7 +75,7 @@ const HistoryPage: React.FC = () => {
     });
 
     const [categories, setCategories] = useState<Category[]>([]);
-    const [tags, setTags] = useState<Tag[]>([]);
+    const [tagNames, setTagNames] = useState<string[]>([]);
     const [entriesPage, setEntriesPage] = useState<Page<Entry> | undefined>(undefined);
     const [expandedRows, setExapndedRows] = useState<boolean[]>([]);
     const [editEntryModalOpen, setEditEntryModalOpen] = useState(false);
@@ -92,9 +93,9 @@ const HistoryPage: React.FC = () => {
                 errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
             });
         
-        getAllTags()
+        getTagNames()
             .then(response => {
-                setTags(response.data);
+                setTagNames(response.data);
             })
             .catch(error => {
                 errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
@@ -127,7 +128,7 @@ const HistoryPage: React.FC = () => {
             dateFrom: dateFromString ? moment(dateFromString, DATE_FORMAT).toDate() : null,
             dateTo: dateToString ? moment(dateToString, DATE_FORMAT).toDate() : null,
             categoriesKeywords: searchParams.get(CATEGORIES_KEYWORDS)?.split(',') || [],
-            tagsNames: searchParams.get(TAGS_NAMES)?.split(',') || []
+            tagsNames: searchParams.get(TAG_NAMES)?.split(',') || []
         };
 
         setValue("searchValue", params.searchValue);
@@ -158,10 +159,11 @@ const HistoryPage: React.FC = () => {
             .then(response => {
                 setEntriesPage(response);
                 setExapndedRows(new Array<boolean>(response.data.length));
-                setAwaitingResponse(false);
             })
             .catch(error => {
                 errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+            })
+            .finally(() => {
                 setAwaitingResponse(false);
             });
     }
@@ -172,7 +174,7 @@ const HistoryPage: React.FC = () => {
         } else if (sortColumn === "date" || sortColumn === "value" || sortColumn === "name") {
             updateQueryParams({ ...entryParams, pageNumber: 1, sortBy: sortColumn, sortDescending: false });
         } else {
-            updateQueryParams({ ...entryParams, pageNumber: 1, sortBy: "date", sortDescending: false });
+            updateQueryParams({ ...entryParams, pageNumber: 1, sortBy: "date", sortDescending: true });
         }
     }
 
@@ -189,7 +191,7 @@ const HistoryPage: React.FC = () => {
         updateQueryParams({ ...entryParams, pageNumber: 1, ...otherData });
     }
 
-    const clearFilter = () => {
+    const clearFilters = () => {
         reset();
         updateQueryParams({
             pageNumber: 1,
@@ -213,7 +215,7 @@ const HistoryPage: React.FC = () => {
             ...(newParams.dateFrom && { [DATE_FROM]: moment(newParams.dateFrom).format(DATE_FORMAT) }),
             ...(newParams.dateTo && { [DATE_TO]: moment(newParams.dateTo).format(DATE_FORMAT) }),
             ...(newParams.categoriesKeywords.length && { [CATEGORIES_KEYWORDS]: newParams.categoriesKeywords.join(',') }),
-            ...(newParams.tagsNames.length && { [TAGS_NAMES]: newParams.tagsNames.join(',') }),
+            ...(newParams.tagsNames.length && { [TAG_NAMES]: newParams.tagsNames.join(',') })
         });
     }
 
@@ -291,7 +293,7 @@ const HistoryPage: React.FC = () => {
         }
     }
 
-    const showFiltersForm = (horizontally: boolean): JSX.Element => {
+    const renderFiltersForm = (horizontally: boolean): JSX.Element => {
         return (
             <form onSubmit={handleSubmit(onFilterSubmit)} autoComplete="off">
                 <Box display="flex" flexWrap="wrap" gap="8px" alignItems="flex-start">
@@ -341,12 +343,12 @@ const HistoryPage: React.FC = () => {
                         fullWidth={!horizontally}
                         sx={{ ...(horizontally && { minWidth: "250px", maxWidth: "400px" }) }}
                     />
-                    { tags.length > 0 &&
+                    { tagNames.length > 0 &&
                         <TagSelectComponent
                             formFieldName="tagsNames"
                             control={control}
                             label={t("general.entry.tags")}
-                            options={tags}
+                            options={tagNames}
                             multiple
                             autoSubmit
                             submitFunction={handleSubmit(onFilterSubmit)}
@@ -363,32 +365,11 @@ const HistoryPage: React.FC = () => {
 
     return (
         <PageCardComponent title={t("pages.history.title")} width={12} actions={ACTIONS}>
-            <Box display="flex" flexDirection={isSmallScreen ? "column" : "row"} gap="8px" alignItems="center">
-                { isSmallScreen ?
-                    <Accordion elevation={0} sx={{ border: "solid 1px", borderColor: "grey.300" }}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Stack direction="row" spacing={1}>
-                                <Typography>
-                                    { t("general.filters") }
-                                </Typography>
-                                {/* <Typography color="text.secondary">
-                                    Active filters here
-                                </Typography> */}
-                            </Stack>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            { showFiltersForm(false) }
-                        </AccordionDetails>
-                    </Accordion>
-                    :
-                    showFiltersForm(true)
-                }
-                { isFilterSet &&
-                    <Button variant="text" onClick={clearFilter}>
-                        { t("general.clearFilters") }
-                    </Button>
-                }
-            </Box>
+            <FiltersComponent
+                renderFiltersForm={renderFiltersForm}
+                isFilterSet={isFilterSet}
+                clearFilters={clearFilters}
+            />
             <TableContainer>
                 <Table style={{ tableLayout: "fixed" }} size={isExtraSmallScreen ? "small" : "medium"}>
                     <TableHead>
@@ -430,7 +411,7 @@ const HistoryPage: React.FC = () => {
                                 sortDescending={entryParams.sortDescending}
                                 onSortChange={onSortChange}
                             />
-                            <TableCell key="actionButtons" style={isSmallScreen ? { width: "34px" } : { width: "68px" }} />
+                            <TableCell key="actionButtons" style={isSmallScreen || !user?.isEmailVerified ? { width: "34px" } : { width: "68px" }} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -459,11 +440,11 @@ const HistoryPage: React.FC = () => {
                                                 <TableCell>{ showTags(entry.tags) }</TableCell>
                                             }
                                             <TableCell align="right">{ currencyValueString(entry.value) }</TableCell>
-                                            <TableCell style={isSmallScreen ? { width: "34px" } : { width: "68px" }}>
+                                            <TableCell style={isSmallScreen || !user?.isEmailVerified ? { width: "34px" } : { width: "68px" }}>
                                                 <IconButton size="small" onClick={() => expandRow(index)}>
                                                     { expandedRows[index] ? <ArrowUpIcon /> : <ArrowDownIcon /> }
                                                 </IconButton>
-                                                { !isSmallScreen &&
+                                                { !isSmallScreen && user?.isEmailVerified &&
                                                     <IconButton size="small" onClick={event => openEntryOptions(event, entry)}>
                                                         <MoreIcon />
                                                     </IconButton>
@@ -506,7 +487,7 @@ const HistoryPage: React.FC = () => {
                                                                 { entry.description || '—' }
                                                             </Typography>
                                                         </Box>
-                                                        { isSmallScreen &&
+                                                        { isSmallScreen && user?.isEmailVerified &&
                                                             <IconButton size="small" onClick={event => openEntryOptions(event, entry)}>
                                                                 <MoreIcon />
                                                             </IconButton>
@@ -552,7 +533,7 @@ const HistoryPage: React.FC = () => {
                 open={editEntryModalOpen}
                 onClose={onModalClose}
                 categories={categories}
-                tags={tags}
+                tagNames={tagNames}
                 entry={selectedEntry}
             />
 
