@@ -37,7 +37,7 @@ const RegisterPage: React.FC = () => {
                 navigate('/login');
             })
             .catch(error => {
-                var translationKey = error.response?.data?.translationKey;
+                var translationKey = error.response?.data?.TranslationKey;
                 errorToast(evaluateBackendMessage(translationKey));
                 if (translationKey === "error.user.register.usernameTaken") {
                     setError("username", { type: "custom", message: t("backend.error.user.register.usernameTaken") }, { shouldFocus: true });

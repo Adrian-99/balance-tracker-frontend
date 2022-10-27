@@ -28,7 +28,7 @@ export const DeleteEntryModal: React.FC<IProps> = ({open, onClose, entry}) => {
                     onClose("yes");
                 })
                 .catch(error => {
-                    errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+                    errorToast(evaluateBackendMessage(error.response?.data?.TranslationKey));
                 })
                 .finally(() => {
                     setAwaitingResponse(false);

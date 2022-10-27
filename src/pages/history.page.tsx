@@ -11,7 +11,7 @@ import { ApplicationContext } from "../components/application-context.provider";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
 import TagSelectComponent from "../components/autocomplete/tag-select.component";
 import DateTimePickerComponent from "../components/date-time-picker.component";
-import { FiltersComponent } from "../components/filters.component";
+import FiltersComponent from "../components/filters.component";
 import PageCardComponent from "../components/page-card.component";
 import SearchFieldComponent from "../components/search-field.component";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
@@ -90,7 +90,7 @@ const HistoryPage: React.FC = () => {
                 setCategories(response.data);
             })
             .catch(error => {
-                errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+                errorToast(evaluateBackendMessage(error.response?.data?.TranslationKey));
             });
         
         getTagNames()
@@ -98,7 +98,7 @@ const HistoryPage: React.FC = () => {
                 setTagNames(response.data);
             })
             .catch(error => {
-                errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+                errorToast(evaluateBackendMessage(error.response?.data?.TranslationKey));
             });
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -161,7 +161,7 @@ const HistoryPage: React.FC = () => {
                 setExapndedRows(new Array<boolean>(response.data.length));
             })
             .catch(error => {
-                errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+                errorToast(evaluateBackendMessage(error.response?.data?.TranslationKey));
             })
             .finally(() => {
                 setAwaitingResponse(false);

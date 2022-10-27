@@ -30,7 +30,7 @@ const ChangePasswordPage: React.FC = () => {
                 reset();
             })
             .catch(error => {
-                var translationKey = error.response?.data?.translationKey;
+                var translationKey = error.response?.data?.TranslationKey;
                 errorToast(evaluateBackendMessage(translationKey));
                 if (translationKey === "error.validation.passwordSameAsUsername" || translationKey === "error.validation.passwordSameAsCurrentOne") {
                     setError("newPassword", { type: "custom", message: evaluateBackendMessage(translationKey) }, { shouldFocus: true });

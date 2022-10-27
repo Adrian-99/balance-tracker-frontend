@@ -7,7 +7,6 @@ import { ApplicationContext } from "../components/application-context.provider";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
 import TagSelectComponent from "../components/autocomplete/tag-select.component";
 import DateTimePickerComponent from "../components/date-time-picker.component";
-import ApiResponse from "../data/api-response";
 import Category from "../data/category";
 import EditEntry from "../data/edit-entry";
 import Entry from "../data/entry";
@@ -70,19 +69,14 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tagNames,
 
     const onSubmit: SubmitHandler<EditEntry> = data => {
         setAwaitingResponse(true);
-        let saveAction: Promise<ApiResponse<string>>;
-        if (entry) {
-            saveAction = editEntry(entry.id, data);
-        } else {
-            saveAction = createEntry(data);
-        }
+        let saveAction = entry ? editEntry(entry.id, data) : createEntry(data);
         saveAction
             .then(response => {
                 successToast(evaluateBackendMessage(response.translationKey));
                 clearFormAndClose("save");
             })
             .catch(error => {
-                errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+                errorToast(evaluateBackendMessage(error.response?.data?.TranslationKey));
             })
             .finally(() => {
                 setAwaitingResponse(false);

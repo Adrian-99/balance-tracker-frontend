@@ -224,6 +224,9 @@
                 "changePassword": {
                     "wrongCurrentPassword": "Niepoprawne hasło"
                 }
+            },
+            "tag": {
+                "nameTaken": "Tag o podanej nazwie już istnieje"
             }
         },
         "success": {
@@ -243,6 +246,11 @@
                 "create": "Pomyślnie dodano nowy wpis",
                 "edit": "Pomyślnie zapisano zmiany",
                 "delete": "Pomyślnie usunięto wpis"
+            },
+            "tag": {
+                "create": "Pomyślnie dodano nowy tag",
+                "edit": "Pomyślnie zapisano zmiany",
+                "delete": "Pomyślnie usunięto tag"
             }
         }
     },

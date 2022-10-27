@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import { ApplicationContext } from "../components/application-context.provider"
 import ApiResponse from "../data/api-response";
+import EditTag from "../data/edit-tag";
 import Page from "../data/page";
 import Pageable from "../data/pageable";
 import Tag from "../data/tag";
@@ -25,5 +26,15 @@ export const useTagService = () => {
             .then(response => response.data);
     };
 
-    return { getTagNames, getTagsPaged };
+    const createTag = (data: EditTag): Promise<ApiResponse<string>> => {
+        return http.post<ApiResponse<string>>("/tag", data)
+            .then(response => response.data);
+    }
+
+    const editTag = (id: string, data: EditTag): Promise<ApiResponse<string>> => {
+        return http.put<ApiResponse<string>>(`/tag/${id}`, data)
+            .then(response => response.data);
+    }
+
+    return { getTagNames, getTagsPaged, createTag, editTag };
 }

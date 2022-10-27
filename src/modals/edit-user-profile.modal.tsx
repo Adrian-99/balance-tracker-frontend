@@ -77,7 +77,7 @@ const EditUserProfileModal: React.FC<IProps> = ({ onClose, userData, ...other}) 
                 }
                 onClose("save");
             }).catch(error => {
-                var translationKey = error.response?.data?.translationKey;
+                var translationKey = error.response?.data?.TranslationKey;
                 errorToast(evaluateBackendMessage(translationKey));
                 switch (translationKey) {
                     case "error.user.register.usernameTaken":

@@ -1,12 +1,13 @@
 import { MoreVert as MoreIcon } from "@mui/icons-material";
-import { Box, Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Button, createTheme, IconButton, Menu, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Typography, useTheme } from "@mui/material";
+import { plPL } from "@mui/material/locale";
 import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 import { ApplicationContext } from "../components/application-context.provider";
-import { FiltersComponent } from "../components/filters.component";
+import FiltersComponent from "../components/filters.component";
 import PageCardComponent from "../components/page-card.component"
 import SearchFieldComponent from "../components/search-field.component";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
@@ -20,14 +21,17 @@ import { useTagService } from "../hooks/tag-service.hook";
 import { useUtils } from "../hooks/utils.hook";
 import { ConfirmationModalCloseReason } from "../modals/confirmation.modal";
 import { CustomFormModalCloseReason } from "../modals/custom-form.modal";
+import EditTagModal from "../modals/edit-tag.modal";
 
 export const TagsPage: React.FC = () => {
     const { register, handleSubmit, setValue, reset } = useForm<TagFilter>();
     const { t } = useTranslation();
     const { getTagsPaged } = useTagService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
-    const { isSmallScreen, isExtraSmallScreen } = useUtils();
+    const { isExtraSmallScreen } = useUtils();
     const { user } = useContext(ApplicationContext);
+
+    const THEME = createTheme(useTheme(), plPL);
 
     const PAGE_NUMBER = "pageNumber";
     const PAGE_SIZE = "pageSize";
@@ -97,7 +101,7 @@ export const TagsPage: React.FC = () => {
                 setTagsPage(response);
             })
             .catch(error => {
-                errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+                errorToast(evaluateBackendMessage(error.response?.data?.TranslationKey));
             })
             .finally(() => {
                 setAwaitingResponse(false);
@@ -241,7 +245,7 @@ export const TagsPage: React.FC = () => {
                                         <TableCell>
                                             <Box display="flex" flexWrap="wrap" columnGap="4px" alignItems="center">
                                                 <Typography variant="inherit">{tag.entriesCount}</Typography>
-                                                { tag.entriesCount && tag.entriesCount > 0 &&
+                                                { tag.entriesCount !== undefined && tag.entriesCount > 0 &&
                                                     <Button size={isExtraSmallScreen ? "small" : "medium"}
                                                         sx={{...(!isExtraSmallScreen && { lineHeight: 1.5 })}}
                                                         to={"/history?tagNames=" + tag.name} component={Link}
@@ -268,9 +272,35 @@ export const TagsPage: React.FC = () => {
                                 </TableCell>
                             </TableRow>
                         }
+                        <Menu anchorEl={tagOptionsAnchor}
+                            open={tagOptionsOpen}
+                            onClose={closeTagOptions}
+                        >
+                            <MenuItem onClick={openEditTagModal}>{t("pages.tags.editTag")}</MenuItem>
+                            <MenuItem onClick={openDeleteTagModal}>{t("pages.tags.deleteTag")}</MenuItem>
+                        </Menu>
                     </TableBody>
                 </Table>
+                <ThemeProvider theme={THEME}>
+                    <TablePagination
+                        component="div"
+                        count={tagsPage?.totalCount || 0}
+                        page={tagParams.pageNumber - 1}
+                        rowsPerPage={tagParams.pageSize}
+                        showFirstButton={!isExtraSmallScreen}
+                        showLastButton={!isExtraSmallScreen}
+                        onPageChange={(_event, page) => onPageChange(page)}
+                        onRowsPerPageChange={(event) => onRowsPerPageChange(Number.parseInt(event.target.value))}
+                    />
+                </ThemeProvider>
             </TableContainer>
+
+            <EditTagModal
+                open={editTagModalOpen}
+                onClose={onModalClose}
+                tag={selectedTag}
+            />
+
         </PageCardComponent>
     );
 }

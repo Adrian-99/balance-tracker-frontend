@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
                 }
             })
             .catch(error => {
-                var translationKey = error.response?.data?.translationKey;
+                var translationKey = error.response?.data?.TranslationKey;
                 errorToast(evaluateBackendMessage(translationKey));
                 if (translationKey === "error.user.authenticate.wrongCredentials") {
                     setError("usernameOrEmail", { type: "custom"});

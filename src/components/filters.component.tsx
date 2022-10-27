@@ -9,7 +9,7 @@ interface IProps {
     clearFilters: () => void;
 }
 
-export const FiltersComponent: React.FC<IProps> = ({ renderFiltersForm, isFilterSet, clearFilters }) => {
+const FiltersComponent: React.FC<IProps> = ({ renderFiltersForm, isFilterSet, clearFilters }) => {
     const { t } = useTranslation();
     const { isSmallScreen } = useUtils();
 
@@ -42,3 +42,5 @@ export const FiltersComponent: React.FC<IProps> = ({ renderFiltersForm, isFilter
         </Box>
     );
 }
+
+export default FiltersComponent;

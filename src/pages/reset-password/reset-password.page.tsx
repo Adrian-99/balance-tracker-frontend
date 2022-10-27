@@ -36,7 +36,7 @@ const ResetPasswordPage: React.FC = () => {
                 navigate("/login");
             })
             .catch(error => {
-                var translationKey = error.response?.data?.translationKey;
+                var translationKey = error.response?.data?.TranslationKey;
                 errorToast(evaluateBackendMessage(translationKey));
                 if (translationKey === "error.user.resetPassword.invalidCode") {
                     setError("resetPasswordCode", { type: "custom", message: evaluateBackendMessage(translationKey) }, { shouldFocus: searchParams.get("code") !== null });

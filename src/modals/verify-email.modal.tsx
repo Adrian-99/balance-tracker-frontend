@@ -43,7 +43,7 @@ const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
                 successToast(evaluateBackendMessage(response.translationKey));
             })
             .catch(error => {
-                errorToast(evaluateBackendMessage(error.response?.data?.translationKey));
+                errorToast(evaluateBackendMessage(error.response?.data?.TranslationKey));
             })
             .finally(() => {
                 setAwaitingResetResponse(false);
@@ -61,7 +61,7 @@ const VerifyEmailModal: React.FC<IProps> = ({ open, onClose }) => {
                 onClose("save");
             })
             .catch(error => {
-                var translationKey = error.response?.data?.translationKey;
+                var translationKey = error.response?.data?.TranslationKey;
                 errorToast(evaluateBackendMessage(translationKey));
                 if (translationKey === "error.user.verifyEmail.invalidCode") {
                     setError("emailVerificationCode", { type: "custom", message: evaluateBackendMessage(translationKey) });
