@@ -8,6 +8,8 @@ import Tag from "../data/tag";
 import TagFilter from "../data/tag-filter";
 
 export const useTagService = () => {
+    const STRINGS_SEPARATOR = ',';
+
     const { http } = useContext(ApplicationContext);
 
     const getTagNames = (): Promise<ApiResponse<string[]>> => {
@@ -29,12 +31,20 @@ export const useTagService = () => {
     const createTag = (data: EditTag): Promise<ApiResponse<string>> => {
         return http.post<ApiResponse<string>>("/tag", data)
             .then(response => response.data);
-    }
+    };
 
     const editTag = (id: string, data: EditTag): Promise<ApiResponse<string>> => {
         return http.put<ApiResponse<string>>(`/tag/${id}`, data)
             .then(response => response.data);
+    };
+
+    const deleteTag = (id: string, replacementTags?: string[]): Promise<ApiResponse<string>> => {
+        const params = {
+            replacementTags: replacementTags?.join(STRINGS_SEPARATOR)
+        }
+        return http.delete<ApiResponse<string>>(`/tag/${id}`, { params })
+            .then(response => response.data);
     }
 
-    return { getTagNames, getTagsPaged, createTag, editTag };
+    return { getTagNames, getTagsPaged, createTag, editTag, deleteTag };
 }

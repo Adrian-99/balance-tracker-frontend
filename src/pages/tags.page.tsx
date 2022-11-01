@@ -21,6 +21,7 @@ import { useTagService } from "../hooks/tag-service.hook";
 import { useUtils } from "../hooks/utils.hook";
 import { ConfirmationModalCloseReason } from "../modals/confirmation.modal";
 import { CustomFormModalCloseReason } from "../modals/custom-form.modal";
+import DeleteTagModal from "../modals/delete-tag.modal";
 import EditTagModal from "../modals/edit-tag.modal";
 
 export const TagsPage: React.FC = () => {
@@ -297,6 +298,12 @@ export const TagsPage: React.FC = () => {
 
             <EditTagModal
                 open={editTagModalOpen}
+                onClose={onModalClose}
+                tag={selectedTag}
+            />
+
+            <DeleteTagModal
+                open={deleteTagModalOpen}
                 onClose={onModalClose}
                 tag={selectedTag}
             />

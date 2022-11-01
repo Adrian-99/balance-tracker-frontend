@@ -283,13 +283,19 @@ const HistoryPage: React.FC = () => {
         }
     }
 
-    const showTags = (tags: Tag[]): JSX.Element[] => {
+    const showTags = (tags: Tag[]): JSX.Element => {
         if (tags.length) {
-            return tags.map(tag => 
-                <Chip key={tag.name} size="small" label={tag.name}/>
+            return (
+                <Box display="flex" gap="4px">
+                    {tags.map(tag => 
+                        <Chip key={tag.name} size="small" label={tag.name}/>
+                    )}
+                </Box>
             );
         } else {
-            return [ <span key="no-tag">—</span> ];
+            return (
+                <span key="no-tag">—</span>
+            );
         }
     }
 

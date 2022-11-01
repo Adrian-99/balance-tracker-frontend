@@ -165,6 +165,12 @@
         },
         "deleteEntry": {
             "confirmationQuestion": "Czy na pewno chcesz usunąć wpis \"{{name}}\"?"
+        },
+        "deleteTag": {
+            "confirmationQuestion": "Czy na pewno chcesz usunąć tag \"{{name}}\"?",
+            "assignedEntriesWarning": "Uwaga! Istnieją wpisy ({{count}}) przypisane do tego tagu.",
+            "replaceWithOtherTag": "Zastąp innym tagiem",
+            "tags": "Tagi"
         }
     },
 

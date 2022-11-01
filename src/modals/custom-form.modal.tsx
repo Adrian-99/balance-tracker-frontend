@@ -13,6 +13,7 @@ interface IProps {
     showSpinner?: boolean | undefined;
     showNoData?: boolean | undefined;
     submitButtonText?: string | undefined;
+    cancelButtonText?: string | undefined;
     showSubmitButtonSpinner?: boolean | undefined;
     disableSubmitButton?: boolean | undefined;
     onClose: (reason: CustomFormModalCloseReason) => void;
@@ -20,8 +21,8 @@ interface IProps {
 }
 
 export const CustomFormModal: React.FC<IProps> = ({
-    open, title, showSpinner, showNoData, submitButtonText, showSubmitButtonSpinner, disableSubmitButton,
-    onClose, onSubmit, children
+    open, title, showSpinner, showNoData, submitButtonText, cancelButtonText, showSubmitButtonSpinner,
+    disableSubmitButton, onClose, onSubmit, children
     }) => {
     const { t } = useTranslation();
 
@@ -44,7 +45,9 @@ export const CustomFormModal: React.FC<IProps> = ({
                         {children}
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => onClose("cancel")}>{t("general.cancel")}</Button>
+                        <Button onClick={() => onClose("cancel")}>
+                            { cancelButtonText || t("general.cancel") }
+                        </Button>
                         <LoadingButton variant="contained"
                             type="submit"
                             disabled={disableSubmitButton}
