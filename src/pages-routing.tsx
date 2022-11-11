@@ -11,6 +11,7 @@ import ResetPasswordPage from "./pages/reset-password/reset-password.page";
 import UserProfilePage from "./pages/user-profile.page";
 import HistoryPage from "./pages/history.page";
 import { TagsPage } from "./pages/tags.page";
+import StatisticsPage from "./pages/statistics.page";
 
 const PagesRouting: React.FC = () => {
     const location = useLocation();
@@ -64,6 +65,10 @@ const PagesRouting: React.FC = () => {
             } />
             <Route path="/tags" element={user ?
                 <TagsPage /> :
+                defaultElementIfNotLoggedIn
+            } />
+            <Route path="/statistics" element={user ?
+                <StatisticsPage /> :
                 defaultElementIfNotLoggedIn
             } />
             <Route path="*" element={

@@ -1,20 +1,15 @@
-import { Autocomplete, Checkbox, Chip, createTheme, SxProps, TextField, Theme, ThemeProvider, useTheme } from "@mui/material";
+import { createTheme, ThemeProvider, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import { Control, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import AutocompleteComponent, { AutocompleteProps } from "./autocomplete.component";
 
-export interface FormAutocompleteProps<T> {
+export interface FormAutocompleteProps<T> extends AutocompleteProps<T> {
     formFieldName: string;
     control: Control<any, any>;
-    label: string;
-    options: T[];
-    required?: boolean;
-    multiple?: boolean;
+    keepSelectOrder?: boolean;
     autoSubmit?: boolean;
     submitFunction?: () => void;
-    size?: "small" | "medium";
-    fullWidth?: boolean;
-    sx?: SxProps<Theme>;
 }
 
 interface IProps<T> extends FormAutocompleteProps<T> {
@@ -31,7 +26,30 @@ const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>)
         if (componentProps.autoSubmit && componentProps.submitFunction) {
             componentProps.submitFunction();
         }
-    }
+    };
+
+    const evaluateComponentValue = (value: any): T | T[] | null => {
+        if (componentProps.multiple) {
+            const valueIsArray = Array.isArray(value);
+            if (componentProps.keepSelectOrder && valueIsArray) {
+                let values: T[] = [];
+                value.forEach(v => {
+                    let option = componentProps.options.find(o => v === componentProps.getOptionValue(o));
+                    if (option) {
+                        values.push(option);
+                    }
+                })
+                return values;
+            } else {
+                return componentProps.options.filter(o => valueIsArray ?
+                    value.includes(componentProps.getOptionValue(o)) :
+                    value === componentProps.getOptionValue(o)
+                );
+            }
+        } else {
+            return componentProps.options.find(o => value === componentProps.getOptionValue(o)) || null;
+        }
+    };
 
     return (
         <ThemeProvider theme={THEME}>
@@ -39,45 +57,17 @@ const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>)
                 name={componentProps.formFieldName}
                 control={componentProps.control}
                 rules={{ ...(componentProps.required && { required: t("validation.required") as string })}}
-                render={({ field: { value, onChange }, fieldState: { error }}) => 
-                    <Autocomplete
+                render={({ field: { value, onChange }, fieldState: { error }}) =>
+                    <AutocompleteComponent
+                        label={componentProps.label}
                         options={componentProps.options}
+                        required={componentProps.required}
                         multiple={componentProps.multiple}
-                        disableCloseOnSelect={componentProps.multiple}
-                        autoHighlight
-                        renderInput={params =>
-                            <TextField {...params}
-                                size={componentProps.size}
-                                label={componentProps.required && !componentProps.label.endsWith("*") ?
-                                    componentProps.label + " *" :
-                                    componentProps.label
-                                }
-                                error={error !== undefined}
-                                helperText={error?.message}
-                            />
-                        }
-                        renderOption={(props, option, { selected }) =>
-                            <li {...props}>
-                                { componentProps.multiple && 
-                                    <Checkbox checked={selected} size={componentProps.size} />
-                                }
-                                { componentProps.renderOption(option) }
-                            </li>
-                        }
-                        getOptionLabel={componentProps.getOptionLabel}
-                        limitTags={2}
-                        getLimitTagsText={more => <Chip label={`+${more}`} size={componentProps.size} />}
+                        limitTags={componentProps.limitTags}
                         size={componentProps.size}
                         fullWidth={componentProps.fullWidth}
                         sx={componentProps.sx}
-                        value={
-                            componentProps.multiple ?
-                                componentProps.options.filter(o => Array.isArray(value) ?
-                                    value.includes(componentProps.getOptionValue(o)) :
-                                    value === componentProps.getOptionValue(o)
-                                ) :
-                                componentProps.options.find(o => value === componentProps.getOptionValue(o)) || null
-                        }
+                        value={evaluateComponentValue(value)}
                         onChange={(event, value) => {
                             let convertedValue: string[] | string | undefined;
                             if (componentProps.multiple) {
@@ -99,6 +89,9 @@ const FormAutocompleteComponent = <T extends unknown>(componentProps: IProps<T>)
                             onChange({...event, target: {...event.target, value: convertedValue}});
                             triggerAutoSubmit();
                         }}
+                        error={error}
+                        renderOption={componentProps.renderOption}
+                        getOptionLabel={componentProps.getOptionLabel}
                     />
                 }
             />

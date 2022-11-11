@@ -2,7 +2,7 @@ import { Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import TagSelectComponent from "../components/autocomplete/tag-select.component";
+import StringSelectComponent from "../components/autocomplete/string-select.component";
 import Tag from "../data/tag";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useTagService } from "../hooks/tag-service.hook";
@@ -43,7 +43,7 @@ const DeleteTagModal: React.FC<IProps> = ({ open, onClose, tag }) => {
         } else if (!open) {
             setReplaceWithOtherTag(false);
         }
-    }, [open, tag]);
+    }, [open, tag]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onReplacementCheckboxChange = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         setReplaceWithOtherTag(checked);
@@ -99,7 +99,7 @@ const DeleteTagModal: React.FC<IProps> = ({ open, onClose, tag }) => {
                                 }
                             />
                             { replaceWithOtherTag &&
-                                <TagSelectComponent
+                                <StringSelectComponent
                                     formFieldName="replacementTags"
                                     control={control}
                                     label={t("modals.deleteTag.tags")}

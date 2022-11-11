@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { ApplicationContext } from "../components/application-context.provider";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
-import TagSelectComponent from "../components/autocomplete/tag-select.component";
+import StringSelectComponent from "../components/autocomplete/string-select.component";
 import DateTimePickerComponent from "../components/date-time-picker.component";
 import FiltersComponent from "../components/filters.component";
 import PageCardComponent from "../components/page-card.component";
@@ -350,7 +350,7 @@ const HistoryPage: React.FC = () => {
                         sx={{ ...(horizontally && { minWidth: "250px", maxWidth: "400px" }) }}
                     />
                     { tagNames.length > 0 &&
-                        <TagSelectComponent
+                        <StringSelectComponent
                             formFieldName="tagsNames"
                             control={control}
                             label={t("general.entry.tags")}

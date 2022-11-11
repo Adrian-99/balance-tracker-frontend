@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { ApplicationContext } from "../components/application-context.provider";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
-import TagSelectComponent from "../components/autocomplete/tag-select.component";
+import StringSelectComponent from "../components/autocomplete/string-select.component";
 import DateTimePickerComponent from "../components/date-time-picker.component";
 import Category from "../data/category";
 import EditEntry from "../data/edit-entry";
@@ -162,7 +162,7 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tagNames,
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <TagSelectComponent
+                    <StringSelectComponent
                         formFieldName="tagNames"
                         control={control}
                         label={t("general.entry.tags")}

@@ -69,6 +69,29 @@
             "name": "Nazwa",
             "entriesCount": "Liczba wpisów"
         },
+        "statistics": {
+            "entryType": "Rodzaj wpisu",
+            "entryTypeValue": {
+                "income": "Przychód",
+                "cost": "Koszt"
+            },
+            "groupBy": "Grupowanie według",
+            "groupByValue": {
+                "timePeriod": "Okres czasu",
+                "entryType": "Rodzaj wpisu",
+                "category": "Kategoria",
+                "tag": "Tag"
+            },
+            "selectValue": "Obliczanie wartości",
+            "selectValueValue": {
+                "count": "Ilość",
+                "min": "Minimum",
+                "max": "Maksimum",
+                "sum": "Suma",
+                "average": "Średnia",
+                "median": "Mediana"
+            }
+        },
         "currency": "zł",
         "currencyValue": "{{value}} zł",
         "categories": "Kategorie"
@@ -150,6 +173,10 @@
             "addTag": "Dodaj tag",
             "editTag": "Edytuj tag",
             "deleteTag": "Usuń tag"
+        },
+        "statistics": {
+            "title": "Statystyki",
+            "generateNewStatistics": "Generuj nowe statystyki"
         }
     },
 
@@ -171,6 +198,28 @@
             "assignedEntriesWarning": "Uwaga! Istnieją wpisy ({{count}}) przypisane do tego tagu.",
             "replaceWithOtherTag": "Zastąp innym tagiem",
             "tags": "Tagi"
+        },
+        "generateNewStatistics": {
+            "filtering": "Filtrowanie",
+            "filterBy": "Filtrowanie według",
+            "filterByValue": {
+                "dateRange": "Zakres dat",
+                "entryType": "Rodzaj wpisu",
+                "category": "Kategoria",
+                "tag": "Tag"
+            },
+            "grouping": "Grupowanie",
+            "startDate": "Data początkowa",
+            "intervalValue": "Długość",
+            "intervalUnit": "Jednostka",
+            "intervalUnitValue": {
+                "day": "Dni",
+                "month": "Miesiące",
+                "year": "Lata"
+            },
+            "selecting": "Obliczanie",
+            "selectOnAllLevels": "Obliczanie na wszystkich poziomach grupowania",
+            "submitButton": "Generuj"
         }
     },
 
