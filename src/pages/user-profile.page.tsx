@@ -1,5 +1,5 @@
 import { CheckCircleOutline as EmailVerifiedIcon, EditOff as UsernameChangeBlockedIcon } from "@mui/icons-material";
-import { Box, Chip, Grid, List, ListItem, Tooltip, Typography } from "@mui/material";
+import { Box, Chip, Tooltip, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import { CustomFormModalCloseReason } from "../modals/custom-form.modal";
 import EditUserProfileModal from "../modals/edit-user-profile.modal";
 import VerifyEmailModal from "../modals/verify-email.modal";
 import { useUtils } from "../hooks/utils.hook";
+import DataListComponent from "../components/data-list.component";
 
 const UserProfilePage: React.FC = () => {
     const { action } = useParams();
@@ -67,13 +68,11 @@ const UserProfilePage: React.FC = () => {
                 undefined
         }>
             { !awaitingUserData && userData ?
-                <List>
-                    <ListItem>
-                        <Grid container alignItems="center">
-                            <Grid item xs={12} md={4}>
-                                <Typography variant="body1">{t("user.username")}:</Typography>
-                            </Grid>
-                            <Grid item xs={12} md="auto">
+                <DataListComponent
+                    data={[
+                        {
+                            name: t("user.username"),
+                            value: 
                                 <Box display="flex" flexWrap="wrap" alignItems="center">
                                     <Typography variant="body2" sx={{ mx: "4px" }}>{userData.username}</Typography>
                                     { isWithinTimeframe(userData.lastUsernameChangeAt, validationRules.userUsernameAllowedChangeFrequencyDays) &&
@@ -102,15 +101,10 @@ const UserProfilePage: React.FC = () => {
                                         )
                                     }
                                 </Box>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
-                    <ListItem>
-                        <Grid container alignItems="center">
-                            <Grid item xs={10} md={4}>
-                                <Typography variant="body1">{t("user.email")}:</Typography>
-                            </Grid>
-                            <Grid item xs={10} md="auto">
+                        },
+                        {
+                            name: t("user.email"),
+                            value:
                                 <Box display="flex" flexWrap="wrap" alignItems="center">
                                     <Typography variant="body2" sx={{ mx: "4px" }}>{userData.email}</Typography>
                                     { userData.isEmailVerified &&
@@ -128,30 +122,17 @@ const UserProfilePage: React.FC = () => {
                                         )
                                     }
                                 </Box>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
-                    <ListItem>
-                        <Grid container alignItems="center">
-                            <Grid item xs={12} md={4}>
-                                <Typography variant="body1">{t("user.firstName")}:</Typography>
-                            </Grid>
-                            <Grid item xs={12} md={8}>
-                                <Typography variant="body2" sx={{ mx: "4px" }}>{userData.firstName || "—"}</Typography>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
-                    <ListItem>
-                        <Grid container alignItems="center">
-                            <Grid item xs={12} md={4}>
-                                <Typography variant="body1">{t("user.lastName")}:</Typography>
-                            </Grid>
-                            <Grid item xs={12} md={8}>
-                                <Typography variant="body2" sx={{ mx: "4px" }}>{userData.lastName || "—"}</Typography>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
-                </List>
+                        },
+                        {
+                            name: t("user.firstName"),
+                            value: userData.firstName || "—"
+                        },
+                        {
+                            name: t("user.lastName"),
+                            value: userData.lastName || "—"
+                        }
+                    ]}
+                />
                 :
                 <SpinnerOrNoDataComponent showSpinner={awaitingUserData} showNoData={!userData} />
             }

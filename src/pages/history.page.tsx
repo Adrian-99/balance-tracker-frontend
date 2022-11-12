@@ -1,5 +1,5 @@
 import { KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon, MoreVert as MoreIcon } from "@mui/icons-material";
-import { Box, Button, Chip, Collapse, createTheme, IconButton, Menu, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
+import { Box, Button, Collapse, createTheme, IconButton, Menu, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, ThemeProvider, Tooltip, Typography, useTheme } from "@mui/material";
 import { plPL } from "@mui/material/locale";
 import moment from "moment";
 import React, { useContext } from "react";
@@ -10,18 +10,19 @@ import { useSearchParams } from "react-router-dom";
 import { ApplicationContext } from "../components/application-context.provider";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
 import StringSelectComponent from "../components/autocomplete/string-select.component";
+import CategoryComponent from "../components/category.component";
 import DateTimePickerComponent from "../components/date-time-picker.component";
 import FiltersComponent from "../components/filters.component";
 import PageCardComponent from "../components/page-card.component";
 import SearchFieldComponent from "../components/search-field.component";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
 import TableHeaderComponent from "../components/table-header.component";
+import TagsComponent from "../components/tags.component";
 import Category from "../data/category";
 import Entry from "../data/entry";
 import EntryFilter from "../data/entry-filter";
 import Page from "../data/page";
 import Pageable from "../data/pageable";
-import Tag from "../data/tag";
 import { useCategoryService } from "../hooks/category-service.hook";
 import { useCustomToast } from "../hooks/custom-toast.hook";
 import { useEntryService } from "../hooks/entry-service.hook";
@@ -40,7 +41,7 @@ const HistoryPage: React.FC = () => {
     const { getTagNames } = useTagService();
     const { getEntriesPaged } = useEntryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
-    const { isSmallScreen, isExtraSmallScreen, relativeDateString, currencyValueString, renderCategory } = useUtils();
+    const { isSmallScreen, isExtraSmallScreen, relativeDateString, currencyValueString } = useUtils();
 
     const THEME = createTheme(useTheme(), plPL);
 
@@ -277,25 +278,9 @@ const HistoryPage: React.FC = () => {
     const showCategory = (categoryKeyword: string): JSX.Element => {
         let category = categories.find(c => c.keyword === categoryKeyword);
         if (category) {
-            return renderCategory(category);
+            return <CategoryComponent category={category} />;
         } else {
             return <Box>—</Box>;
-        }
-    }
-
-    const showTags = (tags: Tag[]): JSX.Element => {
-        if (tags.length) {
-            return (
-                <Box display="flex" gap="4px">
-                    {tags.map(tag => 
-                        <Chip key={tag.name} size="small" label={tag.name}/>
-                    )}
-                </Box>
-            );
-        } else {
-            return (
-                <span key="no-tag">—</span>
-            );
         }
     }
 
@@ -443,7 +428,9 @@ const HistoryPage: React.FC = () => {
                                                 <TableCell>{ showCategory(entry.categoryKeyword) }</TableCell>
                                             }
                                             { !isSmallScreen &&
-                                                <TableCell>{ showTags(entry.tags) }</TableCell>
+                                                <TableCell>
+                                                    <TagsComponent tagNames={entry.tags.map(t => t.name)} />
+                                                </TableCell>
                                             }
                                             <TableCell align="right">{ currencyValueString(entry.value) }</TableCell>
                                             <TableCell style={isSmallScreen || !user?.isEmailVerified ? { width: "34px" } : { width: "68px" }}>
@@ -478,7 +465,7 @@ const HistoryPage: React.FC = () => {
                                                                         { t("general.entry.tags") }
                                                                     </Typography>
                                                                     <Box style={{ paddingBottom: isExtraSmallScreen ? "6px" : "16px" }}>
-                                                                        { showTags(entry.tags) }
+                                                                        <TagsComponent tagNames={entry.tags.map(t => t.name)} />
                                                                     </Box>
                                                                 </>
                                                             }

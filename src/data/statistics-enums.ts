@@ -1,11 +1,26 @@
-export const ENTRY_TYPES = ["income", "cost"] as const;
-export type EntryType = typeof ENTRY_TYPES[number];
+export enum EntryType {
+    INCOME = "income",
+    COST = "cost"
+}
 
-export const GROUP_BY_VALUES = ["timePeriod", "entryType", "category", "tag"] as const;
-export type GroupBy = typeof GROUP_BY_VALUES[number];
+export enum GroupBy {
+    TIME_PERIOD = "timePeriod",
+    ENTRY_TYPE = "entryType",
+    CATEGORY = "category",
+    TAG = "tag"
+}
 
-export const TIME_PERIOD_UNITS = ["day", "month", "year"] as const; 
-export type TimePeriodUnit = typeof TIME_PERIOD_UNITS[number];
+export enum TimePeriodUnit {
+    DAY = "day",
+    MONTH = "month",
+    YEAR = "year"
+}
 
-export const SELECT_VALUES = ["count", "min", "max", "sum", "average", "median"] as const;
-export type SelectValue = typeof SELECT_VALUES[number];
+export enum SelectValue {
+    COUNT = "count",
+    MIN = "min",
+    MAX = "max",
+    SUM = "sum",
+    AVERAGE = "average",
+    MEDIAN = "median"
+}

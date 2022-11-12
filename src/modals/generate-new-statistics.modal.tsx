@@ -4,10 +4,11 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import AutocompleteComponent from "../components/autocomplete/autocomplete.component";
 import CategorySelectComponent from "../components/autocomplete/category-select.component";
+import EntryTypeSelectComponent from "../components/autocomplete/entry-type-select.component";
 import StringSelectComponent from "../components/autocomplete/string-select.component";
 import DateTimePickerComponent from "../components/date-time-picker.component";
 import Category from "../data/category";
-import { ENTRY_TYPES, GROUP_BY_VALUES, SELECT_VALUES, TIME_PERIOD_UNITS } from "../data/statistics-enums";
+import { EntryType, GroupBy, SelectValue, TimePeriodUnit } from "../data/statistics-enums";
 import StatisticsRequest from "../data/statistics-request";
 import StatisticsResponse from "../data/statistics-response";
 import { useCustomToast } from "../hooks/custom-toast.hook";
@@ -22,7 +23,7 @@ interface IProps {
 }
 
 const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categories }) => {
-    const FILTER_BY_VALUES = ["dateRange", "entryType", "category", "tag"] as const;
+    const FILTER_BY_VALUES = ["dateRange", "entryType", "categories", "tags"] as const;
     type FilterBy = typeof FILTER_BY_VALUES[number];
     
     const { t } = useTranslation();
@@ -66,6 +67,9 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
 
     const onSubmit: SubmitHandler<StatisticsRequest> = data => {
         setAwaitingResponse(true);
+        if (data.dateRangeFilter && (!data.dateRangeFilter.dateFrom || !data.dateRangeFilter?.dateTo)) {
+            data.dateRangeFilter = undefined;
+        }
         generateStatistics(data)
             .then(response => {
                 clearFormAndClose(response.data);
@@ -90,8 +94,8 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
             <Grid container spacing={2} alignItems="top" justifyContent="center">
                 <Grid item xs={12}>
                     <AutocompleteComponent
-                        label={t("modals.generateNewStatistics.filterBy")}
-                        options={tags.length > 0 ? Array.from(FILTER_BY_VALUES) : FILTER_BY_VALUES.filter(f => f !== "tag")}
+                        label={t("general.statistics.filterBy")}
+                        options={tags.length > 0 ? Array.from(FILTER_BY_VALUES) : FILTER_BY_VALUES.filter(f => f !== "tags")}
                         multiple
                         limitTags={3}
                         fullWidth
@@ -107,8 +111,8 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                                 setSelectedFilters([]);
                             }
                         }}
-                        renderOption={option => <span>{ t("modals.generateNewStatistics.filterByValue." + option) }</span>}
-                        getOptionLabel={option => t("modals.generateNewStatistics.filterByValue." + option)}
+                        renderOption={option => <span>{ t("general.statistics.filterByValue." + option) }</span>}
+                        getOptionLabel={option => t("general.statistics.filterByValue." + option)}
                     />
                 </Grid>
                 { selectedFilters.includes("dateRange") &&
@@ -141,19 +145,17 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                 }
                 { selectedFilters.includes("entryType") &&
                     <Grid item xs={12}>
-                        <StringSelectComponent
+                        <EntryTypeSelectComponent
                             formFieldName="entryTypeFilter"
                             control={control}
                             label={t("general.statistics.entryType")}
-                            options={Array.from(ENTRY_TYPES)}
+                            options={Object.values(EntryType)}
                             required
                             fullWidth
-                            translateLabel
-                            translateKeyPrefix="general.statistics.entryTypeValue"
                         />
                     </Grid>
                 }
-                { selectedFilters.includes("category") &&
+                { selectedFilters.includes("categories") &&
                     <Grid item xs={12}>
                         <CategorySelectComponent
                             formFieldName="categoryFilter"
@@ -166,7 +168,7 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                         />
                     </Grid>
                 }
-                { selectedFilters.includes("tag") &&
+                { selectedFilters.includes("tags") &&
                     <Grid item xs={12}>
                         <StringSelectComponent
                             formFieldName="tagFilter"
@@ -188,7 +190,7 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                         formFieldName="groupBy"
                         control={control}
                         label={t("general.statistics.groupBy")}
-                        options={tags.length ? Array.from(GROUP_BY_VALUES) : GROUP_BY_VALUES.filter(v => v !== "tag")}
+                        options={tags.length ? Object.values(GroupBy) : Object.values(GroupBy).filter(v => v !== GroupBy.TAG)}
                         multiple
                         limitTags={3}
                         keepSelectOrder
@@ -197,7 +199,7 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                         translateKeyPrefix="general.statistics.groupByValue"
                     />
                 </Grid>
-                { groupByWatch !== undefined && groupByWatch.includes("timePeriod") &&
+                { groupByWatch !== undefined && groupByWatch.includes(GroupBy.TIME_PERIOD) &&
                     <>
                         <Grid item xs={12} md={5}>
                             <DateTimePickerComponent
@@ -228,7 +230,7 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                                 formFieldName="groupByTimePeriodProperties.intervalUnit"
                                 control={control}
                                 label={t("modals.generateNewStatistics.intervalUnit")}
-                                options={Array.from(TIME_PERIOD_UNITS)}
+                                options={Object.values(TimePeriodUnit)}
                                 required
                                 fullWidth
                                 translateLabel
@@ -246,7 +248,7 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                         formFieldName="selectValues"
                         control={control}
                         label={t("general.statistics.selectValue")}
-                        options={Array.from(SELECT_VALUES)}
+                        options={Object.values(SelectValue)}
                         required
                         multiple
                         limitTags={3}

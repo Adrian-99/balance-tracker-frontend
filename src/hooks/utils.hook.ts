@@ -1,7 +1,6 @@
-import { Box, SvgIcon, useMediaQuery, useTheme } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
-import Category from "../data/category";
 
 export const useUtils = () => {
     const { t } = useTranslation();
@@ -59,19 +58,6 @@ export const useUtils = () => {
         return t("general.currencyValue", { value: Number(value).toFixed(2).replace('.', ',') });
     };
 
-    const renderCategory = (category: Category): JSX.Element => {
-        return (
-            <Box display="flex" flexWrap="wrap" columnGap="4px" alignItems="center">
-                <SvgIcon sx={{ color: category.iconColor }}>
-                    <path d={category.icon}></path>
-                </SvgIcon>
-                <span>
-                    { t("categories." + category.keyword) }
-                </span>
-            </Box>
-        );
-    };
-
     const areStringsDifferent = (str1: string | null | undefined, str2: string | null | undefined): boolean => {
         if ((str1 === null || str1 === undefined || str1 === "") && (str2 === null || str2 === undefined || str2 === "")) {
             return false;
@@ -81,10 +67,15 @@ export const useUtils = () => {
 
     const areArraysDifferent = (arr1: any[], arr2: any[]): boolean => {
         return arr1.length !== arr2.length || arr1.some(element => !arr2.includes(element));
-    }
+    };
+
+    const firstLetterToLower = (text: string): string => {
+        return text[0].toLowerCase() + text.slice(1);
+    };
 
     return { 
         isSmallScreen, isExtraSmallScreen, isWithinTimeframe, addDays, durationUntilString,
-        relativeDateString, currencyValueString, renderCategory, areStringsDifferent, areArraysDifferent
+        relativeDateString, currencyValueString, areStringsDifferent,
+        areArraysDifferent, firstLetterToLower
     };
 }

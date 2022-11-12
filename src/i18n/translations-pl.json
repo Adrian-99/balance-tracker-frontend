@@ -70,6 +70,13 @@
             "entriesCount": "Liczba wpisów"
         },
         "statistics": {
+            "filterBy": "Filtrowanie według",
+            "filterByValue": {
+                "dateRange": "Zakres dat",
+                "entryType": "Rodzaj wpisów",
+                "categories": "Kategorie",
+                "tags": "Tagi"
+            },
             "entryType": "Rodzaj wpisu",
             "entryTypeValue": {
                 "income": "Przychód",
@@ -176,7 +183,9 @@
         },
         "statistics": {
             "title": "Statystyki",
-            "generateNewStatistics": "Generuj nowe statystyki"
+            "generateNewStatistics": "Generuj nowe statystyki",
+            "entriesCount": "Liczba wpisów",
+            "viewEntries": "Zobacz wpisy"
         }
     },
 
@@ -201,13 +210,6 @@
         },
         "generateNewStatistics": {
             "filtering": "Filtrowanie",
-            "filterBy": "Filtrowanie według",
-            "filterByValue": {
-                "dateRange": "Zakres dat",
-                "entryType": "Rodzaj wpisu",
-                "category": "Kategoria",
-                "tag": "Tag"
-            },
             "grouping": "Grupowanie",
             "startDate": "Data początkowa",
             "intervalValue": "Długość",

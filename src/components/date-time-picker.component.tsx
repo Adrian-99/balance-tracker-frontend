@@ -59,7 +59,7 @@ const DateTimePickerComponent: React.FC<IProps> = componentProps => {
             label: componentProps.required && !componentProps.label.endsWith("*") ?
                 componentProps.label + " *" :
                 componentProps.label,
-            onChange: (newValue: moment.Moment | null) => onChange(newValue?.toString().length ? moment.parseZone(newValue).toDate() : null),
+            onChange: (newValue: moment.Moment | null) => onChange(newValue?.toString().length ? moment(newValue).utc().add(moment(newValue).utcOffset(), "m") : null),
             onAccept: () => triggerAutoSubmit(),
             renderInput: (props: TextFieldProps) => 
                 <TextField
@@ -75,7 +75,7 @@ const DateTimePickerComponent: React.FC<IProps> = componentProps => {
                         if (props.onChange) {
                             props.onChange(event);
                         }
-                        let parsedDate = moment.parseZone(event.target.value, componentProps.dateTimeFormat, true);
+                        let parsedDate = moment(event.target.value, componentProps.dateTimeFormat, true);
                         if (parsedDate.isValid()) {
                             onChange(parsedDate.toDate());
                             triggerAutoSubmit();
@@ -87,7 +87,7 @@ const DateTimePickerComponent: React.FC<IProps> = componentProps => {
                     error={error?.message !== undefined}
                     helperText={error?.message}
                 />,
-            value: value ? moment(value).utc().add(moment(value).utcOffset(), "m") : null,
+            value: value ? value : null,
             minDate: componentProps.minDate ? moment(componentProps.minDate) : undefined,
             maxDate: componentProps.maxDate ? moment(componentProps.maxDate) : undefined,
             inputFormat: componentProps.dateTimeFormat
