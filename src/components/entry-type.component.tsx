@@ -3,7 +3,6 @@ import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useTranslation } from "react-i18next";
 import { EntryType } from "../data/statistics-enums";
-import { useUtils } from "../hooks/utils.hook";
 
 interface IProps {
     entryType: EntryType;
@@ -12,13 +11,10 @@ interface IProps {
 
 const EntryTypeComponent: React.FC<IProps> = ({ entryType, typographyVariant }) => {
     const { t } = useTranslation();
-    const { firstLetterToLower } = useUtils();
-
-    const entryTypeToLower = firstLetterToLower(entryType);
 
     let icon: JSX.Element = <></>;
 
-    switch (entryTypeToLower) {
+    switch (entryType) {
         case EntryType.INCOME:
             icon = <IncomeIcon sx={{ color: "#37cf08" }} />
             break;
@@ -32,7 +28,7 @@ const EntryTypeComponent: React.FC<IProps> = ({ entryType, typographyVariant }) 
         <Box display="flex" flexWrap="wrap" columnGap="4px" alignItems="center">
             { icon }
             <Typography variant={typographyVariant}>
-                { t("general.statistics.entryTypeValue." + entryTypeToLower) }
+                { t("general.statistics.entryTypeValue." + entryType) }
             </Typography>
         </Box>
     );

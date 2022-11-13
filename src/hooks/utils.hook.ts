@@ -69,13 +69,8 @@ export const useUtils = () => {
         return arr1.length !== arr2.length || arr1.some(element => !arr2.includes(element));
     };
 
-    const firstLetterToLower = (text: string): string => {
-        return text[0].toLowerCase() + text.slice(1);
-    };
-
     return { 
         isSmallScreen, isExtraSmallScreen, isWithinTimeframe, addDays, durationUntilString,
-        relativeDateString, currencyValueString, areStringsDifferent,
-        areArraysDifferent, firstLetterToLower
+        relativeDateString, currencyValueString, areStringsDifferent, areArraysDifferent
     };
 }

@@ -396,7 +396,7 @@ const HistoryPage: React.FC = () => {
                             <TableHeaderComponent
                                 columnKey="value"
                                 columnLabel={t("general.entry.value")}
-                                align="right"
+                                tableCellProps={{ align: "right" }}
                                 sortable={true}
                                 sortBy={entryParams.sortBy}
                                 sortDescending={entryParams.sortDescending}

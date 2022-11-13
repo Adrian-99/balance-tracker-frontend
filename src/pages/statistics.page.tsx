@@ -1,4 +1,4 @@
-import { Button, Divider } from "@mui/material";
+import { Button, Divider, Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Box } from "@mui/system";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
@@ -10,6 +10,8 @@ import DataListComponent from "../components/data-list.component";
 import EntryTypeComponent from "../components/entry-type.component";
 import PageCardComponent from "../components/page-card.component";
 import SpinnerOrNoDataComponent from "../components/spinner-or-no-data.component";
+import StatisticsTableRowComponent from "../components/statistics-table-row.component";
+import TableHeaderComponent from "../components/table-header.component";
 import TagsComponent from "../components/tags.component";
 import Category from "../data/category";
 import { EntryType } from "../data/statistics-enums";
@@ -24,7 +26,7 @@ const StatisticsPage: React.FC = () => {
     const { user } = useContext(ApplicationContext);
     const { getAllCategories } = useCategoryService();
     const { errorToast, evaluateBackendMessage } = useCustomToast();
-    const { firstLetterToLower } = useUtils();
+    const { isSmallScreen, isExtraSmallScreen } = useUtils();
 
     const ACTIONS = user?.isEmailVerified ?
         [ { name: t("pages.statistics.generateNewStatistics"), action: () => setGenerateNewStatisticsModalOpen(true) } ] :
@@ -63,7 +65,7 @@ const StatisticsPage: React.FC = () => {
                 { keywords.map(k => categories.find(c => c.keyword === k))
                     .filter(c => c !== undefined)
                     .map(c => c as Category)
-                    .map(c => <CategoryComponent category={c} typographyVariant="body2" />)
+                    .map((c, index) => <CategoryComponent key={index} category={c} typographyVariant="body2" />)
                 }
 
             </Box>
@@ -80,11 +82,11 @@ const StatisticsPage: React.FC = () => {
             if (categoryKeywords.length > 0) {
                 categoryKeywords = categoryKeywords.filter(ck => {
                     let category = categories.find(c => c.keyword === ck);
-                    return category && (firstLetterToLower(statisticsResponse.entryTypeFilter as string) === EntryType.INCOME ? category.isIncome : !category?.isIncome);
+                    return category && (statisticsResponse.entryTypeFilter === EntryType.INCOME ? category.isIncome : !category?.isIncome);
                 });
             } else {
                 categoryKeywords = categories
-                    .filter(c => firstLetterToLower(statisticsResponse.entryTypeFilter as string) === EntryType.INCOME ? c.isIncome : !c?.isIncome)
+                    .filter(c => statisticsResponse.entryTypeFilter === EntryType.INCOME ? c.isIncome : !c?.isIncome)
                     .map(c => c.keyword);
             }
         }
@@ -134,7 +136,48 @@ const StatisticsPage: React.FC = () => {
                             { t("pages.statistics.viewEntries") }
                         </Button>
                     }
+
                     <Divider sx={{ my: "16px" }} />
+
+                    <TableContainer>
+                        <Table stickyHeader style={{ tableLayout: "fixed" }} size={isExtraSmallScreen ? "small" : "medium"}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableHeaderComponent
+                                        columnKey="group"
+                                        columnLabel={t("pages.statistics.entriesGroup")}
+                                    />
+                                    { !isSmallScreen ?
+                                        statisticsResponse.selectValues.map((v, index) => 
+                                            <TableHeaderComponent
+                                                key={index}
+                                                columnKey={v}
+                                                columnLabel={t("general.statistics.selectValueValue." + v)}
+                                                tableCellProps={{ align: "right", width: "100px" }}
+                                            />
+                                        )
+                                        :
+                                        <TableHeaderComponent
+                                            columnKey="values"
+                                            columnLabel={t("pages.statistics.values")}
+                                            tableCellProps={{ align: "right" }}
+                                        />
+                                    }
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                { statisticsResponse.rows.map((row, index) =>
+                                    <StatisticsTableRowComponent
+                                        key={index}
+                                        rowData={row}
+                                        selectValues={statisticsResponse.selectValues}
+                                        categories={categories}
+                                        groupByLevel={0}
+                                    />
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </>
                 :
                 <SpinnerOrNoDataComponent showNoData={true} showSpinner={false} />

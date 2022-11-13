@@ -1,18 +1,18 @@
-import { TableCell, TableSortLabel } from "@mui/material";
+import { TableCell, TableCellProps, TableSortLabel } from "@mui/material";
 
 interface IProps {
     columnKey: string;
     columnLabel: string;
-    align?: 'center' | 'inherit' | 'justify' | 'left' | 'right';
+    tableCellProps?: TableCellProps;
     sortable?: boolean;
     sortBy?: string;
     sortDescending?: boolean;
     onSortChange?: (columnKey: string) => void;
 }
 
-const TableHeaderComponent: React.FC<IProps> = ({ columnKey, columnLabel, align, sortable, sortBy, sortDescending, onSortChange }) => {
+const TableHeaderComponent: React.FC<IProps> = ({ columnKey, columnLabel, tableCellProps, sortable, sortBy, sortDescending, onSortChange }) => {
     return (
-        <TableCell key={columnKey} align={align ? align : "inherit"}>
+        <TableCell key={columnKey} {...tableCellProps}>
             { sortable ?
                 <TableSortLabel
                     active={sortBy === columnKey}

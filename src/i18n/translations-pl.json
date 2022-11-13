@@ -185,7 +185,11 @@
             "title": "Statystyki",
             "generateNewStatistics": "Generuj nowe statystyki",
             "entriesCount": "Liczba wpisów",
-            "viewEntries": "Zobacz wpisy"
+            "viewEntries": "Zobacz wpisy",
+            "entriesGroup": "Grupa wpisów",
+            "values": "Wartości",
+            "allEntries": "Wszystkie wpisy",
+            "entriesWithoutTags": "Wpisy bez tagów"
         }
     },
 

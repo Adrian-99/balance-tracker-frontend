@@ -6,6 +6,8 @@ export default interface StatisticsRow {
     entryType?: EntryType;
     categoryKeyword?: string;
     tagName?: string;
-    values?: Map<SelectValue, number>;
+    values?: {
+        [type in SelectValue]: number
+    };
     subRows?: StatisticsRow[];
 }

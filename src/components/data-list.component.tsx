@@ -6,22 +6,25 @@ export interface DataRecord {
 }
 
 interface IProps {
-    nameWidth?: number;
     data: DataRecord[];
+    nameWidth?: number;
+    size?: "small" | "medium";
+    align?: "inherit" | "left" | "center" | "right" | "justify";
+    breakLine?: "sm" | "md";
 }
 
-const DataListComponent: React.FC<IProps> = ({ nameWidth, data }) => {
+const DataListComponent: React.FC<IProps> = ({ data, nameWidth, size, align, breakLine }) => {
     return (
-        <List>
-            { data.map(record => 
-                <ListItem>
-                    <Grid container alignItems="center" spacing="4px">
-                        <Grid item xs={12} md={nameWidth || 4}>
-                            <Typography variant="body1">{record.name}:</Typography>
+        <List sx={{ py: 0 }}>
+            { data.map((record, index) => 
+                <ListItem key={index} sx={ size === "small" ? { py: "4px", px: 0 } : {} }>
+                    <Grid container alignItems="center" spacing={size === "small" ? 0 : "4px"}>
+                        <Grid item xs={12} sm={breakLine === "sm" && (nameWidth || 4)} md={nameWidth || 4}>
+                            <Typography variant="body1" align={align}>{record.name}:</Typography>
                         </Grid>
-                        <Grid item xs={12} md={nameWidth ? 12 - nameWidth : 8}>
+                        <Grid item xs={12} sm={breakLine === "sm" && nameWidth ? 12 - nameWidth : 8} md={nameWidth ? 12 - nameWidth : 8}>
                             { typeof record.value === "string" ?
-                                <Typography variant="body2">{record.value}</Typography>
+                                <Typography variant="body2" align={align}>{record.value}</Typography>
                                 :
                                 record.value
                             }
