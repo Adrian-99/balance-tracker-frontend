@@ -1,4 +1,5 @@
-import { Box, TableCell, TableRow, Typography } from "@mui/material";
+import { KeyboardArrowDown as ArrowDownIcon, KeyboardArrowUp as ArrowUpIcon } from "@mui/icons-material";
+import { Box, IconButton, TableCell, TableRow, Typography } from "@mui/material";
 import moment from "moment";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,6 +10,7 @@ import { useUtils } from "../hooks/utils.hook";
 import CategoryComponent from "./category.component";
 import DataListComponent from "./data-list.component";
 import EntryTypeComponent from "./entry-type.component";
+import IndentComponent from "./indent.component";
 import TagsComponent from "./tags.component";
 
 interface IProps {
@@ -22,7 +24,7 @@ const StatisticsTableRowComponent: React.FC<IProps> = ({ rowData, selectValues, 
     const { t } = useTranslation();
     const { isExtraSmallScreen, isSmallScreen, currencyValueString } = useUtils();
 
-    const [subRowsExpanded, setSubRowsExpanded] = useState(false);
+    const [subRowsExpanded, setSubRowsExpanded] = useState(true);
 
     const DATE_FORMAT = "YYYY.MM.DD";
 
@@ -75,18 +77,28 @@ const StatisticsTableRowComponent: React.FC<IProps> = ({ rowData, selectValues, 
 
     return (
         <>
-            <TableRow>
-                <TableCell>
-                    <Box ml={groupByLevel * (isExtraSmallScreen ? 8 : 32) + "px"}>
+            <TableRow sx={{ height: "1px" }}>
+                <TableCell height="inherit">
+                    <Box display="flex" alignItems="center" height="100%">
+                        { Array.from({ length: groupByLevel }).map((_, i) =>
+                            <IndentComponent key={i} widthPx={32} divider />
+                        )}
+                        { rowData.subRows ?
+                            <IconButton size="small" onClick={() => setSubRowsExpanded(!subRowsExpanded)} sx={{ mr: "2px" }}>
+                                { subRowsExpanded ? <ArrowUpIcon /> : <ArrowDownIcon /> }
+                            </IconButton>
+                            :
+                            <IndentComponent widthPx={ 32} />
+                        }
                         { evaluateGroup() }
                     </Box>
                 </TableCell>
                 { !isSmallScreen ?
                     selectValues.map((v, index) =>
-                        <TableCell key={index} align="right">{ evaluateValue(v) }</TableCell>
+                        <TableCell key={index} align="right" height="inherit">{ evaluateValue(v) }</TableCell>
                     )
                     :
-                    <TableCell align="right">
+                    <TableCell align="right" height="inherit">
                         { rowData.values &&
                             <DataListComponent
                                 data={selectValues.map(v => { return {
@@ -102,7 +114,7 @@ const StatisticsTableRowComponent: React.FC<IProps> = ({ rowData, selectValues, 
                     </TableCell>
                 }
             </TableRow>
-            { rowData.subRows &&
+            { rowData.subRows && subRowsExpanded &&
                 rowData.subRows.map((subRow, index) =>
                     <StatisticsTableRowComponent
                         key={index}
