@@ -199,14 +199,14 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                         translateKeyPrefix="general.statistics.groupByValue"
                     />
                 </Grid>
-                { groupByWatch !== undefined && groupByWatch.includes(GroupBy.TIME_PERIOD) &&
+                { groupByWatch !== undefined && groupByWatch.includes(GroupBy.TIME_INTERVAL) &&
                     <>
                         <Grid item xs={12} md={5}>
                             <DateTimePickerComponent
                                 type="date"
-                                formFieldName="groupByTimePeriodProperties.startDate"
+                                formFieldName="groupByTimeIntervalProperties.referenceDate"
                                 control={control}
-                                label={t("modals.generateNewStatistics.startDate")}
+                                label={t("modals.generateNewStatistics.referenceDate")}
                                 dateTimeFormat={DATE_FORMAT}
                                 required
                                 fullWidth
@@ -214,20 +214,20 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                         </Grid>
                         <Grid item xs={12} sm={6} md={3}>
                             <TextField
-                                label={t("modals.generateNewStatistics.intervalValue") + " *"}
+                                label={t("modals.generateNewStatistics.intervalLength") + " *"}
                                 variant="outlined"
                                 fullWidth
-                                {...register("groupByTimePeriodProperties.intervalValue", {
+                                {...register("groupByTimeIntervalProperties.intervalLength", {
                                     required: t("validation.required") as string,
                                     pattern: { value: /^\d+$/, message: t("validation.valuePattern")}
                                 })}
-                                error={errors.groupByTimePeriodProperties?.intervalValue !== undefined}
-                                helperText={errors.groupByTimePeriodProperties?.intervalValue?.message}
+                                error={errors.groupByTimeIntervalProperties?.intervalLength !== undefined}
+                                helperText={errors.groupByTimeIntervalProperties?.intervalLength?.message}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
                             <StringSelectComponent
-                                formFieldName="groupByTimePeriodProperties.intervalUnit"
+                                formFieldName="groupByTimeIntervalProperties.intervalUnit"
                                 control={control}
                                 label={t("modals.generateNewStatistics.intervalUnit")}
                                 options={Object.values(TimePeriodUnit)}

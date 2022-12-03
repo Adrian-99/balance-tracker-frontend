@@ -47,7 +47,7 @@ const StatisticsPage: React.FC = () => {
                 errorToast(evaluateBackendMessage(error.response?.data?.TranslationKey));
             });
         
-        if (!statisticsResponse) {
+        if (user?.isEmailVerified && !statisticsResponse) {
             setGenerateNewStatisticsModalOpen(true);
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps

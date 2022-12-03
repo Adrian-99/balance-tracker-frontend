@@ -4,7 +4,7 @@ export enum EntryType {
 }
 
 export enum GroupBy {
-    TIME_PERIOD = "timePeriod",
+    TIME_INTERVAL = "timeInterval",
     ENTRY_TYPE = "entryType",
     CATEGORY = "category",
     TAG = "tag"

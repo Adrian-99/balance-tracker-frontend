@@ -217,25 +217,27 @@ export const TagsPage: React.FC = () => {
             <TableContainer>
                 <Table style={{ tableLayout: "fixed" }} size={isExtraSmallScreen ? "small" : "medium"}>
                     <TableHead>
-                        <TableHeaderComponent
-                            columnKey="name"
-                            columnLabel={t("general.tag.name")}
-                            sortable={true}
-                            sortBy={tagParams.sortBy}
-                            sortDescending={tagParams.sortDescending}
-                            onSortChange={onSortChange}
-                        />
-                        <TableHeaderComponent
-                            columnKey="entriesCount"
-                            columnLabel={t("general.tag.entriesCount")}
-                            sortable={true}
-                            sortBy={tagParams.sortBy}
-                            sortDescending={tagParams.sortDescending}
-                            onSortChange={onSortChange}
-                        />
-                        { user?.isEmailVerified &&
-                            <TableCell key="actionButtons" style={{ width: "34px" }} />
-                        }
+                        <TableRow>
+                            <TableHeaderComponent
+                                columnKey="name"
+                                columnLabel={t("general.tag.name")}
+                                sortable={true}
+                                sortBy={tagParams.sortBy}
+                                sortDescending={tagParams.sortDescending}
+                                onSortChange={onSortChange}
+                            />
+                            <TableHeaderComponent
+                                columnKey="entriesCount"
+                                columnLabel={t("general.tag.entriesCount")}
+                                sortable={true}
+                                sortBy={tagParams.sortBy}
+                                sortDescending={tagParams.sortDescending}
+                                onSortChange={onSortChange}
+                            />
+                            { user?.isEmailVerified &&
+                                <TableCell key="actionButtons" style={{ width: "34px" }} />
+                            }
+                        </TableRow>
                     </TableHead>
                     <TableBody>
                         { !awaitingResponse && tagsPage?.data.length ?
@@ -268,7 +270,7 @@ export const TagsPage: React.FC = () => {
                             )
                             :
                             <TableRow>
-                                <TableCell colSpan={3}>
+                                <TableCell colSpan={user?.isEmailVerified ? 3 : 2}>
                                     <SpinnerOrNoDataComponent showSpinner={awaitingResponse} showNoData={!tagsPage?.data.length} />
                                 </TableCell>
                             </TableRow>

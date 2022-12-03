@@ -84,7 +84,7 @@
             },
             "groupBy": "Grupowanie według",
             "groupByValue": {
-                "timePeriod": "Okres czasu",
+                "timeInterval": "Przedział czasu",
                 "entryType": "Rodzaj wpisu",
                 "category": "Kategoria",
                 "tag": "Tag"
@@ -215,8 +215,8 @@
         "generateNewStatistics": {
             "filtering": "Filtrowanie",
             "grouping": "Grupowanie",
-            "startDate": "Data początkowa",
-            "intervalValue": "Długość",
+            "referenceDate": "Data odniesienia",
+            "intervalLength": "Długość",
             "intervalUnit": "Jednostka",
             "intervalUnitValue": {
                 "day": "Dni",

@@ -41,7 +41,7 @@ const EditEntryModal: React.FC<IProps> = ({ open, onClose, categories, tagNames,
                 setValue("date", moment(entry?.date).toDate());
             }
             if (!getFieldState("value").isDirty && entry?.value) {
-                setValue("value", entry?.value);
+                setValue("value", Math.abs(entry?.value));
             }
             if (!getFieldState("name").isDirty) {
                 setValue("name", entry?.name || "");
