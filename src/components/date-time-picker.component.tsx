@@ -59,7 +59,7 @@ const DateTimePickerComponent: React.FC<IProps> = componentProps => {
             label: componentProps.required && !componentProps.label.endsWith("*") ?
                 componentProps.label + " *" :
                 componentProps.label,
-            onChange: (newValue: moment.Moment | null) => onChange(newValue?.toString().length ? moment(newValue).utc().add(moment(newValue).utcOffset(), "m") : null),
+            onChange: (newValue: moment.Moment | null) => onChange(newValue?.toString().length ? moment(newValue) : null),
             onAccept: () => triggerAutoSubmit(),
             renderInput: (props: TextFieldProps) => 
                 <TextField

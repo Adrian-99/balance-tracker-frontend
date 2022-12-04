@@ -30,16 +30,16 @@ const StatisticsTableRowComponent: React.FC<IProps> = ({ rowData, selectValues, 
 
     const evaluateGroup = (): JSX.Element => {
         if (rowData.dateFrom && rowData.dateTo) {
-            if (moment.utc(rowData.dateFrom).startOf("day").isSame(moment.utc(rowData.dateTo).startOf("day"))) {
+            if (moment(rowData.dateFrom).startOf("day").isSame(moment(rowData.dateTo).startOf("day"))) {
                 return (
                     <Typography>
-                        { moment.utc(rowData.dateFrom).format(DATE_FORMAT) }
+                        { moment(rowData.dateFrom).format(DATE_FORMAT) }
                     </Typography>
                 );
             } else {
                 return (
                     <Typography>
-                        { moment.utc(rowData.dateFrom).format(DATE_FORMAT) } — { moment.utc(rowData.dateTo).format(DATE_FORMAT) }
+                        { moment(rowData.dateFrom).format(DATE_FORMAT) } — { moment(rowData.dateTo).format(DATE_FORMAT) }
                     </Typography>
                 )
             }

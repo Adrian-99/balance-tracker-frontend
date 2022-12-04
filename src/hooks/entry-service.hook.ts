@@ -9,7 +9,6 @@ import Page from "../data/page";
 import Pageable from "../data/pageable";
 
 export const useEntryService = () => {
-    const DATE_FORMAT = "YYYY-MM-DD";
     const STRINGS_SEPARATOR = ',';
 
     const { http } = useContext(ApplicationContext);
@@ -20,8 +19,8 @@ export const useEntryService = () => {
             pageSize: parameters.pageSize,
             sortBy: (parameters.sortDescending ? '-' : '') + parameters.sortBy,
             searchValue: parameters.searchValue,
-            dateFrom: parameters.dateFrom !== null ? moment(parameters.dateFrom).format(DATE_FORMAT) : null,
-            dateTo: parameters.dateTo !== null ? moment(parameters.dateTo).format(DATE_FORMAT) : null,
+            dateFrom: parameters.dateFrom !== null ? moment(parameters.dateFrom).startOf("day").toDate() : null,
+            dateTo: parameters.dateTo !== null ? moment(parameters.dateTo).endOf("day").toDate() : null,
             categoriesKeywords: parameters.categoriesKeywords?.join(STRINGS_SEPARATOR),
             tagsNames: parameters.tagsNames?.join(STRINGS_SEPARATOR)
         }

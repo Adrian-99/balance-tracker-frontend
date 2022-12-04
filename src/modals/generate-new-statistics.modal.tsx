@@ -1,4 +1,5 @@
 import { Checkbox, FormControlLabel, Grid, TextField, Typography } from "@mui/material";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -67,8 +68,13 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
 
     const onSubmit: SubmitHandler<StatisticsRequest> = data => {
         setAwaitingResponse(true);
-        if (data.dateRangeFilter && (!data.dateRangeFilter.dateFrom || !data.dateRangeFilter?.dateTo)) {
-            data.dateRangeFilter = undefined;
+        if (data.dateRangeFilter) {
+            if (data.dateRangeFilter.dateFrom && data.dateRangeFilter.dateTo) {
+                data.dateRangeFilter.dateFrom = moment(data.dateRangeFilter.dateFrom).startOf("day").toDate();
+                data.dateRangeFilter.dateTo = moment(data.dateRangeFilter.dateTo).endOf("day").toDate();
+            } else {
+                data.dateRangeFilter = undefined;
+            }
         }
         generateStatistics(data)
             .then(response => {

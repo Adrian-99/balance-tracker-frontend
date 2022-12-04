@@ -75,7 +75,7 @@ const StatisticsPage: React.FC = () => {
     const getHistoryLink = (): string => {
         let query = "";
         if (statisticsResponse?.dateFromFilter && statisticsResponse?.dateToFilter) {
-            query = `${query}&dateFrom=${moment.utc(statisticsResponse.dateFromFilter).format(QUERY_DATE_FORMAT)}&dateTo=${moment.utc(statisticsResponse.dateToFilter).format(QUERY_DATE_FORMAT)}`;
+            query = `${query}&dateFrom=${moment(statisticsResponse.dateFromFilter).format(QUERY_DATE_FORMAT)}&dateTo=${moment(statisticsResponse.dateToFilter).format(QUERY_DATE_FORMAT)}`;
         }
         let categoryKeywords = statisticsResponse?.categoryFilter || [];
         if (statisticsResponse?.entryTypeFilter) {
@@ -111,7 +111,7 @@ const StatisticsPage: React.FC = () => {
                         data={[
                             ...(statisticsResponse.dateFromFilter && statisticsResponse.dateToFilter ? [{
                                 name: t("general.statistics.filterByValue.dateRange"),
-                                value: `${moment.utc(statisticsResponse.dateFromFilter).format(DATE_FORMAT)} — ${moment.utc(statisticsResponse.dateToFilter).format(DATE_FORMAT)}`
+                                value: `${moment(statisticsResponse.dateFromFilter).format(DATE_FORMAT)} — ${moment(statisticsResponse.dateToFilter).format(DATE_FORMAT)}`
                             }]: []),
                             ...(statisticsResponse.entryTypeFilter ? [{
                                 name: t("general.statistics.filterByValue.entryType"),
