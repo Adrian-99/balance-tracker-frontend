@@ -76,6 +76,11 @@ const GenerateNewStatisticsModal: React.FC<IProps> = ({ open, onClose, categorie
                 data.dateRangeFilter = undefined;
             }
         }
+        if (data.groupByTimeIntervalProperties) {
+            data.groupByTimeIntervalProperties.referenceDate = moment(data.groupByTimeIntervalProperties.referenceDate)
+                .startOf("day")
+                .toDate();
+        }
         generateStatistics(data)
             .then(response => {
                 clearFormAndClose(response.data);
